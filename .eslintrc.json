@@ -27,9 +27,7 @@
     {
       "files": ["./tests/**/*"],
       "env": {
-        "jest": true,
-        // https://stackoverflow.com/questions/31629389/how-to-use-eslint-with-jest
-        "jest/globals": true
+        "jest": true
       }
     }
   ]
