@@ -10,6 +10,7 @@
     "lint-fix": "prettier ./src && eslint ./src --ext .ts --fix",
     "prepare": "husky install"
   },
+  "type": "module",
   "license": "MIT",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.5.0",
