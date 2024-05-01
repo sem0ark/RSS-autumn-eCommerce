@@ -10,12 +10,7 @@
     "lint-fix": "prettier ./src && eslint ./src --ext .ts --fix",
     "prepare": "husky install"
   },
-  "keywords": [
-    "WebSocket",
-    "chat-app"
-  ],
-  "author": "Arkadii Semenov (@sem0ark)",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
