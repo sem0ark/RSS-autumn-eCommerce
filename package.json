@@ -31,5 +31,15 @@
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
     "vite-svg-loader": "^5.1.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   }
 }
