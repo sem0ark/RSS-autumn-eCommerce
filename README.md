@@ -7,3 +7,6 @@ It includes features such as:
 - product search;
 - product categorization and sorting.
 
+## Contents
+- Docs for development and contribution
+  - [Project structure](./docs/project_structure.md)
