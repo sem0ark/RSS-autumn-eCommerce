@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# don't commit jest coverage
+coverage
 node_modules
 dist
 dist-ssr
