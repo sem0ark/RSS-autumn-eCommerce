@@ -22,5 +22,15 @@
     "no-console": 0,
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["./tests/**/*"],
+      "env": {
+        "jest": true,
+        // https://stackoverflow.com/questions/31629389/how-to-use-eslint-with-jest
+        "jest/globals": true
+      }
+    }
+  ]
 }

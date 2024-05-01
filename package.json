@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "lint": "prettier ./src && eslint . --ext .ts",
     "lint-fix": "prettier ./src && eslint ./src --ext .ts --fix",
+    "test": "jest",
     "prepare": "husky install"
   },
   "type": "module",
