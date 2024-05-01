@@ -1,7 +1,7 @@
 {
-  "name": "fun-chat",
+  "name": "e-commerce",
   "version": "1.0.0",
-  "description": "RSS Fun-chat application",
+  "description": "RSS eCommerce application",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
