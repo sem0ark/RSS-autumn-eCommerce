@@ -2,7 +2,6 @@
   "root": true,
   "plugins": ["prettier", "import"],
   "extends": [
-    "airbnb",
     "airbnb-typescript/base", // no need in react support
     "plugin:@typescript-eslint/recommended",
   ],
