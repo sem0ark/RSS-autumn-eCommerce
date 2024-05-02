@@ -30,3 +30,18 @@ Maintenance:
 2. ESLint
 3. Husky (`commitilint` for conventional commits)
 
+## Installation and scripts
+
+
+### Scripts
+In the `project.json` file you may see:
+- `dev` - run dev mode for vite, automatic reload
+- `build` - build project for production
+- `preview` - run built project in production environment
+- `lint` - run checks for style guidelines
+- `lint-fix` - run checks for style guidelines with automatic correction
+- `test` - run Jest tests locally
+- `prepare` - initialize Husky locally
+- `lint-ci-eslint` - run ESLint checks for GitHub Actions CI
+- `lint-ci-prettier` - run Prettier checks for GitHub Actions CI
+- `test-ci` - run Jest tests in GitHub Actions CI
