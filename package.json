@@ -12,7 +12,7 @@
     "prepare": "husky install",
     "lint-ci-eslint": "eslint ./src ./tests --ext .ts --fix",
     "lint-ci-prettier": "prettier ./src ./tests --write",
-    "test-ci": "jest --ci --reporters='default' --reporters='./github-actions-reporter'"
+    "test-ci": "jest --ci --reporters='default'"
   },
   "type": "module",
   "license": "MIT",

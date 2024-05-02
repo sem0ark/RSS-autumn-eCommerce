@@ -41,5 +41,5 @@ jobs:
       - name: Run ESLint checks
         run: npm run lint-ci-eslint
       
-      # - name: Run Jest tests
-      #   run: npm run test-ci
+      - name: Run Jest tests
+        run: npm run test-ci
