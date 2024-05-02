@@ -31,7 +31,20 @@ Maintenance:
 3. Husky (`commitilint` for conventional commits)
 
 ## Installation and scripts
+To run the project locally, consider installing Node of version `20.11` or later:
 
+```bash
+# check out the repository
+git clone https://github.com/sem0ark/RSS-autumn-eCommerce.git
+# install required NPM dependencies
+npm install
+# configure Husky for commit linting
+npm run prepare
+# try to run the available tests to make sure everything works fine
+npm run test
+```
+
+We recommend you to check out the information about the [Project structure](./docs/project_structure.md) and summary of [project's framework functionality](./docs/framework.md).
 
 ### Scripts
 In the `package.json` file you may see:
