@@ -30,3 +30,18 @@ Maintenance:
 2. ESLint
 3. Husky (`commitilint` for conventional commits)
 
+## Installation and scripts
+
+
+### Scripts
+In the `package.json` file you may see:
+- `npm run dev` - run dev mode for vite, automatic reload
+- `npm run build` - build project for production
+- `npm run preview` - run built project in production environment
+- `npm run lint` - run checks for style guidelines
+- `npm run lint-fix` - run checks for style guidelines with automatic correction
+- `npm run test` - run Jest tests locally
+- `npm run prepare` - initialize Husky locally
+- `npm run lint-ci-eslint` - run ESLint checks for GitHub Actions CI
+- `npm run lint-ci-prettier` - run Prettier checks for GitHub Actions CI
+- `npm run test-ci` - run Jest tests in GitHub Actions CI
