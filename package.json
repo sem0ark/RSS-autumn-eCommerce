@@ -6,10 +6,13 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "prettier ./src && eslint . --ext .ts",
-    "lint-fix": "prettier ./src && eslint ./src --ext .ts --fix",
+    "lint": "prettier ./src ./tests && eslint ./src ./tests --ext .ts",
+    "lint-fix": "prettier ./src ./tests --write && eslint ./src ./tests --ext .ts --fix",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint-ci-eslint": "eslint ./src ./tests --ext .ts --fix",
+    "lint-ci-prettier": "prettier ./src ./tests --write",
+    "test-ci": "jest --ci --reporters='default' --reporters='./github-actions-reporter'"
   },
   "type": "module",
   "license": "MIT",
