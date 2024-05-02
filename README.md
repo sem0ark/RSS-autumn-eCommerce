@@ -36,6 +36,8 @@ To run the project locally, consider installing Node of version `20.11` or later
 ```bash
 # check out the repository
 git clone https://github.com/sem0ark/RSS-autumn-eCommerce.git
+cd ./RSS-autumn-eCommerce/
+
 # install required NPM dependencies
 npm install
 # configure Husky for commit linting
