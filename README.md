@@ -34,14 +34,14 @@ Maintenance:
 
 
 ### Scripts
-In the `project.json` file you may see:
-- `dev` - run dev mode for vite, automatic reload
-- `build` - build project for production
-- `preview` - run built project in production environment
-- `lint` - run checks for style guidelines
-- `lint-fix` - run checks for style guidelines with automatic correction
-- `test` - run Jest tests locally
-- `prepare` - initialize Husky locally
-- `lint-ci-eslint` - run ESLint checks for GitHub Actions CI
-- `lint-ci-prettier` - run Prettier checks for GitHub Actions CI
-- `test-ci` - run Jest tests in GitHub Actions CI
+In the `package.json` file you may see:
+- `npm run dev` - run dev mode for vite, automatic reload
+- `npm run build` - build project for production
+- `npm run preview` - run built project in production environment
+- `npm run lint` - run checks for style guidelines
+- `npm run lint-fix` - run checks for style guidelines with automatic correction
+- `npm run test` - run Jest tests locally
+- `npm run prepare` - initialize Husky locally
+- `npm run lint-ci-eslint` - run ESLint checks for GitHub Actions CI
+- `npm run lint-ci-prettier` - run Prettier checks for GitHub Actions CI
+- `npm run test-ci` - run Jest tests in GitHub Actions CI
