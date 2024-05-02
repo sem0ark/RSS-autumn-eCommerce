@@ -35,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # - name: Run Prettier checks
-      #   run: npm run lint-ci-prettier
+      - name: Run Prettier checks
+        run: npm run lint-ci-prettier
 
       - name: Run ESLint checks
         run: npm run lint-ci-eslint
