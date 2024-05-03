@@ -1,32 +1,40 @@
-import { DEVMODE, TRACEMODE } from './config';
-
 type LoggingEntries = (object | string | number)[];
 
+const config = {
+  DEVMODE: true,
+  TRACEMODE: true,
+  logFunction: console.log,
+};
+
+export const disableLogging = () => {
+  config.logFunction = () => {};
+};
+
 export const info = (...str: LoggingEntries) => {
-  console.log('INF: ', ...str);
+  config.logFunction('INF: ', ...str);
 };
 
 export const trace =
-  DEVMODE && TRACEMODE
+  config.DEVMODE && config.TRACEMODE
     ? (...str: LoggingEntries) => {
-        console.log('TRC: ', ...str);
+        config.logFunction('TRC: ', ...str);
       }
     : () => {};
 
-export const log = DEVMODE
+export const log = config.DEVMODE
   ? (...str: LoggingEntries) => {
-      console.log('DBG: ', ...str);
+      config.logFunction('DBG: ', ...str);
     }
   : () => {};
 
-export const debug = DEVMODE
+export const debug = config.DEVMODE
   ? (...str: LoggingEntries) => {
-      console.log('DBG: ', ...str);
+      config.logFunction('DBG: ', ...str);
     }
   : () => {};
 
 export const warn = (...str: LoggingEntries) => {
-  console.log('WRN: ', ...str);
+  config.logFunction('WRN: ', ...str);
 };
 
 export const error = (...str: LoggingEntries) => {
