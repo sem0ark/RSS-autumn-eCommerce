@@ -90,6 +90,50 @@ export class PBoolean extends Property<boolean> {
   }
 }
 
+export class PList<T extends PropertyValueType> extends Property<T[]> {
+  public readonly length: PInteger;
+
+  constructor(
+    public readonly name: string,
+    initial: T[]
+  ) {
+    super(name, initial);
+    this.length = new PInteger(name + '_length', initial.length);
+  }
+
+  public put(index: number, value: T) {
+    this.get()[index] = value;
+    this.update();
+  }
+
+  public push(value: T) {
+    this.get().push(value);
+    this.length.inc();
+    this.update();
+  }
+
+  public pop() {
+    if (this.length.get() > 0) {
+      const value = this.get().pop();
+      this.length.dec();
+      this.update();
+      return value;
+    }
+    return undefined;
+  }
+
+  public insert(index: number, value: T) {
+    this.get().splice(index, 0, value);
+    this.length.inc();
+    this.update();
+  }
+
+  public clear() {
+    this.get().length = 0;
+    this.length.set(0);
+  }
+}
+
 export class DependentProperty<
   K extends (...args: PropertyValueType[]) => PropertyValueType,
 > extends Property<PropertyValueType> {

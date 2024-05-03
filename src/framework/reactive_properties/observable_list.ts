@@ -87,11 +87,6 @@ export class ObservableList<T extends PropertyValueType> {
     if (index !== -1) this.remove(index);
   }
 
-  public removeByValue(property: Property<T>) {
-    const index = this._properties.indexOf(property);
-    if (index !== -1) this.remove(index);
-  }
-
   public clear() {
     while (this.length > 0) this.remove(0);
   }

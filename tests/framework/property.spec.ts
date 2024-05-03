@@ -3,6 +3,7 @@ import {
   DependentProperty,
   PBoolean,
   PInteger,
+  PList,
   PObject,
   Property,
 } from '../../src/framework/reactive_properties/property';
@@ -181,7 +182,7 @@ describe('Test functionality of dependent property', () => {
     const prop1 = new PInteger('', 0);
     const prop2 = new PInteger('', 0);
 
-    const dprop = new DependentProperty<() => number>(
+    const dprop = new DependentProperty(
       'test property',
       () => prop1.get() + prop2.get()
     );
@@ -245,6 +246,26 @@ describe('Test functionality of dependent property', () => {
     expect(cb).toHaveBeenCalledTimes(0);
     expect(cb.mock.calls).toStrictEqual([]);
   });
+
+  it('must not call listeners with the same value', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty<() => number>(
+      'test property',
+      () => prop1.get() + prop2.get()
+    );
+
+    dprop.onChange(cb);
+    prop1.update();
+    prop2.update();
+
+    expect(dprop.get()).toBe(0);
+    expect(cb).toHaveBeenCalledTimes(0);
+    expect(cb.mock.calls).toStrictEqual([]);
+  });
 });
 
 describe('Test functionality of object property', () => {
@@ -290,54 +311,113 @@ describe('Test functionality of object property', () => {
 
   it('must update set value as property', () => {
     const cb = jest.fn();
-
-    const prop = new PObject<Record<string, string>>('test property', {
+    const data = {
       test: 'data',
-    });
+    };
+    const prop = new PObject<Record<string, string>>('test property', data);
     prop.onChange(cb);
     prop.get().test = 'new-data';
 
-    expect(prop.get()).toStrictEqual({ test: 'new-data' });
+    expect(prop.get()).toStrictEqual(data);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([
-      [{ test: 'new-data' }, { test: 'new-data' }, prop],
-    ]);
+    expect(cb.mock.calls).toStrictEqual([[data, data, prop]]);
   });
 
   it('must update set value as property recursively', () => {
     const cb = jest.fn();
+    const data = {
+      test: {
+        inner: 'data',
+      },
+    };
 
     const prop = new PObject<Record<string, Record<string, string>>>(
       'test property',
-      {
-        test: {
-          inner: 'data',
-        },
-      }
+      data
     );
     prop.onChange(cb);
     prop.get().test.inner = 'new-data';
 
-    expect(prop.get()).toStrictEqual({
-      test: {
-        inner: 'new-data',
-      },
-    });
+    expect(prop.get()).toStrictEqual(data);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([
-      [
-        {
-          test: {
-            inner: 'new-data',
-          },
-        },
-        {
-          test: {
-            inner: 'new-data',
-          },
-        },
-        prop,
-      ],
-    ]);
+    expect(cb.mock.calls).toStrictEqual([[data, data, prop]]);
+  });
+});
+
+describe('Test functionality of list property', () => {
+  beforeEach(() => {
+    disableLogging();
+  });
+
+  it('must be able set value', () => {
+    const prop = new PList('test property', []);
+    expect(prop.get()).toStrictEqual([]);
+  });
+
+  it('must update set value', () => {
+    const prop = new PList<string>('test property', []);
+    prop.set(['new']);
+    expect(prop.get()).toStrictEqual(['new']);
+  });
+
+  it('must call listeners on value update', () => {
+    const cb = jest.fn();
+
+    const prop = new PList<string>('test property', []);
+    prop.onChange(cb);
+    prop.set(['new']);
+
+    expect(prop.get()).toStrictEqual(['new']);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[['new'], [], prop]]);
+  });
+
+  it('must call listeners on value update', () => {
+    const cb = jest.fn();
+
+    const prop = new PList<string>('test property', []);
+    prop.onChange(cb);
+    prop.set(['new']);
+
+    expect(prop.get()).toStrictEqual(['new']);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[['new'], [], prop]]);
+  });
+
+  it('must update push value', () => {
+    const cb = jest.fn();
+    const prop = new PList<string>('test property', []);
+
+    prop.onChange(cb);
+    prop.push('new');
+
+    expect(prop.get()).toStrictEqual(['new']);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[['new'], null, prop]]);
+  });
+
+  it('must update pop value', () => {
+    const cb = jest.fn();
+    const prop = new PList<string>('test property', ['abc']);
+
+    prop.onChange(cb);
+    const result = prop.pop();
+
+    expect(result).toBe('abc');
+    expect(prop.get()).toStrictEqual([]);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[[], null, prop]]);
+  });
+
+  it('must update set value', () => {
+    const cb = jest.fn();
+    const prop = new PList<string>('test property', ['abc']);
+
+    prop.onChange(cb);
+    prop.put(0, '123');
+
+    expect(prop.get()).toStrictEqual(['123']);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[['123'], null, prop]]);
   });
 });
