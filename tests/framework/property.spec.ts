@@ -1,5 +1,6 @@
 import { disableLogging } from '../../src/framework/utilities/logging';
 import {
+  PBoolean,
   PInteger,
   Property,
 } from '../../src/framework/reactive_properties/property';
@@ -112,8 +113,8 @@ describe('Test functionality of PInteger', () => {
     prop.onChange(cb);
     prop.dec();
 
-    expect(prop.get()).toBe(1);
-    expect(cb.mock.calls).toStrictEqual([[1, 0, prop]]);
+    expect(prop.get()).toBe(-1);
+    expect(cb.mock.calls).toStrictEqual([[-1, 0, prop]]);
   });
 
   it('must not call listeners after value update dec', () => {
@@ -123,7 +124,42 @@ describe('Test functionality of PInteger', () => {
     prop.dec();
     prop.onChange(cb);
 
-    expect(prop.get()).toBe(1);
+    expect(prop.get()).toBe(-1);
     expect(cb.mock.calls).toStrictEqual([]);
+  });
+});
+
+describe('Test functionality of PBoolean', () => {
+  beforeEach(() => {
+    disableLogging();
+  });
+
+  it('must be able set value', () => {
+    const prop = new PBoolean('test property', false);
+    expect(prop.get()).toBe(false);
+  });
+
+  it('must update set value', () => {
+    const prop = new PBoolean('test property', false);
+    prop.set(true);
+    expect(prop.get()).toBe(true);
+  });
+
+  it('must update set value on enable', () => {
+    const prop = new PBoolean('test property', false);
+    prop.enable();
+    expect(prop.get()).toBe(true);
+  });
+
+  it('must update set value on disable', () => {
+    const prop = new PBoolean('test property', false);
+    prop.disable();
+    expect(prop.get()).toBe(false);
+  });
+
+  it('must update set value on toggle', () => {
+    const prop = new PBoolean('test property', false);
+    prop.toggle();
+    expect(prop.get()).toBe(true);
   });
 });
