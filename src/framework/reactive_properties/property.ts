@@ -8,7 +8,7 @@ export type PropertyHandler<T extends PropertyValueType> = (
 ) => void;
 
 // used to declaratively implement dependent reactive properties
-const dependencies: Property<PropertyValueType>[] = [];
+const dependencies: Set<Property<PropertyValueType>> = new Set();
 let creatingDependentProperty: boolean = false;
 
 export class Property<T extends PropertyValueType> {
@@ -26,8 +26,12 @@ export class Property<T extends PropertyValueType> {
   }
 
   public get(): T {
-    if (creatingDependentProperty)
-      dependencies.push(this as unknown as Property<PropertyValueType>);
+    if (creatingDependentProperty) {
+      // to add itself into the set
+      const ref = this as unknown as Property<PropertyValueType>;
+      if (!dependencies.has(ref)) dependencies.add(ref);
+    }
+
     return this.value;
   }
 
@@ -87,28 +91,24 @@ export class PBoolean extends Property<boolean> {
 }
 
 export class DependentProperty<
-  T extends PropertyValueType,
-  K extends (...args: PropertyValueType[]) => T,
-> extends Property<T> {
+  K extends (...args: PropertyValueType[]) => PropertyValueType,
+> extends Property<PropertyValueType> {
   constructor(
     name: string,
-    initial: T,
     private updater: K,
-    private args: Parameters<K>
+    private args?: Parameters<K>
   ) {
-    super(name, initial);
-
     creatingDependentProperty = true;
 
-    this.set();
+    super(name, updater(...(args || [])));
 
     creatingDependentProperty = false;
     dependencies.forEach((dep) => dep.onChange(() => this.set()));
-    dependencies.length = 0;
+    dependencies.clear();
   }
 
   public set() {
-    const newValue = this.updater(...this.args);
+    const newValue = this.updater(...(this.args || []));
     debug(
       `Updating dependent property ${this.toString()} to`,
       newValue as object
@@ -117,39 +117,45 @@ export class DependentProperty<
   }
 }
 
-export class PList<T extends PropertyValueType> extends Property<T[]> {
-  public readonly length: PInteger;
+type RecursiveProxy<T> = T extends object
+  ? {
+      [K in keyof T]: RecursiveProxy<T[K]>;
+    }
+  : T;
 
+function createRecursiveProxy<T extends object>(
+  target: T,
+  onChange: () => void
+): RecursiveProxy<T> {
+  const handler: ProxyHandler<T> = {
+    get(_, prop: string) {
+      const value = target[prop as keyof T];
+      if (typeof value === 'object' && value !== null) {
+        return createRecursiveProxy(value, onChange);
+      }
+      return value;
+    },
+
+    set(o, prop, value) {
+      if (typeof value === 'object' && value !== null) {
+        o[prop as keyof T] = createRecursiveProxy(value, onChange);
+      } else {
+        o[prop as keyof T] = value;
+      }
+      onChange();
+      return true; // Indicates success
+    },
+  };
+
+  return new Proxy(target, handler) as RecursiveProxy<T>;
+}
+
+export class PObject extends Property<object> {
   constructor(
     public readonly name: string,
-    initial: T[]
+    initial: object
   ) {
     super(name, initial);
-    this.length = new PInteger(name + 'length', initial.length);
-  }
-
-  public push(value: T) {
-    this.get().push(value);
-    this.length.inc();
-    this.update();
-  }
-
-  public pop() {
-    if (this.length.get() > 0) {
-      this.get().pop();
-      this.length.dec();
-      this.update();
-    }
-  }
-
-  public insert(index: number, value: T) {
-    this.get().splice(index, 0, value);
-    this.length.inc();
-    this.update();
-  }
-
-  public clear() {
-    this.get().length = 0;
-    this.length.set(0);
+    this.set(createRecursiveProxy(this.get(), () => this.update()));
   }
 }

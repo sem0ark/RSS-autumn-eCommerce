@@ -1,5 +1,6 @@
 import { disableLogging } from '../../src/framework/utilities/logging';
 import {
+  DependentProperty,
   PBoolean,
   PInteger,
   Property,
@@ -161,5 +162,77 @@ describe('Test functionality of PBoolean', () => {
     const prop = new PBoolean('test property', false);
     prop.toggle();
     expect(prop.get()).toBe(true);
+  });
+});
+
+describe('Test functionality of dependent property', () => {
+  beforeEach(() => {
+    disableLogging();
+  });
+
+  it('must be able set initial value', () => {
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty<() => number>(
+      'test property',
+      () => prop1.get() + prop2.get()
+    );
+
+    expect(dprop.get()).toBe(0);
+  });
+
+  it('must call listeners on value update', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty<() => number>(
+      'test property',
+      () => prop1.get() + prop2.get()
+    );
+
+    dprop.onChange(cb);
+    prop1.inc();
+
+    expect(dprop.get()).toBe(1);
+    expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
+  });
+
+  it('must call listeners on value update', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty<() => number>(
+      'test property',
+      () => prop1.get() + prop2.get()
+    );
+
+    dprop.onChange(cb);
+    prop1.inc();
+
+    expect(dprop.get()).toBe(1);
+    expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
+  });
+
+  it('must not call listeners after value update', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty<() => number>(
+      'test property',
+      () => prop1.get() + prop2.get()
+    );
+
+    prop1.inc();
+    dprop.onChange(cb);
+
+    expect(dprop.get()).toBe(1);
+    expect(cb.mock.calls).toStrictEqual([]);
   });
 });
