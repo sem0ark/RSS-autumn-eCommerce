@@ -3,6 +3,7 @@ import {
   DependentProperty,
   PBoolean,
   PInteger,
+  PObject,
   Property,
 } from '../../src/framework/reactive_properties/property';
 
@@ -30,6 +31,7 @@ describe('Test functionality of elementary property', () => {
     prop.set('new');
 
     expect(prop.get()).toBe('new');
+    expect(cb).toHaveBeenCalledTimes(1);
     expect(cb.mock.calls).toStrictEqual([['new', 'initial', prop]]);
   });
 
@@ -41,6 +43,7 @@ describe('Test functionality of elementary property', () => {
     prop.onChange(cb);
 
     expect(prop.get()).toBe('new');
+    expect(cb).toHaveBeenCalledTimes(0);
     expect(cb.mock.calls).toStrictEqual([]);
   });
 });
@@ -93,6 +96,7 @@ describe('Test functionality of PInteger', () => {
     prop.inc();
 
     expect(prop.get()).toBe(1);
+    expect(cb).toHaveBeenCalledTimes(1);
     expect(cb.mock.calls).toStrictEqual([[1, 0, prop]]);
   });
 
@@ -104,6 +108,7 @@ describe('Test functionality of PInteger', () => {
     prop.onChange(cb);
 
     expect(prop.get()).toBe(1);
+    expect(cb).toHaveBeenCalledTimes(0);
     expect(cb.mock.calls).toStrictEqual([]);
   });
 
@@ -115,6 +120,7 @@ describe('Test functionality of PInteger', () => {
     prop.dec();
 
     expect(prop.get()).toBe(-1);
+    expect(cb).toHaveBeenCalledTimes(1);
     expect(cb.mock.calls).toStrictEqual([[-1, 0, prop]]);
   });
 
@@ -126,6 +132,7 @@ describe('Test functionality of PInteger', () => {
     prop.onChange(cb);
 
     expect(prop.get()).toBe(-1);
+    expect(cb).toHaveBeenCalledTimes(0);
     expect(cb.mock.calls).toStrictEqual([]);
   });
 });
@@ -197,6 +204,7 @@ describe('Test functionality of dependent property', () => {
     prop1.inc();
 
     expect(dprop.get()).toBe(1);
+    expect(cb).toHaveBeenCalledTimes(1);
     expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
   });
 
@@ -215,6 +223,7 @@ describe('Test functionality of dependent property', () => {
     prop1.inc();
 
     expect(dprop.get()).toBe(1);
+    expect(cb).toHaveBeenCalledTimes(1);
     expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
   });
 
@@ -233,6 +242,102 @@ describe('Test functionality of dependent property', () => {
     dprop.onChange(cb);
 
     expect(dprop.get()).toBe(1);
+    expect(cb).toHaveBeenCalledTimes(0);
     expect(cb.mock.calls).toStrictEqual([]);
+  });
+});
+
+describe('Test functionality of object property', () => {
+  beforeEach(() => {
+    disableLogging();
+  });
+
+  it('must be able set value', () => {
+    const prop = new PObject('test property', {});
+    expect(prop.get()).toStrictEqual({});
+  });
+
+  it('must update set value', () => {
+    const prop = new PObject('test property', {});
+    prop.set({ test: 'data' });
+    expect(prop.get()).toStrictEqual({ test: 'data' });
+  });
+
+  it('must call listeners on value update', () => {
+    const cb = jest.fn();
+
+    const prop = new PObject('test property', {});
+    prop.onChange(cb);
+    prop.set({ test: 'data' });
+
+    expect(prop.get()).toStrictEqual({ test: 'data' });
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[{ test: 'data' }, {}, prop]]);
+  });
+
+  it('must not call listeners after value update', () => {
+    const cb = jest.fn();
+
+    const prop = new PObject('test property', {});
+
+    prop.set({ test: 'data' });
+    prop.onChange(cb);
+
+    expect(prop.get()).toStrictEqual({ test: 'data' });
+    expect(cb).toHaveBeenCalledTimes(0);
+    expect(cb.mock.calls).toStrictEqual([]);
+  });
+
+  it('must update set value as property', () => {
+    const cb = jest.fn();
+
+    const prop = new PObject<Record<string, string>>('test property', {
+      test: 'data',
+    });
+    prop.onChange(cb);
+    prop.get().test = 'new-data';
+
+    expect(prop.get()).toStrictEqual({ test: 'new-data' });
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([
+      [{ test: 'new-data' }, { test: 'new-data' }, prop],
+    ]);
+  });
+
+  it('must update set value as property recursively', () => {
+    const cb = jest.fn();
+
+    const prop = new PObject<Record<string, Record<string, string>>>(
+      'test property',
+      {
+        test: {
+          inner: 'data',
+        },
+      }
+    );
+    prop.onChange(cb);
+    prop.get().test.inner = 'new-data';
+
+    expect(prop.get()).toStrictEqual({
+      test: {
+        inner: 'new-data',
+      },
+    });
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([
+      [
+        {
+          test: {
+            inner: 'new-data',
+          },
+        },
+        {
+          test: {
+            inner: 'new-data',
+          },
+        },
+        prop,
+      ],
+    ]);
   });
 });

@@ -150,12 +150,16 @@ function createRecursiveProxy<T extends object>(
   return new Proxy(target, handler) as RecursiveProxy<T>;
 }
 
-export class PObject extends Property<object> {
+export class PObject<T extends object> extends Property<object> {
   constructor(
     public readonly name: string,
     initial: object
   ) {
     super(name, initial);
     this.set(createRecursiveProxy(this.get(), () => this.update()));
+  }
+
+  public get() {
+    return super.get() as T;
   }
 }
