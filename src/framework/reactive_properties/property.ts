@@ -7,8 +7,9 @@ export type PropertyHandler<T extends PropertyValueType> = (
 ) => void;
 
 // used to declaratively implement dependent reactive properties
-const dependencies: Set<Property<PropertyValueType>> = new Set();
-let creatingDependentProperty: boolean = false;
+const dependencies: Property<PropertyValueType>[][] = [];
+export const pushDependenciesInitializer = () => dependencies.push([]);
+export const popDependenciesInitializer = () => dependencies.pop();
 
 export class Property<T extends PropertyValueType> {
   private listeners: PropertyHandler<T>[] = [];
@@ -23,10 +24,11 @@ export class Property<T extends PropertyValueType> {
   }
 
   public get(): T {
-    if (creatingDependentProperty) {
+    if (dependencies.length > 0) {
       // to add itself into the set
       const ref = this as unknown as Property<PropertyValueType>;
-      if (!dependencies.has(ref)) dependencies.add(ref);
+      if (dependencies.at(-1)?.indexOf(ref) === -1)
+        dependencies.at(-1)?.push(ref);
     }
 
     return this.value;
@@ -138,13 +140,12 @@ export class DependentProperty<
     private updater: K,
     private args?: Parameters<K>
   ) {
-    creatingDependentProperty = true;
+    pushDependenciesInitializer();
 
     super(name, updater(...(args || [])));
 
-    creatingDependentProperty = false;
-    dependencies.forEach((dep) => dep.onChange(() => this.set()));
-    dependencies.clear();
+    const collected = popDependenciesInitializer();
+    collected?.forEach((dep) => dep.onChange(() => this.set()));
   }
 
   public set() {
