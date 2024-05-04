@@ -94,6 +94,11 @@ export class ObservableList<T extends PropertyValueType> {
     if (index !== -1) this.remove(index);
   }
 
+  public removeByValue(value: T) {
+    const index = this._properties.map((p) => p.get()).indexOf(value);
+    if (index !== -1) this.remove(index);
+  }
+
   public clear() {
     while (this.length > 0) this.remove(0);
   }
