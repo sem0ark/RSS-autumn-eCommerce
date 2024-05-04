@@ -7,6 +7,7 @@ import {
   PObject,
   Property,
 } from '../../src/framework/reactive_properties/property';
+import { ObservableList } from '../../src/framework/reactive_properties/observable_list';
 
 describe('Test functionality of elementary property', () => {
   beforeEach(() => {
@@ -33,7 +34,7 @@ describe('Test functionality of elementary property', () => {
 
     expect(prop.get()).toBe('new');
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([['new', 'initial', prop]]);
+    expect(cb.mock.calls).toStrictEqual([['new', prop]]);
   });
 
   it('must not call listeners after value update', () => {
@@ -98,7 +99,7 @@ describe('Test functionality of PInteger', () => {
 
     expect(prop.get()).toBe(1);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[1, 0, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[1, prop]]);
   });
 
   it('must not call listeners after value update', () => {
@@ -122,7 +123,7 @@ describe('Test functionality of PInteger', () => {
 
     expect(prop.get()).toBe(-1);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[-1, 0, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[-1, prop]]);
   });
 
   it('must not call listeners after value update dec', () => {
@@ -206,7 +207,7 @@ describe('Test functionality of dependent property', () => {
 
     expect(dprop.get()).toBe(1);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
+    expect(cb.mock.calls).toStrictEqual([[1, dprop]]);
   });
 
   it('must call listeners on value update', () => {
@@ -225,7 +226,7 @@ describe('Test functionality of dependent property', () => {
 
     expect(dprop.get()).toBe(1);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[1, 0, dprop]]);
+    expect(cb.mock.calls).toStrictEqual([[1, dprop]]);
   });
 
   it('must not call listeners after value update', () => {
@@ -293,7 +294,7 @@ describe('Test functionality of object property', () => {
 
     expect(prop.get()).toStrictEqual({ test: 'data' });
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[{ test: 'data' }, {}, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[{ test: 'data' }, prop]]);
   });
 
   it('must not call listeners after value update', () => {
@@ -320,7 +321,7 @@ describe('Test functionality of object property', () => {
 
     expect(prop.get()).toStrictEqual(data);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[data, data, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[data, prop]]);
   });
 
   it('must update set value as property recursively', () => {
@@ -340,7 +341,7 @@ describe('Test functionality of object property', () => {
 
     expect(prop.get()).toStrictEqual(data);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[data, data, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[data, prop]]);
   });
 });
 
@@ -369,7 +370,7 @@ describe('Test functionality of list property', () => {
 
     expect(prop.get()).toStrictEqual(['new']);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[['new'], [], prop]]);
+    expect(cb.mock.calls).toStrictEqual([[['new'], prop]]);
   });
 
   it('must call listeners on value update', () => {
@@ -381,7 +382,7 @@ describe('Test functionality of list property', () => {
 
     expect(prop.get()).toStrictEqual(['new']);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[['new'], [], prop]]);
+    expect(cb.mock.calls).toStrictEqual([[['new'], prop]]);
   });
 
   it('must update push value', () => {
@@ -393,7 +394,7 @@ describe('Test functionality of list property', () => {
 
     expect(prop.get()).toStrictEqual(['new']);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[['new'], null, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[['new'], prop]]);
   });
 
   it('must update pop value', () => {
@@ -406,7 +407,7 @@ describe('Test functionality of list property', () => {
     expect(result).toBe('abc');
     expect(prop.get()).toStrictEqual([]);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[[], null, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[[], prop]]);
   });
 
   it('must update set value', () => {
@@ -418,6 +419,59 @@ describe('Test functionality of list property', () => {
 
     expect(prop.get()).toStrictEqual(['123']);
     expect(cb).toHaveBeenCalledTimes(1);
-    expect(cb.mock.calls).toStrictEqual([[['123'], null, prop]]);
+    expect(cb.mock.calls).toStrictEqual([[['123'], prop]]);
+  });
+});
+
+describe('Test functionality of observable list', () => {
+  beforeEach(() => {
+    disableLogging();
+  });
+
+  it('must be able set value', () => {
+    const prop = new ObservableList('test property', []);
+    expect(prop.length).toStrictEqual(0);
+  });
+
+  it('must update set value', () => {
+    const prop = new ObservableList<string>('test property', []);
+    prop.push('new');
+    expect(prop.get(0)).toStrictEqual('new');
+  });
+
+  it('must call listeners on value push', () => {
+    const cb = jest.fn();
+
+    const prop = new ObservableList<string>('test property', []);
+    prop.onPush(cb);
+    prop.push('new');
+
+    expect(prop.get(0)).toStrictEqual('new');
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[prop.getProp(0), 0]]);
+  });
+
+  it('must call listeners on value insert', () => {
+    const cb = jest.fn();
+
+    const prop = new ObservableList<string>('test property', []);
+    prop.onInsert(cb);
+    prop.insert(0, 'new');
+
+    expect(prop.get(0)).toStrictEqual('new');
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[prop.getProp(0), 0]]);
+  });
+
+  it('must call listeners on value remove', () => {
+    const cb = jest.fn();
+
+    const prop = new ObservableList<string>('test property', ['new']);
+    prop.onRemove(cb);
+    prop.remove(0);
+
+    expect(prop.length).toStrictEqual(0);
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb.mock.calls).toStrictEqual([[0]]);
   });
 });

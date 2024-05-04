@@ -27,16 +27,12 @@ export class ObservableList<T extends PropertyValueType> {
     private name: string,
     entries?: T[]
   ) {
-    if (entries) entries.forEach((v) => this.push(v));
     this.pLength = new PInteger('pLength', this._properties.length);
+    if (entries) entries.forEach((v) => this.push(v));
   }
 
   public get length() {
     return this._properties.length;
-  }
-
-  public get properties() {
-    return this._properties;
   }
 
   public onInsert(handler: OListInsertHandler<T>) {
@@ -51,9 +47,20 @@ export class ObservableList<T extends PropertyValueType> {
     this.removeHandlers.push(handler);
   }
 
-  public put(index: number, value: T) {
+  public getProp(index: number) {
+    return this._properties[index];
+  }
+
+  public get(index: number) {
+    return this._properties[index].get();
+  }
+
+  public setProp(index: number, prop: Property<T>) {
+    this._properties[index] = prop;
+  }
+
+  public set(index: number, value: T) {
     this._properties[index].set(value);
-    this.pLength.set(this._properties.length);
   }
 
   public insert(index: number, value: T) {

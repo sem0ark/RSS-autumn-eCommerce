@@ -3,7 +3,6 @@ import { debug } from '../utilities/logging';
 
 export type PropertyHandler<T extends PropertyValueType> = (
   newValue: T,
-  oldValue: T | null,
   property: Property<T>
 ) => void;
 
@@ -13,8 +12,6 @@ let creatingDependentProperty: boolean = false;
 
 export class Property<T extends PropertyValueType> {
   private listeners: PropertyHandler<T>[] = [];
-
-  private previousValue: T | null = null;
 
   private value: T;
 
@@ -37,7 +34,6 @@ export class Property<T extends PropertyValueType> {
 
   public set(newValue: T): void {
     if (newValue !== this.value || !Object.is(newValue, this.value)) {
-      this.previousValue = this.value;
       this.value = newValue;
       this.update();
     }
@@ -45,7 +41,7 @@ export class Property<T extends PropertyValueType> {
 
   public update() {
     debug(`Updating property ${this.toString()} to`, this.value as object);
-    this.listeners.forEach((l) => l(this.value, this.previousValue, this));
+    this.listeners.forEach((l) => l(this.value, this));
   }
 
   public onChange(handler: PropertyHandler<T>) {
@@ -199,8 +195,10 @@ export class PObject<T extends object> extends Property<object> {
     public readonly name: string,
     initial: object
   ) {
-    super(name, initial);
-    this.set(createRecursiveProxy(this.get(), () => this.update()));
+    super(
+      name,
+      createRecursiveProxy(initial, () => this.update())
+    );
   }
 
   public get() {
