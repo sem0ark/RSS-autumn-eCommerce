@@ -1,7 +1,6 @@
 import { getId } from '../utilities/id';
 import { trace, warn } from '../utilities/logging';
 import { Component } from './component';
-import { HTMLComponent } from './htmlComponent';
 
 export class AsynchronousComponent extends Component {
   private _node?: Node;
@@ -56,17 +55,4 @@ export class AsynchronousComponent extends Component {
   public getNode() {
     return this._node;
   }
-}
-
-const defaultLoading = () => new HTMLComponent().tag('div');
-const defaultError = (err: Error) =>
-  new HTMLComponent().tag('div').text(`${err.name}: ${err.message}`);
-
-export function asynchronous(
-  onComplete: () => Promise<Component>,
-  onLoading: () => Component = defaultLoading,
-  onError: (err: Error) => Component = defaultError,
-  name: string = ''
-) {
-  return new AsynchronousComponent(onComplete, onLoading, onError, name);
 }
