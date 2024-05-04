@@ -1,4 +1,5 @@
 import {
+  Property,
   popDependenciesInitializer,
   pushDependenciesInitializer,
 } from '../reactive_properties/property';
@@ -8,7 +9,9 @@ import { trace } from '../utilities/logging';
 import { Component } from './component';
 
 export class FunctionalComponent<
-  K extends (...args: PropertyValueType[]) => Component,
+  K extends (
+    ...args: (PropertyValueType | Property<PropertyValueType>)[]
+  ) => Component,
 > extends Component {
   private _node?: Node;
 
