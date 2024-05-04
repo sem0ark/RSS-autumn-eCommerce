@@ -1,5 +1,6 @@
 import { PropertyValueType } from './types';
 import { debug } from '../utilities/logging';
+import { getId } from '../utilities/id';
 
 export type PropertyHandler<T extends PropertyValueType> = (
   newValue: T,
@@ -205,4 +206,47 @@ export class PObject<T extends object> extends Property<object> {
   public get() {
     return super.get() as T;
   }
+}
+
+export function property<T extends PropertyValueType>(
+  initial: T,
+  name?: string
+) {
+  if (!name) name = getId('Property');
+  return new Property(name, initial);
+}
+
+export function pinteger(initial: number, name?: string) {
+  if (!name) name = getId('PInteger');
+  return new PInteger(name, initial);
+}
+
+export function pboolean(initial: boolean, name?: string) {
+  if (!name) name = getId('PBoolean');
+  return new PBoolean(name, initial);
+}
+
+export function plist<T extends PropertyValueType>(
+  initial?: T[],
+  name?: string
+) {
+  if (!initial) initial = [];
+  if (!name) name = getId('PBoolean');
+  return new PList(name, initial);
+}
+
+export function pfunc<
+  K extends (...args: PropertyValueType[]) => PropertyValueType,
+>(updater: K, args?: Parameters<K>, name?: string) {
+  if (!name) name = getId('DependentProperty');
+  return new DependentProperty(name, updater, args);
+}
+
+interface RecObj {
+  [key: string]: PropertyValueType | RecObj;
+}
+
+export function pobject<T extends RecObj>(initial: T, name?: string) {
+  if (!name) name = getId('PObject');
+  return new PObject<T>(name, initial);
 }
