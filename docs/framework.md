@@ -118,21 +118,84 @@ prop2.inc(); // "Changed to 2"
 prop1.dec(); // "Changed to 1"
 ```
 
-### PList
+### ObservableList
 
-`ObservableList` - optimized version of `PList`, which is used in `ListComponent`, used for handling lists.
+`ObservableList` - optimized version of `PList`, which is used in `ListComponent`, used for handling lists of different elements.
 
 ```typescript
-const prop = new ObservableList('Property name', []);
+const prop = new ObservableList('Property name', [1, 2, 3]);
 
-prop.onChange((newValue, property) => {
-  console.log(`Changed to ${newValue}`);
+prop.onPush((index, property) => {
+  console.log(`Pushed value ${property.get()} to ${index}`);
 });
 
-prop.set([1, 2, 3]); //  "Changed to [1, 2, 3]"
-prop.pop(); //  "Changed to [1, 2]"
-prop.push(4); //  "Changed to [1, 2, 4]"
-prop.insert(0, 5); //  "Changed to [5, 1, 2, 4]"
-prop.put(2, 5); //  "Changed to [5, 1, 5, 4]"
-prop.clear(); //  "Changed to []"
+prop.onInsert((index, property) => {
+  console.log(`Inserted value ${property.get()} to ${index}`);
+});
+
+prop.onRemove((index) => {
+  console.log(`Removed on ${index}`);
+});
+
+prop.removeByValue(2); // "Removed on 1"
+prop.insert(2, 5); // "Inserted 5 on 2"
+prop.push(5); // "Pushed 5 on 3"
 ```
+
+## How to use them?
+
+The structure and usage is the same as MVC with added declarativity of UI and logic definition.
+
+Overall the recommended approach of usage is specified in project structure:
+
+1. Encapsulate business logic in context classes (often will work as singleton), which will contain main interaction points with the business logic and reactive properties, available for read for the UI components to listen to.
+2. Use only properties and context methods in UI. That will allow to declaratively define the UI without mixing it with the business logic -> testable and modular UI.
+
+Example of a context class:
+
+```typescript
+import { PBoolean } from 'reactive_properties/property';
+
+class LoginContext {
+  // UI components will register changes in that property
+  public readonly pIsActive: PBoolean;
+
+  constructor() {
+    this.pIsActive = new PBoolean('user_is_active', false);
+  }
+
+  private static instance?: LoginContext;
+  public static getInstance() {
+    if (this.instance) return this.instance;
+    this.instance = new LoginContext();
+    return this.instance;
+  }
+
+  public logIn(): void {
+    pIsActive.enable(); // change the state
+  }
+
+  public logOut(): void {
+    pIsActive.enable(); // change the state
+  }
+}
+// export the context instance to avoid multiple copies
+export const loginContext = LoginContext.getInstance();
+```
+
+Example of a UI component:
+
+```typescript
+export const LoginButton = () =>
+  functional(
+    () =>
+      // functional component works like dependent property, but for UI
+      loginContext.pIsActive.get() // UI component will automatically listen to changes in this property
+        ? button('Log Out').onClick(() => loginConext.logOut()) // UI will trigger some state change
+        : button('Log In').onClick(() => loginConext.logIn())
+    // these are HTMLComponents, which represent HTML elements
+    // with additional utility functions to add all interactivity
+  );
+```
+
+In such way we will be able to separate the actual logic to be as standard variables, so we won't need to "think" about how the UI will update.
