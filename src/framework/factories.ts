@@ -86,7 +86,14 @@ function text(txt: unknown) {
 }
 
 function html(tag: string) {
-  return (...children: Component[]) => new HTMLComponent(...children).tag(tag);
+  return (...children: (Component | unknown)[]) =>
+    new HTMLComponent(
+      ...children.map((c) => (c instanceof Component ? c : text(c)))
+    ).tag(tag);
+}
+
+function htmlTag(tag: string) {
+  return new HTMLComponent().tag(tag);
 }
 
 export const factories = {
@@ -100,4 +107,5 @@ export const factories = {
   functional,
   text,
   html,
+  htmlTag,
 };
