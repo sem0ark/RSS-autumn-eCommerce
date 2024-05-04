@@ -253,10 +253,11 @@ export class HTMLComponent extends Component {
 
     this._node = result;
 
+    // wait until the node appears in the DOM
     setTimeout(
       () =>
         this.renderListeners.forEach((l) => (this._node ? l(this._node) : '')),
-      0.01
+      10
     );
 
     return result;
