@@ -1,8 +1,9 @@
 type LoggingEntries = (object | string | number)[];
 
+const DEVMODE = true;
+const TRACEMODE = true;
+
 const config = {
-  DEVMODE: true,
-  TRACEMODE: true,
   logFunction: console.log,
 };
 
@@ -10,24 +11,28 @@ export const disableLogging = () => {
   config.logFunction = () => {};
 };
 
+export const enableLogging = () => {
+  config.logFunction = console.log;
+};
+
 export const info = (...str: LoggingEntries) => {
   config.logFunction('INF: ', ...str);
 };
 
 export const trace =
-  config.DEVMODE && config.TRACEMODE
+  DEVMODE && TRACEMODE
     ? (...str: LoggingEntries) => {
         config.logFunction('TRC: ', ...str);
       }
     : () => {};
 
-export const log = config.DEVMODE
+export const log = DEVMODE
   ? (...str: LoggingEntries) => {
       config.logFunction('DBG: ', ...str);
     }
   : () => {};
 
-export const debug = config.DEVMODE
+export const debug = DEVMODE
   ? (...str: LoggingEntries) => {
       config.logFunction('DBG: ', ...str);
     }
