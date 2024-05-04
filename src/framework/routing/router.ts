@@ -135,14 +135,14 @@ export class RegExpRoute extends Route {
   public match(url: string): string[] | null {
     const match = url.match(this.regex);
     if (match === null) return null;
-    return match.slice(1);
+    return match.slice(1).flatMap((v) => v.split('/')); // for handling path data
   }
 
   private static makeRouteRegExp(str: string): RegExp {
     str = str.replace(/\[int\]/g, `([0-9]+)`);
     str = str.replace(/\[word\]/g, `([a-zA-Z]+)`);
     str = str.replace(/\[string\]/g, `([a-zA-Z0-9\\-]+)`);
-    str = str.replace(/\[path\]/g, `((\/[^\/\s?]+)+)`);
+    str = str.replace(/\[path\]/g, `([^\\s\\?\\#]+)`);
 
     return new RegExp(`^${str}$`, 'i');
   }
