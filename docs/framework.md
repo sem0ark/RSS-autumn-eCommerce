@@ -21,6 +21,10 @@ Main goal of framework is to _divide business logic from UI_, business logic wil
 
 ```typescript
 const prop = new Property<string>('Property name', 'initial value');
+/* or
+import { factories } from 'factories';
+const prop = factories.property<string>("initial value");
+*/
 
 prop.onChange((newValue, property) => {
   console.log(`Changed to ${newValue}`);
@@ -34,6 +38,10 @@ prop.set('new-value');
 
 ```typescript
 const prop = new PInteger('Property name', 0);
+/* or
+import { factories } from 'factories';
+const prop = factories.pinteger(0);
+*/
 
 prop.onChange((newValue, property) => {
   console.log(`Changed to ${newValue}`);
@@ -49,6 +57,10 @@ prop.dec(2); //  "Changed to 10"
 
 ```typescript
 const prop = new PBoolean('Property name', false);
+/* or
+import { factories } from 'factories';
+const prop = factories.pboolean(false);
+*/
 
 prop.onChange((newValue, property) => {
   console.log(`Changed to ${newValue}`);
@@ -64,6 +76,10 @@ prop.toggle(); //  "Changed to false"
 
 ```typescript
 const prop = new PList<number>('Property name', []);
+/* or
+import { factories } from 'factories';
+const prop = factories.plist<number>([]);
+*/
 
 prop.onChange((newValue, property) => {
   console.log(`Changed to ${newValue}`);
@@ -83,6 +99,10 @@ Used to make an observable object property, which will listen to changes in any 
 
 ```typescript
 const prop = new PObject<Record<string, number>>('Property name', {});
+/* or
+import { factories } from 'factories';
+const prop = factories.pobject([]);
+*/
 
 prop.onChange((newValue, property) => {
   console.log(`Changed to ${newValue}`);
@@ -107,6 +127,10 @@ const prop = new DependentProperty(
   'dependent property',
   () => prop1.get() + prop2.get()
 );
+/* or
+import { factories } from 'factories';
+const prop = factories.pfunc(() => prop1.get() + prop2.get());
+*/
 
 // changes in the function result will
 prop.onChange((newValue, property) => {
@@ -142,6 +166,117 @@ prop.insert(2, 5); // "Inserted 5 on 2"
 prop.push(5); // "Pushed 5 on 3"
 ```
 
+## Usage examples: UI Components
+
+### Text Component
+
+Text Component represents the functionality of `TextNode` in DOM
+
+```typescript
+import { factories } from 'factories';
+const { text, html } = factories;
+
+const component = html(text('some text')).tag('button');
+```
+
+### HTML Component
+
+HTML Component will represent the functionality of the actual DOM `HTMLElement` used in JavaScript, but with additional functionality for tackling reactivity.
+
+```typescript
+import { factories } from 'factories';
+
+const prop = factories.pinteger(0);
+
+const component = factories
+  .html()
+  .tag('button')
+  // depending on the value of property
+  // change the value of the CSS class
+  .propClass(prop, (value) =>
+    value > 5 ? ['counter-bigger-5', 'active'] : ['inactive']
+  )
+  .propAttr(prop, 'data-value', (v) => `${v}`)
+  .onClick(() => prop.inc()); // add event listener to the component
+```
+
+### Functional Component
+
+`FunctionalComponent` is the core of reactivity in the framework, which is just a component which will re-render when one of the properties, used in it, changes.
+
+Note: you need to use `.get()` method of the property to get it automatically registered to the component.
+
+```typescript
+import { factories } from '...factories';
+import { htmlComponents } from '...htmlComponents';
+
+const { functional, text, pinteger } = factories;
+const prop = pinteger(0);
+
+const { button } = htmlComponents;
+
+const component = button(functional(() => text(prop.get())));
+```
+
+### Asynchronous Component
+
+`AsynchronousComponent` allows to place loadable data for the component. It is used to place `Promise`s into the component to be able to load some data, like images, etc.
+
+```typescript
+import { factories } from '...factories';
+import { htmlComponents } from '...htmlComponents';
+
+const { text, asynchronous } = factories;
+
+const { p } = htmlComponents;
+
+const component = asynchronous(
+  // actual rendering function with some awaitable data
+  async () => p(text(await fetchData('http://get-some-text'))),
+  // optional, shown while all promises are loading
+  () => p('data is loading...'),
+  // optional, shown when some of the promises fails
+  (err: Error) => p(`data is loading failed: ${err.message}`)
+);
+```
+
+### List Component
+
+Used to efficiently render lists of components. Useful on any list-like functionality (rendering TODO lists, product cards, etc.). It can be created from a class or used through `HTMLComponent` method as a shortcut.
+
+```typescript
+import { factories } from '...factories';
+import { htmlComponents } from '...htmlComponents';
+import { ObservableList } from '...ObservableList';
+
+const { text, list } = factories;
+const { button, div } = htmlComponents;
+
+const todoList = new ObservableList<string>('todo_list');
+
+// Create a list of buttons
+const component = div(
+  // create a div
+  // add a button to it
+  button('Add new entry').onClick(() => {
+    list.push('Some new text entry');
+  }) // when clicking on the button, add a new entry to the property
+)
+  // use that div as a container for the list items
+  .list(todoList, (prop: Property<string>) =>
+    functional(
+      // it is better to use a functional component as an entry
+      // then, if the value in the list change, UI will update automatically
+      () =>
+        // buttons with the list entry text
+        button(`List Item [${prop.get()}]`).onClick(() => {
+          todoList.removeByProperty(prop);
+        })
+      // when clicking on that button, remove the entry from the list
+    )
+  );
+```
+
 ## How to use them?
 
 The structure and usage is the same as MVC with added declarativity of UI and logic definition.
@@ -154,15 +289,12 @@ Overall the recommended approach of usage is specified in project structure:
 Example of a context class:
 
 ```typescript
-import { PBoolean } from 'reactive_properties/property';
+import { factories } from 'factories';
+const { pboolean } = factories;
 
 class LoginContext {
   // UI components will register changes in that property
-  public readonly pIsActive: PBoolean;
-
-  constructor() {
-    this.pIsActive = new PBoolean('user_is_active', false);
-  }
+  public readonly pIsActive = pboolean(false);
 
   private static instance?: LoginContext;
   public static getInstance() {
@@ -186,7 +318,11 @@ export const loginContext = LoginContext.getInstance();
 Example of a UI component:
 
 ```typescript
+import { factories } from 'factories';
+const { functional } = factories;
+
 export const LoginButton = () =>
+  // actually a factory method used to fluently create components
   functional(
     () =>
       // functional component works like dependent property, but for UI
@@ -199,3 +335,51 @@ export const LoginButton = () =>
 ```
 
 In such way we will be able to separate the actual logic to be as standard variables, so we won't need to "think" about how the UI will update.
+
+### Working with components
+
+The overall idea of reusable components is to implement files, which will export an object, containing a list of functions, representing different components.
+
+```typescript
+import { factories } from '...factories';
+const { html } = factories;
+
+export const htmlComponents = {
+  button: (...children: Component[]) => html(...children).tag('button'),
+};
+
+///////////////
+import { Component } from '...component';
+import { htmlComponents } from '...htmlComponents';
+const { button } = htmlComponents;
+
+export const buttonComponents = {
+  buttonPrimary: (...children: Component[]) =>
+    button(...children).cls('button', 'button-primary'),
+  buttonSecondary: (...children: Component[]) =>
+    button(...children).cls('button', 'button-secondary'),
+};
+```
+
+In case the component actually related to a single application, it is possible to export a single function for this component.
+
+```typescript
+import { factories } from '...factories';
+import { buttonComponents } from '...buttonComponents';
+
+const { functional, pinteger } = factories;
+const { buttonPrimary } = buttonComponents;
+
+// will create a button with a counter, which will update on clicking the button
+export const Counter = () => {
+  const count = pinteger(0);
+
+  return functional(() =>
+    buttonPrimary(text(`Current counter: ${count.get()}`)).onClick(() =>
+      count.inc()
+    )
+  );
+};
+```
+
+Compared to class-based approach, functional components are more declarative and readable.
