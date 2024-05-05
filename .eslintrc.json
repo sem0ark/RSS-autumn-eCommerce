@@ -3,7 +3,8 @@
   "plugins": ["prettier", "import"],
   "extends": [
     "airbnb-typescript/base", // no need in react support
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
