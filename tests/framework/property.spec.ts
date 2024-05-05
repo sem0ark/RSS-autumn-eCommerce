@@ -197,7 +197,7 @@ describe('Test functionality of dependent property', () => {
     const prop1 = new PInteger('', 0);
     const prop2 = new PInteger('', 0);
 
-    const dprop = new DependentProperty<() => number>(
+    const dprop = new DependentProperty(
       'test property',
       () => prop1.get() + prop2.get()
     );
@@ -216,7 +216,7 @@ describe('Test functionality of dependent property', () => {
     const prop1 = new PInteger('', 0);
     const prop2 = new PInteger('', 0);
 
-    const dprop = new DependentProperty<() => number>(
+    const dprop = new DependentProperty(
       'test property',
       () => prop1.get() + prop2.get()
     );
@@ -229,13 +229,77 @@ describe('Test functionality of dependent property', () => {
     expect(cb.mock.calls).toStrictEqual([[1, dprop]]);
   });
 
+  it('must call listeners on value update once per dependency', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop = new DependentProperty(
+      'test property',
+      () => prop1.get() + prop2.get() + prop1.get() + prop2.get()
+    );
+
+    dprop.onChange(cb);
+    prop1.inc();
+    prop2.inc();
+
+    expect(dprop.get()).toBe(4);
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
+  it('must handle dependency hierarchy', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop1 = new DependentProperty(
+      'test property',
+      () => prop1.get() + prop2.get() + prop1.get() + prop2.get()
+    );
+
+    const dprop2 = new DependentProperty(
+      'test property 2',
+      () => dprop1.get() + prop2.get()
+    );
+
+    dprop2.onChange(cb);
+    prop1.inc();
+    prop2.inc();
+
+    expect(dprop2.get()).toBe(5);
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
+  it('must handle additional arguments', () => {
+    const cb = jest.fn();
+
+    const prop1 = new PInteger('', 0);
+    const prop2 = new PInteger('', 0);
+
+    const dprop1 = new DependentProperty(
+      'test property',
+      (a, b, c) =>
+        prop1.get() + prop2.get() + prop1.get() + prop2.get() + a + b + c,
+      [1, 2, 3]
+    );
+
+    dprop1.onChange(cb);
+    prop1.inc();
+    prop2.inc();
+
+    expect(dprop1.get()).toBe(10);
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
   it('must not call listeners after value update', () => {
     const cb = jest.fn();
 
     const prop1 = new PInteger('', 0);
     const prop2 = new PInteger('', 0);
 
-    const dprop = new DependentProperty<() => number>(
+    const dprop = new DependentProperty(
       'test property',
       () => prop1.get() + prop2.get()
     );
@@ -254,7 +318,7 @@ describe('Test functionality of dependent property', () => {
     const prop1 = new PInteger('', 0);
     const prop2 = new PInteger('', 0);
 
-    const dprop = new DependentProperty<() => number>(
+    const dprop = new DependentProperty(
       'test property',
       () => prop1.get() + prop2.get()
     );
