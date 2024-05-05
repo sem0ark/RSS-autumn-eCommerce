@@ -150,6 +150,7 @@ export class DependentProperty<
   }
 
   public set() {
+
     const newValue = this.updater(...((this.args || []) as T));
     debug(
       `Updating dependent property ${this.toString()} to`,
