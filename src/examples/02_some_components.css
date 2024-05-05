@@ -1,0 +1,13 @@
+/* inputComponents.css */
+
+.inputComponents-button {
+  display: block;
+  width: 100px;
+}
+
+.inputComponents-button-primary {
+  color: red;
+  border-radius: 10px;
+  background-color: transparent;
+  border-width: 5px;
+}
