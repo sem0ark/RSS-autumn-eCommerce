@@ -5,6 +5,8 @@ import { getId } from '../utilities/id';
 
 import { TextComponent } from './textComponent';
 import { trace } from '../utilities/logging';
+import { ListComponent } from './listComponent';
+import { ObservableList } from '../reactive_properties/observable_list';
 
 export class HTMLComponent extends Component {
   private _id?: string;
@@ -26,6 +28,28 @@ export class HTMLComponent extends Component {
   constructor(...children: Component[]) {
     super();
     this.add(...children);
+  }
+
+  // Create list component with the current HTML component as a container
+  public list<
+    T extends PropertyValueType,
+    K extends (
+      prop: Property<T>,
+      ...args: (PropertyValueType | Property<PropertyValueType>)[]
+    ) => Component,
+  >(
+    listProperty: ObservableList<T>,
+    componentRenderer: K,
+    additionalParameters?: Parameters<K>,
+    name: string | null = null
+  ) {
+    return new ListComponent<T, K>(
+      listProperty,
+      componentRenderer,
+      this,
+      name,
+      additionalParameters
+    );
   }
 
   private _prevToggledClasses: Record<string, string[]> = {};
