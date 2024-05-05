@@ -176,7 +176,7 @@ Text Component represents the functionality of `TextNode` in DOM
 import { factories } from 'factories';
 const { text, html } = factories;
 
-const component = html(text('some text')).tag('button');
+const component = html('button')('some text');
 ```
 
 ### HTML Component
@@ -189,8 +189,7 @@ import { factories } from 'factories';
 const prop = factories.pinteger(0);
 
 const component = factories
-  .html()
-  .tag('button')
+  .html('button')() // create a button component without any children
   // depending on the value of property
   // change the value of the CSS class
   .propClass(prop, (value) =>
@@ -341,24 +340,35 @@ In such way we will be able to separate the actual logic to be as standard varia
 The overall idea of reusable components is to implement files, which will export an object, containing a list of functions, representing different components.
 
 ```typescript
+// htmlComponents.ts
+
 import { factories } from '...factories';
 const { html } = factories;
 
+// html factory function will return another function, which will create a component with
+// specified tag after receiving a (maybe empty) list of children components
+// or some other data, automatically transformed into text as TextComponent
+
 export const htmlComponents = {
-  button: (...children: Component[]) => html(...children).tag('button'),
+  button: html('button'), // create a function, which will return button component with specified children
 };
 
-///////////////
+// buttonComponents.ts
 import { Component } from '...component';
 import { htmlComponents } from '...htmlComponents';
 const { button } = htmlComponents;
 
+// simpler type as a shorthand for writing wrappers
+type CC = (Component | string | number | boolean)[];
+
 export const buttonComponents = {
-  buttonPrimary: (...children: Component[]) =>
+  // a bit more specific element, used somewhere else
+  buttonPrimary: (...children: CC) =>
     button(...children).cls('button', 'button-primary'),
-  buttonSecondary: (...children: Component[]) =>
+  buttonSecondary: (...children: CC) =>
     button(...children).cls('button', 'button-secondary'),
 };
+// like that we will make a UI Kit for creating more sophisticated components
 ```
 
 In case the component actually related to a single application, it is possible to export a single function for this component.
