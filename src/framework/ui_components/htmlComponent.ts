@@ -115,10 +115,8 @@ export class HTMLComponent extends Component {
       if (preventDefault) return false;
       return true;
     };
-    trace(`Adding a handler on ${name}`);
 
     if (this._handlers[name] === undefined) this._handlers[name] = [];
-
     this._handlers[name].push(updatedHandler);
 
     return this;

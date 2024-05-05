@@ -3,8 +3,6 @@ import {
   RegExpRoute,
   Route,
 } from '../../src/framework/routing/router';
-import { Page } from '../../src/framework/ui_components/page';
-import { disableLogging } from '../../src/framework/utilities/logging';
 
 describe('Test router pattern matching functionality', () => {
   const pageMock = new Page(jest.fn());
