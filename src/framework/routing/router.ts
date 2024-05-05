@@ -1,10 +1,7 @@
-import { PropertyValueType } from '../reactive_properties/types';
 import { Property } from '../reactive_properties/property';
 import { Storage } from '../persistence/storage';
 import { log } from '../utilities/logging';
-
-// TODO: remove after moving all the components
-type Page = { render: (...args: PropertyValueType[]) => void };
+import { Page } from '../ui_components/page';
 
 export class Router {
   private static router?: Router;
