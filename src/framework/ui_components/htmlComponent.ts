@@ -124,8 +124,8 @@ export class HTMLComponent extends Component {
 
   public onClick(
     handler: (e: Event) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on('click', handler, preventDefault, stopPropagation);
     return this;
@@ -133,8 +133,8 @@ export class HTMLComponent extends Component {
 
   public onRClick(
     handler: (e: Event) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on('contextmenu', handler, preventDefault, stopPropagation);
     return this;
@@ -142,8 +142,8 @@ export class HTMLComponent extends Component {
 
   public onInput(
     handler: (e: InputEvent) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on(
       'input',
@@ -156,8 +156,8 @@ export class HTMLComponent extends Component {
 
   public onInputValue(
     handler: (data: string) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on(
       'input',
@@ -170,8 +170,8 @@ export class HTMLComponent extends Component {
 
   public onChange(
     handler: (e: InputEvent) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on(
       'change',
@@ -184,8 +184,8 @@ export class HTMLComponent extends Component {
 
   public onSubmit(
     handler: (e: SubmitEvent) => void,
-    preventDefault = true,
-    stopPropagation = true
+    preventDefault = false,
+    stopPropagation = false
   ) {
     this.on(
       'submit',
@@ -199,7 +199,7 @@ export class HTMLComponent extends Component {
   public onKeypress(
     handler: (key: string) => void,
     preventDefault = false,
-    stopPropagation = true
+    stopPropagation = false
   ) {
     this.on(
       'keydown',
