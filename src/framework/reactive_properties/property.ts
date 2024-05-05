@@ -133,28 +133,33 @@ export class PList<T extends PropertyValueType> extends Property<T[]> {
 }
 
 export class DependentProperty<
-  K extends (...args: PropertyValueType[]) => PropertyValueType,
+  T extends PropertyValueType[],
+  R extends PropertyValueType,
 > extends Property<PropertyValueType> {
   constructor(
     name: string,
-    private updater: K,
-    private args?: Parameters<K>
+    private updater: (...args: T) => R,
+    private args?: T
   ) {
     pushDependenciesInitializer();
 
-    super(name, updater(...(args || [])));
+    super(name, updater(...((args || []) as T)));
 
     const collected = popDependenciesInitializer();
     collected?.forEach((dep) => dep.onChange(() => this.set()));
   }
 
   public set() {
-    const newValue = this.updater(...(this.args || []));
+    const newValue = this.updater(...((this.args || []) as T));
     debug(
       `Updating dependent property ${this.toString()} to`,
       newValue as object
     );
     super.set(newValue);
+  }
+
+  public get(): R {
+    return super.get() as R;
   }
 }
 
