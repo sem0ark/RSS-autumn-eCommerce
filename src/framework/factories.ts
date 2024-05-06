@@ -81,6 +81,15 @@ function asynchronous(
   return new AsynchronousComponent(onComplete, onLoading, onError, name);
 }
 
+/**
+ * `FunctionalComponent` is the core of reactivity in the framework, which is just a component which will re-render when one of the properties, used in it, changes.
+ * Note: you need to use `.get()` method of properties to get them automatically registered to the component.
+ *
+ * @param renderer  - function, creating a new component, which will be re-rendered, when any of the properties used inside that component changes.
+ * @param args - optional: list of arguments, passed to the render function, useful for customizing component's behavior.
+ * @param name
+ * @returns
+ */
 function functional<
   K extends (
     ...args: (PropertyValueType | Property<PropertyValueType>)[]
@@ -90,6 +99,11 @@ function functional<
   return new FunctionalComponent(renderer, name, args);
 }
 
+/**
+ *
+ * @param txt some data to be changed into string
+ * @returns
+ */
 function text(txt: unknown) {
   return new TextComponent(`${txt}`);
 }
