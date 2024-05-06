@@ -3,13 +3,13 @@ name: Run Tests
 on:
   push:
     branches:
-      - release/*
+      - release/**
       - development
       - main
   pull_request:
     types: [opened, reopened]
     branches:
-      - release/*
+      - release/**
       - development
       - main
 
