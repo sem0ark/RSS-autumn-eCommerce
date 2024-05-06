@@ -8,6 +8,9 @@ import { ObservableList } from '../reactive_properties/observable_list';
 import { PropertyValueType } from '../reactive_properties/types';
 import { getId } from '../utilities/id';
 
+/**
+ * Represents a component which will render a changing list of items.
+ */
 export class ListComponent<
   T extends PropertyValueType,
   K extends (PropertyValueType | Property<PropertyValueType>)[],
