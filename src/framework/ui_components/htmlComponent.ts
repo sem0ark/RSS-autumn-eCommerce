@@ -35,17 +35,21 @@ export class HTMLComponent extends Component {
     this.add(...children);
   }
 
-  // Create list component with the current HTML component as a container
+  /**
+   *
+   * @param listProperty ObservableList instance used in the component
+   * @param componentRenderer Function, which will receive
+   * @param additionalParameters
+   * @param name
+   * @returns
+   */
   public list<
     T extends PropertyValueType,
-    K extends (
-      prop: Property<T>,
-      ...args: (PropertyValueType | Property<PropertyValueType>)[]
-    ) => Component,
+    K extends (PropertyValueType | Property<PropertyValueType>)[],
   >(
     listProperty: ObservableList<T>,
-    componentRenderer: K,
-    additionalParameters?: Parameters<K>,
+    componentRenderer: (prop: Property<T>, ...args: K) => Component,
+    additionalParameters?: K,
     name: string | null = null
   ) {
     return new ListComponent<T, K>(
