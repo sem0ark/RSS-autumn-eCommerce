@@ -8,12 +8,12 @@ import { ObservableList } from '../reactive_properties/observable_list';
 import { PropertyValueType } from '../reactive_properties/types';
 import { getId } from '../utilities/id';
 
+/**
+ * Represents a component which will render a changing list of items.
+ */
 export class ListComponent<
   T extends PropertyValueType,
-  K extends (
-    prop: Property<T>,
-    ...args: (PropertyValueType | Property<PropertyValueType>)[]
-  ) => Component,
+  K extends (PropertyValueType | Property<PropertyValueType>)[],
 > extends Component {
   private _container: Node;
 
@@ -21,10 +21,10 @@ export class ListComponent<
 
   constructor(
     listProperty: ObservableList<T>,
-    componentRenderer: K,
+    componentRenderer: (prop: Property<T>, ...args: K) => Component,
     container: Component,
     private name: string | null = null,
-    additionalParameters?: Parameters<K>
+    additionalParameters?: K
   ) {
     super();
     if (!this.name) this.name = getId('ListComponent');

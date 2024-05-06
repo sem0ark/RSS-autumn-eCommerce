@@ -1,9 +1,15 @@
 name: Run Tests
 
 on:
+  push:
+    branches:
+      - release/**
+      - development
+      - main
   pull_request:
     types: [opened, reopened]
     branches:
+      - release/**
       - development
       - main
 
@@ -40,6 +46,6 @@ jobs:
 
       - name: Run ESLint checks
         run: npm run lint-ci-eslint
-      
+
       - name: Run Jest tests
         run: npm run test-ci

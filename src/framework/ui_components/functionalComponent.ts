@@ -8,6 +8,14 @@ import { getId } from '../utilities/id';
 import { trace } from '../utilities/logging';
 import { Component } from './component';
 
+/**
+ * `FunctionalComponent` is the core of reactivity in the framework, which is just a component which will re-render when one of the properties, used in it, changes.
+ * Received parameters:
+ * - Render function - function, creating a new component, which will be re-rendered, when any of the properties used inside that component changes.
+ * - optional: list of arguments, passed to the render function, useful for customizing component's behavior.
+ *
+ * Note: you need to use `.get()` method of the property to get it automatically registered to the component.
+ */
 export class FunctionalComponent<
   K extends (
     ...args: (PropertyValueType | Property<PropertyValueType>)[]

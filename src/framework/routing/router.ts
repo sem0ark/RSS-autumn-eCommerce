@@ -3,6 +3,10 @@ import { Storage } from '../persistence/storage';
 import { log } from '../utilities/logging';
 import { Page } from '../ui_components/page';
 
+/**
+ * Router class implemented routing functionality for the Single Page application.
+ * It will use header-like inner routing to allow smooth reloads and UX on on the website.
+ */
 export class Router {
   private static router?: Router;
 
@@ -20,6 +24,9 @@ export class Router {
 
   private currentPath?: Property<string>;
 
+  /**
+   * Will initialize the localStorage saving for the current route.
+   */
   public initNavigation() {
     const storage = new Storage('router_');
     this.currentPath = storage.registerProperty(
@@ -51,6 +58,12 @@ export class Router {
     }
   }
 
+  /**
+   * Get the current router instance. Will be used to initialize the navigation on the SPA website.
+   *
+   * @param routes - will be used in case the router was deleted or not instantiated
+   * @returns
+   */
   public static getRouter(...routes: Route[]): Router {
     if (Router.router) return Router.router;
     Router.router = new Router(routes);
@@ -70,6 +83,9 @@ export class Router {
   }
 }
 
+/**
+ * Will match a standard string URL.
+ */
 export abstract class Route {
   constructor(
     protected page?: Page,
@@ -90,6 +106,9 @@ export abstract class Route {
   }
 }
 
+/**
+ * Will match any request, in case the previous routes didn't handle it, and resolve the provided page.
+ */
 export class DefaultRoute extends Route {
   constructor(protected page: Page) {
     super(page, 'default-route');
@@ -118,6 +137,14 @@ export class RedirectRoute extends Route {
   }
 }
 
+/**
+ * Will match regular-expression-like route and, in case the specific expressions were used, send them into the provided page on render.
+ * Expressions possible:
+ * - `[int]` (as in `/product/data/[int]`) will match any digits and pass them as a string into Page instance. (e.g. 02324)
+ * - `[word]` (as in `/message/to/[word]`) will match any set of lower and upper case characters. (e.g. BaNana)
+ * - `[string]` (as in /`product/[string]/data`) will match any digits or characters and pass them as a string into Page instance. (e.g. some-id-123)
+ * - `[path]` (as in `/product/category/[path]`) will match any path and will pass split values into Page instance (e.g. `/product/category/apples/green` into `["apple", "green"]`)
+ */
 export class RegExpRoute extends Route {
   private regex: RegExp;
 
@@ -138,7 +165,7 @@ export class RegExpRoute extends Route {
   private static makeRouteRegExp(str: string): RegExp {
     str = str.replace(/\[int\]/g, `([0-9]+)`);
     str = str.replace(/\[word\]/g, `([a-zA-Z]+)`);
-    str = str.replace(/\[string\]/g, `([a-zA-Z0-9\\-]+)`);
+    str = str.replace(/\[string\]/g, `([a-zA-Z0-9\\-\\_]+)`);
     str = str.replace(/\[path\]/g, `([^\\s\\?\\#]+)`);
 
     return new RegExp(`^${str}$`, 'i');
