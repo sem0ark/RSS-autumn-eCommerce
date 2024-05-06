@@ -36,12 +36,13 @@ export class HTMLComponent extends Component {
   }
 
   /**
+   * Utility function for creating ListComponent with the container being the current HTML Component.
    *
-   * @param listProperty ObservableList instance used in the component
-   * @param componentRenderer Function, which will receive
-   * @param additionalParameters
-   * @param name
-   * @returns
+   * @param listProperty ObservableList instance used in the component.
+   * @param componentRenderer Function, which will receive current list's property attached to the current list component and additional arguments if provided.
+   * @param additionalParameters Optional, add some other arguments to the function rendering the list item.
+   * @param name Optional, name the component for debugging and logging purposes.
+   * @returns new List Component instance
    */
   public list<
     T extends PropertyValueType,
@@ -63,6 +64,14 @@ export class HTMLComponent extends Component {
 
   private _prevToggledClasses: Record<string, string[]> = {};
 
+  /**
+   * Update Component's `classList` in runtime based on current property value.
+   * Note: to avoid undefined behavior, set some class for a specific component in only one call to this method.
+   *
+   * @param prop `Property<T>` some property, to listen to for updating a list of classes
+   * @param resolver `(value: T) => string[]` function receiving current property value and returning, which classes to set
+   * @returns The same instance to allow chaining operations.
+   */
   public propClass<T extends PropertyValueType>(
     prop: Property<T>,
     resolver: (v: T) => string[] | string
@@ -87,6 +96,13 @@ export class HTMLComponent extends Component {
     return this;
   }
 
+  /**
+   * Update Component's HTML attribute value in runtime based on current property value.
+   *
+   * @param prop `Property<T>` some property, to listen to for updating a list of classes
+   * @param resolver `(value: T) => string` function receiving current property value and returning a new attribute value
+   * @returns The same instance to allow chaining operations.
+   */
   public propAttr<T extends PropertyValueType>(
     prop: Property<T>,
     attributeName: string,
@@ -100,6 +116,16 @@ export class HTMLComponent extends Component {
     return this;
   }
 
+  /**
+   * Utility function for adding branching in the chaining methods, based on the boolean value of `predicate` apply the given methods to the component.
+   *
+   * @param prop `Property<T>` some property, to listen to for updating a list of classes
+   * @param resolver `(value: T) => string` function receiving current property value and returning a new attribute value
+   * @param predicate Boolean value used to determine which values to use.
+   * @param thenApply Callback applying additional methods to the component if `predicate` is `true`
+   * @param otherwiseApply Optional, callback applying additional methods to the component if `predicate` is `false`
+   * @returns The same instance to allow chaining operations.
+   */
   public if(
     predicate: boolean,
     thenApply: (c: HTMLComponent) => void,
