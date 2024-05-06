@@ -8,6 +8,11 @@ import { trace } from '../utilities/logging';
 import { ListComponent } from './listComponent';
 import { ObservableList } from '../reactive_properties/observable_list';
 
+/**
+ * HTML Component will represents the functionality of the actual DOM `HTMLElement`
+ * with additional functionality for tackling reactivity. Will be rendered as plain HTMLElement with additional metadata.
+ *
+ */
 export class HTMLComponent extends Component {
   private _id?: string;
 
