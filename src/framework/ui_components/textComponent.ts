@@ -1,5 +1,8 @@
 import { Component } from './component';
 
+/**
+ * Represents some text data placed inside the rendered HTML, will be rendered as a TextNode.
+ */
 export class TextComponent extends Component {
   private _node: Node;
 

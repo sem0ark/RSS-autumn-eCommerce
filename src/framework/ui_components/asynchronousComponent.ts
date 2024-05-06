@@ -2,6 +2,15 @@ import { getId } from '../utilities/id';
 import { trace, warn } from '../utilities/logging';
 import { Component } from './component';
 
+/**
+ * `AsynchronousComponent` allows to place loadable data for the component. It is used to place `Promise`s into the component to be able to load some data, like images, etc.
+ * It receives during the creation:
+ * - `onComplete: () => Promise<Component>` - asynchronous function returning some component after waiting for some data to be loaded.
+ * - optional: `onLoading: () => Component` - function returning some component shown while the `onComplete` function is still loading, useful to show a loader state. (default - blank component)
+ * - optional: `onError: (err: Error) => Component` - function returning some component shown when the `onComplete` function fails to load due to some exception, useful to show an error state. (default - error message text)
+ * - optional: `name = ''` - name the component, for debugging purposes.
+ *
+ */
 export class AsynchronousComponent extends Component {
   private _node?: Node;
 

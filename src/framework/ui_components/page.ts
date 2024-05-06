@@ -1,5 +1,9 @@
 import { Component } from './component';
 
+/**
+ * Class representing a Page in Single Page Application
+ * It will contain a render function, returning some Component and also optionally receive some path arguments from the Router.
+ */
 export class Page {
   public static rootId: string = 'app-root';
 
