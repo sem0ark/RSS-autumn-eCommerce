@@ -1,3 +1,5 @@
+import '../styles/utilityStyles.css';
+
 import { Router } from '../framework/routing/router';
 import { log } from '../framework/utilities/logging';
 
