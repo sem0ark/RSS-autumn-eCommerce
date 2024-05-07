@@ -1,0 +1,8 @@
+
+/* prefix like .containerComponents will allow to encapsulate all styles into a single space at least partially */
+.containerComponents.container.container-modal-center {
+  display: block;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}

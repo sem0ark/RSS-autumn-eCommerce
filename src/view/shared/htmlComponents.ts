@@ -1,7 +1,6 @@
 import { factories } from '../../framework/factories';
-import { PropertyValueType } from '../../framework/reactive_properties/types';
 import { Router } from '../../framework/routing/router';
-import { Component } from '../../framework/ui_components/component';
+import { CC } from '../../framework/ui_components/htmlComponent';
 
 const { html, htmlTag } = factories;
 
@@ -29,12 +28,12 @@ const br = html('br');
 
 const span = html('span');
 
-const a = (url: string, ...children: (Component | PropertyValueType)[]) =>
+const a = (url: string, ...children: CC) =>
   html('a')(...children)
     .cls('link', 'link-external')
     .attr('href', url);
 
-const link = (url: string, ...children: (Component | PropertyValueType)[]) =>
+const link = (url: string, ...children: CC) =>
   html('a')(...children)
     .cls('link', 'link-local')
     .attr('href', url)

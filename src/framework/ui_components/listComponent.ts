@@ -22,7 +22,7 @@ export class ListComponent<
   constructor(
     listProperty: ObservableList<T>,
     componentRenderer: (prop: Property<T>, ...args: K) => Component,
-    container: Component,
+    private container: Component,
     private name: string | null = null,
     additionalParameters?: K
   ) {
@@ -88,5 +88,10 @@ export class ListComponent<
 
   public toString(): string {
     return `ListComponent[${this.name}]`;
+  }
+
+  // used to still access methods for the container's functionality
+  public getContainer() {
+    return this.container;
   }
 }
