@@ -12,7 +12,7 @@ import {
 
 import { Component } from './ui_components/component';
 import { AsynchronousComponent } from './ui_components/asynchronousComponent';
-import { HTMLComponent } from './ui_components/htmlComponent';
+import { CC, HTMLComponent } from './ui_components/htmlComponent';
 import { FunctionalComponent } from './ui_components/functionalComponent';
 import { TextComponent } from './ui_components/textComponent';
 
@@ -244,6 +244,10 @@ function text(txt: unknown) {
   return new TextComponent(`${txt}`);
 }
 
+function htmlTag(tag: string) {
+  return new HTMLComponent().tag(tag);
+}
+
 /**
  * Create a builder for HTMLComponents with specified tag.
  *
@@ -254,37 +258,93 @@ function text(txt: unknown) {
  * @returns Function to create a new HTMLComponent with specified children.
  *
  * ```typescript
- * const buttonElement = factories.html('button');
- * const p = factories.html('button');
+ * import { factories } from '../framework/factories';
+ * import { Page } from '../framework/ui_components/page';
  *
- * const component =
- *  buttonElement("Click me", p("it is a paragraph"))
- *   // create a button HTML Element with some text and paragraph element
- *   // depending on the value of property
- *   // change the value of the CSS class
- *   .propClass(prop, (value) =>
- *     value > 5 ? ['counter-bigger-5', 'active'] : ['inactive']
- *   )
- *   .propAttr(prop, 'data-value', (v) => `${v}`)
- *   .onClick(() => prop.inc()); // add event listener to the component
+ * const div = factories.html('div');
+ * const container = div.cls('container', 'container-center'); // create a new builder adding a new class
+ *
+ * const button = factories.html('button');
+ * const buttonPrimary = button
+ *   .cls('button', 'button-primary')
+ *   .attr('data', 'some-data'); // create a new builder adding additional attribute to the component
+ *
+ * export const SampleComponent = () =>
+ *     container(
+ *       div.cls('button-container')( // calling it as a function will instantiate the component and add children to it
+ *           buttonPrimary('Some text'),
+ *           button.id('special-button-id')('Some other text'),
+ *           button().onClick(() => console.log("HI!"))
+ *       )
+ *     );
  * ```
  *
  */
 function html(tag: string) {
-  return (...children: (Component | unknown)[]) =>
-    new HTMLComponent(
-      ...children.map((c) => (c instanceof Component ? c : text(c)))
-    ).tag(tag);
-}
+  interface HTMLClsConstructor {
+    (...childrenComponents: CC): HTMLComponent;
 
-/**
- * Create a new HTMLComponent with specified tag.
- *
- * @param tag Tag to set for the HTMLComponent
- * @returns new HTML component with specified tag
- */
-function htmlTag(tag: string) {
-  return new HTMLComponent().tag(tag);
+    /**
+     * Create a new constructor, which will create an element with all specified classes.
+     * @param CSSclasses list of classes to be added to a new constructor
+     */
+    cls(...CSSclasses: string[]): HTMLClsConstructor;
+
+    /**
+     * Create a new constructor, which will create an element with all previously specified parameters as well as specified attribute value.
+     *
+     * @param name
+     * @param value
+     */
+    attr(name: string, value: unknown): HTMLClsConstructor;
+
+    /**
+     * Create a new constructor, which will create an element with all previously specified parameters as well as specified "id" value.
+     *
+     * @param value
+     */
+    id(value: string): HTMLClsConstructor;
+  }
+
+  const makeCallable = (
+    cls: string[] = [],
+    attributes: [string, string][] = [],
+    id?: string
+  ) => {
+    const callable: HTMLClsConstructor = (...childrenComponents: CC) => {
+      const result = htmlTag(tag)
+        .add(
+          ...childrenComponents.map((c) =>
+            c instanceof Component ? c : text(c)
+          )
+        )
+        .cls(...cls);
+
+      for (const [name, value] of attributes) {
+        result.attr(name, value);
+      }
+
+      if (id) result.id(id);
+
+      return result;
+    };
+
+    callable.cls = (...classes: string[]) => {
+      return makeCallable([...cls, ...classes], attributes);
+    };
+
+    callable.attr = (name, value = '') => {
+      return makeCallable(cls, [...attributes, [name, `${value}`]]);
+    };
+
+    callable.id = (value: string) => {
+      return makeCallable(cls, attributes, value);
+    };
+
+    return callable;
+  };
+
+  return makeCallable();
 }
 
 export const factories = {

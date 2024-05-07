@@ -8,6 +8,8 @@ import { trace } from '../utilities/logging';
 import { ListComponent } from './listComponent';
 import { ObservableList } from '../reactive_properties/observable_list';
 
+export type CC = (Component | string | number | boolean)[];
+
 /**
  * HTML Component will represents the functionality of the actual DOM `HTMLElement`
  * with additional functionality for tackling reactivity. Will be rendered as plain HTMLElement with additional metadata.
@@ -413,6 +415,23 @@ export class HTMLComponent extends Component {
         this.renderListeners.forEach((l) => (this._node ? l(this._node) : '')),
       10
     );
+
+    return result;
+  }
+
+  public clone(): HTMLComponent {
+    const result = new HTMLComponent();
+
+    if (this._id) result.id(this._id);
+    if (this._classList) result.cls(...this._classList);
+    if (this._attributes) result._attributes = { ...this._attributes };
+    if (this._styles) result._styles = { ...this._styles };
+    if (this._handlers) {
+      result._handlers = {};
+      Object.getOwnPropertyNames(this._handlers).forEach((k) => {
+        result._handlers[k] = [...this._handlers[k]];
+      });
+    }
 
     return result;
   }
