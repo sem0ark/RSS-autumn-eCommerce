@@ -12,7 +12,7 @@ import {
 
 import { Component } from './ui_components/component';
 import { AsynchronousComponent } from './ui_components/asynchronousComponent';
-import { HTMLComponent } from './ui_components/htmlComponent';
+import { CC, HTMLComponent } from './ui_components/htmlComponent';
 import { FunctionalComponent } from './ui_components/functionalComponent';
 import { TextComponent } from './ui_components/textComponent';
 
@@ -271,7 +271,7 @@ function text(txt: unknown) {
  *
  */
 function html(tag: string) {
-  return (...children: (Component | unknown)[]) =>
+  return (...children: CC) =>
     new HTMLComponent(
       ...children.map((c) => (c instanceof Component ? c : text(c)))
     ).tag(tag);
@@ -287,6 +287,60 @@ function htmlTag(tag: string) {
   return new HTMLComponent().tag(tag);
 }
 
+/**
+ * Create a builder for HTMLComponents with specified tag also with reusable classes functionality
+ *
+ * HTML Component will represents the functionality of the actual DOM `HTMLElement`
+ * with additional functionality for tackling reactivity. Will be rendered as plain HTMLElement with additional metadata.
+ *
+ * @param tag Tag to create HTML Elements with
+ * @returns Function to create a new HTMLComponent with specified children.
+ *
+ * ```typescript
+ * const buttonElement = factories.htmlCls('button');
+ * const p = factories.html('button');
+ *
+ * const component =
+ *  buttonElement("Click me", p("it is a paragraph"))
+ *   // create a button HTML Element with some text and paragraph element
+ *   // depending on the value of property
+ *   // change the value of the CSS class
+ *   .propClass(prop, (value) =>
+ *     value > 5 ? ['counter-bigger-5', 'active'] : ['inactive']
+ *   )
+ *   .propAttr(prop, 'data-value', (v) => `${v}`)
+ *   .onClick(() => prop.inc()); // add event listener to the component
+ * ```
+ *
+ */
+function htmlConstructor(tag: string) {
+  interface HTMLClsConstructor {
+    (...childrenComponents: CC): HTMLComponent;
+
+    /**
+     * Create a new constructor, which will create an element with all specified classes.
+     * @param CSSclasses list of classes to be added to a new constructor
+     */
+    cls(...CSSclasses: string[]): HTMLClsConstructor;
+    currentClasses?: string[];
+  }
+
+  const makeCallable = (...cls: string[]) => {
+    const callable: HTMLClsConstructor = (...childrenComponents: CC) =>
+      html(tag)(...childrenComponents).cls(...(callable.currentClasses || []));
+
+    callable.cls = (...classes: string[]) => {
+      callable.currentClasses = callable.currentClasses || [];
+      callable.currentClasses.push(...classes);
+      return makeCallable(...cls, ...classes);
+    };
+
+    return callable;
+  };
+
+  return makeCallable();
+}
+
 export const factories = {
   property,
   pinteger,
@@ -299,4 +353,5 @@ export const factories = {
   text,
   html,
   htmlTag,
+  htmlConstructor,
 };
