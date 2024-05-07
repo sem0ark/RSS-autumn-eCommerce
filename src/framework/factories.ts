@@ -245,6 +245,16 @@ function text(txt: unknown) {
 }
 
 /**
+ * Create a new HTMLComponent with specified tag.
+ *
+ * @param tag Tag to set for the HTMLComponent
+ * @returns new HTML component with specified tag
+ */
+function htmlTag(tag: string) {
+  return new HTMLComponent().tag(tag);
+}
+
+/**
  * Create a builder for HTMLComponents with specified tag.
  *
  * HTML Component will represents the functionality of the actual DOM `HTMLElement`
@@ -256,9 +266,13 @@ function text(txt: unknown) {
  * ```typescript
  * const buttonElement = factories.html('button');
  * const p = factories.html('button');
+ * const pRed = p.cls('red'); // will create a new builder and add CSS class 'red' to it.
  *
  * const component =
- *  buttonElement("Click me", p("it is a paragraph"))
+ *  buttonElement.cls('some-other-class')(
+ *    "Click me",
+ *    p("it is a paragraph")
+ * )
  *   // create a button HTML Element with some text and paragraph element
  *   // depending on the value of property
  *   // change the value of the CSS class
@@ -271,49 +285,11 @@ function text(txt: unknown) {
  *
  */
 function html(tag: string) {
-  return (...children: CC) =>
-    new HTMLComponent(
-      ...children.map((c) => (c instanceof Component ? c : text(c)))
-    ).tag(tag);
-}
+  // return (...children: CC) =>
+  //   new HTMLComponent(
+  //     ...children.map((c) => (c instanceof Component ? c : text(c)))
+  //   ).tag(tag);
 
-/**
- * Create a new HTMLComponent with specified tag.
- *
- * @param tag Tag to set for the HTMLComponent
- * @returns new HTML component with specified tag
- */
-function htmlTag(tag: string) {
-  return new HTMLComponent().tag(tag);
-}
-
-/**
- * Create a builder for HTMLComponents with specified tag also with reusable classes functionality
- *
- * HTML Component will represents the functionality of the actual DOM `HTMLElement`
- * with additional functionality for tackling reactivity. Will be rendered as plain HTMLElement with additional metadata.
- *
- * @param tag Tag to create HTML Elements with
- * @returns Function to create a new HTMLComponent with specified children.
- *
- * ```typescript
- * const buttonElement = factories.htmlCls('button');
- * const p = factories.html('button');
- *
- * const component =
- *  buttonElement("Click me", p("it is a paragraph"))
- *   // create a button HTML Element with some text and paragraph element
- *   // depending on the value of property
- *   // change the value of the CSS class
- *   .propClass(prop, (value) =>
- *     value > 5 ? ['counter-bigger-5', 'active'] : ['inactive']
- *   )
- *   .propAttr(prop, 'data-value', (v) => `${v}`)
- *   .onClick(() => prop.inc()); // add event listener to the component
- * ```
- *
- */
-function htmlConstructor(tag: string) {
   interface HTMLClsConstructor {
     (...childrenComponents: CC): HTMLComponent;
 
@@ -322,17 +298,42 @@ function htmlConstructor(tag: string) {
      * @param CSSclasses list of classes to be added to a new constructor
      */
     cls(...CSSclasses: string[]): HTMLClsConstructor;
-    currentClasses?: string[];
+
+    /**
+     * Create a new constructor, which will create an element with all previously specified parameters as well as specified attribute value.
+     *
+     * @param name
+     * @param value
+     */
+    attr(name: string, value: unknown): HTMLClsConstructor;
   }
 
-  const makeCallable = (...cls: string[]) => {
-    const callable: HTMLClsConstructor = (...childrenComponents: CC) =>
-      html(tag)(...childrenComponents).cls(...(callable.currentClasses || []));
+  const makeCallable = (
+    cls: string[] = [],
+    attributes: [string, string][] = []
+  ) => {
+    const callable: HTMLClsConstructor = (...childrenComponents: CC) => {
+      const result = htmlTag(tag)
+        .add(
+          ...childrenComponents.map((c) =>
+            c instanceof Component ? c : text(c)
+          )
+        )
+        .cls(...cls);
+
+      for (const [name, value] of attributes) {
+        result.attr(name, value);
+      }
+
+      return result;
+    };
 
     callable.cls = (...classes: string[]) => {
-      callable.currentClasses = callable.currentClasses || [];
-      callable.currentClasses.push(...classes);
-      return makeCallable(...cls, ...classes);
+      return makeCallable([...cls, ...classes], attributes);
+    };
+
+    callable.attr = (name, value = '') => {
+      return makeCallable(cls, [...attributes, [name, `${value}`]]);
     };
 
     return callable;
@@ -353,5 +354,4 @@ export const factories = {
   text,
   html,
   htmlTag,
-  htmlConstructor,
 };
