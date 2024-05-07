@@ -1,7 +1,7 @@
 import './loginPage.css';
 import { Page } from '../../framework/ui_components/page';
 
-import { containerComponents } from '../shared/wrapperComponent';
+import { containerComponents } from '../shared/containerComponents';
 import { navContainer } from '../shared/nav/nav';
 import { footerComponents } from '../shared/footer/footer';
 import { htmlComponents } from '../shared/htmlComponents';
