@@ -264,32 +264,29 @@ function htmlTag(tag: string) {
  * @returns Function to create a new HTMLComponent with specified children.
  *
  * ```typescript
- * const buttonElement = factories.html('button');
- * const p = factories.html('button');
- * const pRed = p.cls('red'); // will create a new builder and add CSS class 'red' to it.
+ * import { factories } from '../framework/factories';
+ * import { Page } from '../framework/ui_components/page';
  *
- * const component =
- *  buttonElement.cls('some-other-class')(
- *    "Click me",
- *    p("it is a paragraph")
- * )
- *   // create a button HTML Element with some text and paragraph element
- *   // depending on the value of property
- *   // change the value of the CSS class
- *   .propClass(prop, (value) =>
- *     value > 5 ? ['counter-bigger-5', 'active'] : ['inactive']
- *   )
- *   .propAttr(prop, 'data-value', (v) => `${v}`)
- *   .onClick(() => prop.inc()); // add event listener to the component
+ * const div = factories.html('div');
+ * const container = div.cls('container', 'container-center'); // create a new builder adding a new class
+ *
+ * const button = factories.html('button');
+ * const buttonPrimary = button
+ *   .cls('button', 'button-primary')
+ *   .attr('data', 'some-data'); // create a new builder adding additional attribute to the component
+ *
+ * export const SampleComponent = () =>
+ *     container(
+ *       div.cls('button-container')( // calling it as a function will instantiate the component and add children to it
+ *           buttonPrimary('Some text'),
+ *           button.id('special-button-id')('Some other text'),
+ *           button().onClick(() => console.log("HI!"))
+ *       )
+ *     );
  * ```
  *
  */
 function html(tag: string) {
-  // return (...children: CC) =>
-  //   new HTMLComponent(
-  //     ...children.map((c) => (c instanceof Component ? c : text(c)))
-  //   ).tag(tag);
-
   interface HTMLClsConstructor {
     (...childrenComponents: CC): HTMLComponent;
 
@@ -306,11 +303,19 @@ function html(tag: string) {
      * @param value
      */
     attr(name: string, value: unknown): HTMLClsConstructor;
+
+    /**
+     * Create a new constructor, which will create an element with all previously specified parameters as well as specified "id" value.
+     *
+     * @param value
+     */
+    id(value: string): HTMLClsConstructor;
   }
 
   const makeCallable = (
     cls: string[] = [],
-    attributes: [string, string][] = []
+    attributes: [string, string][] = [],
+    id?: string
   ) => {
     const callable: HTMLClsConstructor = (...childrenComponents: CC) => {
       const result = htmlTag(tag)
@@ -325,6 +330,8 @@ function html(tag: string) {
         result.attr(name, value);
       }
 
+      if (id) result.id(id);
+
       return result;
     };
 
@@ -334,6 +341,10 @@ function html(tag: string) {
 
     callable.attr = (name, value = '') => {
       return makeCallable(cls, [...attributes, [name, `${value}`]]);
+    };
+
+    callable.id = (value: string) => {
+      return makeCallable(cls, attributes, value);
     };
 
     return callable;
