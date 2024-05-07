@@ -244,12 +244,6 @@ function text(txt: unknown) {
   return new TextComponent(`${txt}`);
 }
 
-/**
- * Create a new HTMLComponent with specified tag.
- *
- * @param tag Tag to set for the HTMLComponent
- * @returns new HTML component with specified tag
- */
 function htmlTag(tag: string) {
   return new HTMLComponent().tag(tag);
 }
