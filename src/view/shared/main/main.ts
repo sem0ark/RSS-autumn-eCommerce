@@ -1,4 +1,3 @@
-import './main.css';
 import { htmlComponents } from '../htmlComponents';
 import { Component } from '../../../framework/ui_components/component';
 import { PropertyValueType } from '../../../framework/reactive_properties/types';
