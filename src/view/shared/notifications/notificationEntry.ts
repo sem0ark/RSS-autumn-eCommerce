@@ -1,3 +1,5 @@
+import './notificationEntry.css';
+
 import {
   Notification,
   notificationContext,
@@ -11,7 +13,7 @@ const { div } = htmlComponents;
 export const notificationEntry = (notificationProp: Property<Notification>) =>
   factories.functional(() =>
     div(notificationProp.get().message)
-      .cls('notification-entry')
+      .cls('notification-entry', 'block-selection')
       .propClass(notificationProp, (v) => {
         switch (v.type) {
           case 'ERROR':

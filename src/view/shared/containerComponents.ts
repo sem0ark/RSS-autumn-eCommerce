@@ -1,18 +1,25 @@
+import './containerComponents.css';
+
 import { htmlComponents } from './htmlComponents';
 
 const { div } = htmlComponents;
 
 export const containerComponents = {
-  modalContainerCenter: div.cls(
-    'containerComponents',
+  outerContainer: div.cls(
+    'container-components',
     'container',
-    'modal-container',
+    'container-outer'
+  ),
+  modalContainerCenter: div.cls(
+    'container-components',
+    'container',
+    'container-modal',
     'modal-container-center'
   ),
   modalContainerColumn: div.cls(
-    'containerComponents',
+    'container-components',
     'container',
-    'modal-container',
-    'modal-container-column'
+    'container-modal',
+    'container-modal-column'
   ),
 };

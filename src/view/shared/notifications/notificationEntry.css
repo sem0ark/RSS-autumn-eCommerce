@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+}
+
+.notification-container > .notification-entry {
+  display: block;
+  width: 200px;
+  border-radius: 10px;
+  height: 20px;
+  padding-left: 10px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  border: 1px solid black;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.notification-container > .notification-entry:hover {
+  height: unset;
+  width: 300px;
+  min-height: 20px;
+  overflow: unset;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: unset;
+  font-size: 15px;
+}

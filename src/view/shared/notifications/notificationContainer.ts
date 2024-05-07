@@ -1,10 +1,10 @@
 import { notificationContext } from '../../../contexts/notificationContext';
-import { htmlComponents } from '../htmlComponents';
+import { containerComponents } from '../containerComponents';
 import { notificationEntry } from './notificationEntry';
 
-const { div } = htmlComponents;
+const { modalContainerColumn } = containerComponents;
 
-export const notificationContainer = () =>
-  div()
+export const notificationModal = () =>
+  modalContainerColumn()
     .cls('notification-container')
     .list(notificationContext.notifications, (prop) => notificationEntry(prop));

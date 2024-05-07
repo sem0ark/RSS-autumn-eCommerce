@@ -24,11 +24,11 @@ class NotificationContext {
 
     this.notifications.onPush(() => {
       if (this.notifications.length > 5) this.removeLastNotification();
+      else
+        setTimeout(() => {
+          this.removeLastNotification();
+        }, 5000);
     });
-
-    setInterval(() => {
-      this.removeLastNotification();
-    }, 5000);
   }
 
   private static instance?: NotificationContext;
