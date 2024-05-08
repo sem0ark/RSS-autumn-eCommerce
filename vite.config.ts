@@ -7,6 +7,14 @@ export default defineConfig({
     outDir: './dist/',
     assetsDir: './assets/',
   },
+  define: {
+    global: {}
+  },
+  resolve: {
+    alias: {
+      'node-fetch': 'isomorphic-fetch',
+    },
+  }
   // css: {
   //   modules: {
   //     localsConvention: 'camelCase',
