@@ -4,13 +4,14 @@ import { registerBtn } from '../buttons/registerBtn';
 import { loginBtn } from '../buttons/loginBtn';
 import { userProfileBtn } from '../buttons/userProfileBtn';
 import { shoppingCartBtn } from '../buttons/shoppingCartBtn';
+import logoSite from '../../../../assets/logo-site.svg';
 
-const { div, header, nav, ul, li, link } = htmlComponents;
+const { div, header, nav, ul, li, link, iconSvg } = htmlComponents;
 
 const navElement = () =>
   header(
     div(
-      div().cls('logo'),
+      div(iconSvg(logoSite)).cls('logo-site'),
       div(
         nav(
           ul(

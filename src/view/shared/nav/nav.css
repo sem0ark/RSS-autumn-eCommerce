@@ -37,10 +37,9 @@
   gap: 20px;
 }
 
-.logo {
-  padding: 20px;
-  background-color: var(--primary-color);
-  border-radius: 50%;
+.logo-site img {
+  width: 40px;
+  height: 40px;
 }
 
 .btn {
