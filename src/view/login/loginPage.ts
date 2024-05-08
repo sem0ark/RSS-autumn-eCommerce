@@ -3,7 +3,7 @@ import { Page } from '../../framework/ui_components/page';
 
 import { containerComponents } from '../shared/containerComponents';
 import { navContainer } from '../shared/nav/nav';
-import { mainComponents } from '../shared/main/main';
+import { mainComponents } from './mainLoginPage';
 import { footerComponents } from '../shared/footer/footer';
 
 const { wrapper } = containerComponents;
