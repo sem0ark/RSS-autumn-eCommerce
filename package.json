@@ -17,8 +17,6 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
-    "@commercetools/platform-sdk": "^7.8.0",
-    "@commercetools/sdk-client-v2": "^2.5.0",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
     "@types/jest": "^29.5.12",
@@ -47,5 +45,11 @@
       ".(ts|tsx)": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
+  },
+  "dependencies": {
+    "@commercetools/platform-sdk": "^7.8.0",
+    "@commercetools/sdk-client-v2": "^2.5.0",
+    "isomorphic-fetch": "^3.0.0",
+    "node-fetch": "^3.3.2"
   }
 }
