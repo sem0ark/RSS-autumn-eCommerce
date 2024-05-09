@@ -23,7 +23,9 @@ const getConfig = (): ENV => {
     VITE_CTP_CLIENT_ID: import.meta.env.VITE_CTP_CLIENT_ID,
     VITE_CTP_AUTH_URL: import.meta.env.VITE_CTP_AUTH_URL,
     VITE_CTP_API_URL: import.meta.env.VITE_CTP_API_URL,
-    VITE_CTP_SCOPES: import.meta.env.VITE_CTP_SCOPES ? import.meta.env.VITE_CTP_SCOPES : undefined,
+    VITE_CTP_SCOPES: import.meta.env.VITE_CTP_SCOPES
+      ? import.meta.env.VITE_CTP_SCOPES
+      : undefined,
   };
 };
 

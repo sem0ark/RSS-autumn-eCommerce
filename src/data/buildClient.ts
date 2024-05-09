@@ -3,12 +3,11 @@ import {
   ClientBuilder,
   // Import middlewares
   type PasswordAuthMiddlewareOptions, // Required for user authentication
-  type HttpMiddlewareOptions // Required for sending HTTP requests
+  type HttpMiddlewareOptions, // Required for sending HTTP requests
 } from '@commercetools/sdk-client-v2';
 import { MyTokenCache } from './tokenCache';
 import getEnvVars from './dotEnvType';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
-
 
 export const myTokenCache = new MyTokenCache();
 
