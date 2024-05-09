@@ -1,11 +1,8 @@
+import { CC } from '../../../framework/ui_components/htmlComponent';
 import { htmlComponents } from '../htmlComponents';
-import { PropertyValueType } from '../../../framework/reactive_properties/types';
-import { Component } from '../../../framework/ui_components/component';
 import userSVG from '../../../../assets/icon-user-profile.svg';
 
 const { button, iconSvg } = htmlComponents;
-
-type CC = (Component | PropertyValueType)[];
 
 export const userProfileBtn = (...children: CC) =>
   button(...children)

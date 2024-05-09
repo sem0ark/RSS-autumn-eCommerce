@@ -1,10 +1,7 @@
+import { CC } from '../../framework/ui_components/htmlComponent';
 import { htmlComponents } from '../shared/htmlComponents';
-import { Component } from '../../framework/ui_components/component';
-import { PropertyValueType } from '../../framework/reactive_properties/types';
 
 const { div, h2, p, form, label, input, link } = htmlComponents;
-
-type CC = (Component | PropertyValueType)[];
 
 const title = () => h2('Create your unique bouquet').cls('form-title');
 const login = () => p('Login').cls('form-title');
@@ -51,7 +48,7 @@ const submitForm = () =>
     .attr('value', 'Submit')
     .attr('id', 'submit');
 
-const linkToRegisterPape = () =>
+const linkToRegisterPage = () =>
   div('Not Registered Yet? ')
     .cls('subtext')
     .add(link('/singUp', 'Create an account').cls('link-subtext'));
@@ -65,7 +62,7 @@ const formEl = () =>
     inputContainer(labelPassword(), inputPassword(), passwordClue()),
     inputContainer(checkboxContainer(checkboxPassword(), labelShowPassword())),
     submitForm(),
-    linkToRegisterPape()
+    linkToRegisterPage()
   ).cls('form');
 
 const formContainer = () =>
