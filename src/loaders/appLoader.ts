@@ -1,3 +1,5 @@
+import '../styles/utilityStyles.css';
+
 import { RegExpRoute, Router } from '../framework/routing/router';
 import { log } from '../framework/utilities/logging';
 import { loginPage } from '../view/login/loginPage';

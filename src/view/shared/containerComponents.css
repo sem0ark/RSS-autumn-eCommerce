@@ -1,0 +1,36 @@
+#app-root {
+  position: relative;
+}
+
+/* prefix like .container-components will allow to encapsulate all styles into a single space at least partially */
+.container-components.container-modal {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.container-components.container-modal > * {
+  pointer-events: all;
+}
+
+.container-components.container-modal-center {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container-components.container-modal-column {
+  flex-direction: column;
+  align-items: left;
+  justify-content: flex-end;
+}
+
+.container-components.container-outer {
+  display: block;
+  width: 100vw;
+  min-height: 100vh;
+}
