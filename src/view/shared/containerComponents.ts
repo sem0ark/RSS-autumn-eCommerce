@@ -1,5 +1,7 @@
 import './containerComponents.css';
 
+import { PropertyValueType } from '../../framework/reactive_properties/types';
+import { Component } from '../../framework/ui_components/component';
 import { htmlComponents } from './htmlComponents';
 
 const { div } = htmlComponents;
@@ -22,4 +24,5 @@ export const containerComponents = {
     'container-modal',
     'container-modal-column'
   ),
+  wrapper: div.cls('wrapper');
 };
