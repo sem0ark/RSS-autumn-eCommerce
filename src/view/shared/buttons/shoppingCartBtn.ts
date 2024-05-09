@@ -1,11 +1,9 @@
-import { htmlComponents } from '../htmlComponents';
-import { PropertyValueType } from '../../../framework/reactive_properties/types';
-import { Component } from '../../../framework/ui_components/component';
 import cartSVG from '../../../../assets/shopping-cart.svg';
 
-const { button, iconSvg } = htmlComponents;
+import { CC } from '../../../framework/ui_components/htmlComponent';
+import { htmlComponents } from '../htmlComponents';
 
-type CC = (Component | PropertyValueType)[];
+const { button, iconSvg } = htmlComponents;
 
 export const shoppingCartBtn = (...children: CC) =>
   button(...children)

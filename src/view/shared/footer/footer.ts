@@ -1,11 +1,9 @@
 import './footer.css';
+
+import { CC } from '../../../framework/ui_components/htmlComponent';
 import { htmlComponents } from '../htmlComponents';
-import { Component } from '../../../framework/ui_components/component';
-import { PropertyValueType } from '../../../framework/reactive_properties/types';
 
 const { footer, div } = htmlComponents;
-
-type CC = (Component | PropertyValueType)[];
 
 const footerContainer = (...children: CC) =>
   footer(...children)
