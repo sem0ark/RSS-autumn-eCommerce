@@ -41,7 +41,7 @@ html,
 body {
   height: 100%;
   background: var(--background-body);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: var(--text-dark);
   font-style: normal;
   font-weight: 400;

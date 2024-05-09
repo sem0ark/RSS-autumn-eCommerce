@@ -15,7 +15,7 @@ const navElement = () =>
       div(
         nav(
           ul(
-            li(link('/', 'Home').cls('header-link', 'active-link')).cls(
+            li(link('/main', 'Home').cls('header-link', 'active-link')).cls(
               'header-item'
             ),
             li(link('/catalog', 'Catalog product').cls('header-link')).cls(
