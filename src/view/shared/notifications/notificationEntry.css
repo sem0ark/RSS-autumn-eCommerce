@@ -8,7 +8,7 @@ body {
 
 .notification-container > .notification-entry {
   z-index: 10;
-  
+
   display: block;
   width: 200px;
   border-radius: 10px;
@@ -36,7 +36,6 @@ body {
   white-space: unset;
   font-size: 15px;
 }
-
 
 .notification-entry.success {
   border: 2px solid var(--success-green);
