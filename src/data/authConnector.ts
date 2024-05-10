@@ -1,11 +1,16 @@
 import { error } from '../framework/utilities/logging';
 import { config } from '../utils/config';
-import { ServerConnector, Token, TokenType } from './serverConnector';
+import {
+  APIResponse,
+  ServerConnector,
+  Token,
+  TokenType,
+} from './serverConnector';
 
 /**
  * Response structure on login
  */
-export interface LoginResponse {
+export interface LoginTokenResponse {
   access_token: Token;
   expires_in: number;
 
@@ -104,24 +109,19 @@ export class AuthConnector {
    * @param password - entered password from the form
    * @returns Login information about the user
    */
-  public async requestLoginToken(
-    username: string,
-    password: string
-  ): Promise<LoginResponse | null> {
-    try {
-      const result = await ServerConnector.post(
-        ServerConnector.getOAuthURL('customers/token'),
-        {
-          ...ServerConnector.makeBasicAuthHeader(),
-          ...ServerConnector.formDataHeaders,
-        },
-        `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES_LIMITED}`
-      );
-      return result as LoginResponse;
-    } catch (err) {
-      error('Failed to log in', err as object);
-    }
-    return null;
+  private async requestLoginToken(username: string, password: string) {
+    const result = await ServerConnector.post<LoginTokenResponse>(
+      ServerConnector.getOAuthURL('customers/token'),
+      {
+        ...ServerConnector.makeBasicAuthHeader(),
+        ...ServerConnector.formDataHeaders,
+      },
+      `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES_LIMITED}`
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
   }
 
   /**
@@ -130,26 +130,40 @@ export class AuthConnector {
    * @param password - entered password from the form
    * @returns Login information about the user
    */
-  public async requestLoginSignIn(
+  private async requestLoginSignIn(email: string, password: string) {
+    if (!this.accessToken)
+      throw new Error('Access token for sign in was not initialized.');
+
+    const result = await ServerConnector.post<CustomerDataReceived>(
+      ServerConnector.getAuthURL('login'),
+      {
+        ...ServerConnector.makeBearerAuthHeader(this.accessToken),
+        ...ServerConnector.formJSONHeaders,
+      },
+      { email, password }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   * Authorize the user.
+   * @param username - entered username from the form
+   * @param password - entered password from the form
+   * @returns Login information about the user
+   */
+  public async runSignInWorkflow(
     email: string,
     password: string
-  ): Promise<LoginResponse | null> {
-    try {
-      if (!this.accessToken)
-        throw new Error('Access token for sign in was not initialized.');
+  ): Promise<APIResponse<CustomerDataReceived>> {
+    const tokenResult = await this.requestLoginToken(email, password);
+    if (!tokenResult.ok) return tokenResult;
 
-      const result = await ServerConnector.post(
-        ServerConnector.getAuthURL('login'),
-        {
-          ...ServerConnector.makeBearerAuthHeader(this.accessToken),
-          ...ServerConnector.formJSONHeaders,
-        },
-        { email, password }
-      );
-      return result as LoginResponse;
-    } catch (err) {
-      error('Failed to log in', err as object);
-    }
-    return null;
+    if (tokenResult.body.access_token)
+      this.accessToken = tokenResult.body.access_token;
+
+    return this.requestLoginSignIn(email, password);
   }
 }

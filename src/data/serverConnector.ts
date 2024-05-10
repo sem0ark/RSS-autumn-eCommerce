@@ -3,6 +3,24 @@ import { config } from '../utils/config';
 export type Token = string;
 export type TokenType = 'Bearer';
 
+/**
+ * Describes a single error entry in the errors array from the API.
+ */
+export interface ErrorEntry {
+  code: string;
+  message: string;
+}
+
+export type APIResponse<T> =
+  | {
+      ok: true;
+      body: T;
+    }
+  | {
+      ok: false;
+      errors: ErrorEntry[];
+    };
+
 export class ServerConnector {
   /**
    * Provides a standard set of headers for form submission request
@@ -41,25 +59,47 @@ export class ServerConnector {
     };
   }
 
-  private static async makeRequestJSON(
+  private static async makeRequestJSON<T>(
     url: string,
     method: string,
     headers: HeadersInit = {},
     body?: string | object
-  ) {
+  ): Promise<APIResponse<T>> {
     const formattedBody = body
       ? undefined
       : typeof body === 'object'
         ? JSON.stringify(body)
         : body;
 
-    const response = await fetch(url, {
-      method: method,
-      headers,
-      body: formattedBody,
-    });
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers,
+        body: formattedBody,
+      });
 
-    return response.json();
+      if (response.ok)
+        return {
+          ok: true,
+          body: await response.json(),
+        };
+
+      return {
+        ok: false,
+        // https://docs.commercetools.com/api/errors#top
+        errors: (await response.json()).errors as ErrorEntry[],
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        errors: [
+          {
+            code: 'Fetch Error',
+            message: `Request Failed: ${err}`,
+          },
+        ],
+      };
+    }
   }
 
   /**
@@ -69,11 +109,11 @@ export class ServerConnector {
    * @param body Text representation (or object - automatically parsed to JSON) of body if needed.
    * @returns "body" object from parsed JSON is any.
    */
-  public static post = async (
+  public static post = async <T>(
     url: string,
     headers: HeadersInit = {},
     body?: string | object
-  ) => ServerConnector.makeRequestJSON(url, 'POST', headers, body);
+  ) => ServerConnector.makeRequestJSON<T>(url, 'POST', headers, body);
 
   /**
    * Make a formatted "get" request.
@@ -82,11 +122,11 @@ export class ServerConnector {
    * @param body Text representation (or object - automatically parsed to JSON) of body if needed.
    * @returns "body" object from parsed JSON is any.
    */
-  public static get = async (
+  public static get = async <T>(
     url: string,
     headers: HeadersInit = {},
     body?: string | object
-  ) => ServerConnector.makeRequestJSON(url, 'GET', headers, body);
+  ) => ServerConnector.makeRequestJSON<T>(url, 'GET', headers, body);
 
   /**
    * Make a formatted "put" request.
@@ -95,22 +135,22 @@ export class ServerConnector {
    * @param body Text representation (or object - automatically parsed to JSON) of body if needed.
    * @returns "body" object from parsed JSON is any.
    */
-  public static put = async (
+  public static put = async <T>(
     url: string,
     headers: HeadersInit = {},
     body?: string | object
-  ) => ServerConnector.makeRequestJSON(url, 'PUT', headers, body);
+  ) => ServerConnector.makeRequestJSON<T>(url, 'PUT', headers, body);
 
   /**
-   * Make a formatted "delete" requ.est
+   * Make a formatted "delete" request.
    * @param url URL of the request.
    * @param headers Required headers, such as token.
    * @param body Text representation (or object - automatically parsed to JSON) of body if needed.
    * @returns "body" object from parsed JSON is any.
    */
-  public static delete = async (
+  public static delete = async <T>(
     url: string,
     headers: HeadersInit = {},
     body?: string | object
-  ) => ServerConnector.makeRequestJSON(url, 'DELETE', headers, body);
+  ) => ServerConnector.makeRequestJSON<T>(url, 'DELETE', headers, body);
 }
