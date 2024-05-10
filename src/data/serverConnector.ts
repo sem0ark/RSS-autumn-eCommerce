@@ -11,19 +11,34 @@ export class ServerConnector {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  public static getAuthURL(postfix = '') {
+  /**
+   * Provides a standard set of headers for JSON data
+   */
+  public static readonly formJSONHeaders = {
+    'Content-Type': 'application/json',
+  };
+
+  public static getOAuthURL(postfix = '') {
     return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
   }
 
-  public static makeBasicAuthHeader(): string {
+  public static getAuthURL(postfix = '') {
+    return `https://${config.VITE_CTP_AUTH_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
+  }
+
+  public static makeBearerAuthHeader(token: Token) {
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  public static makeBasicAuthHeader() {
     const encodedData = btoa(
       `${config.VITE_CTP_CLIENT_ID}:${config.VITE_CTP_CLIENT_SECRET}`
     );
-    return `Basic ${encodedData}`;
-  }
-
-  public static makeBearerAuthHeader(token: Token): string {
-    return `Bearer ${token}`;
+    return {
+      Authorization: `Basic ${encodedData}`,
+    };
   }
 
   private static async makeRequestJSON(

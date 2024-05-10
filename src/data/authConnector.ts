@@ -5,12 +5,11 @@ import { ServerConnector, Token, TokenType } from './serverConnector';
 /**
  * Response structure on login
  */
-interface LoginResponse {
+export interface LoginResponse {
   access_token: Token;
   expires_in: number;
 
   // commented out values to hide from the other app's functionality
-  // scope: string;
   refresh_token: Token;
   token_type: TokenType;
 }
@@ -42,45 +41,61 @@ export interface CustomerData {
   firstName?: string;
   lastName?: string;
 
-  // middleName?: string;
-  // title?: string;
-
   dateOfBirth?: Date;
-
   addresses: Address[];
 }
 
+/**
+ * Example result:
+ *
+ * ```typescript
+ * {
+ *  addresses: [],
+ *  email: "johndoe@example.com",
+ *  firstName: "John",
+ *  id: "some_123_id",
+ *  isEmailVerified: false,
+ *  lastName: "Doe",
+ *  password: "****aGg=",
+ *  version: 1,
+ *  createdAt: "2015-07-06T13:22:33.339Z",
+ *  lastModifiedAt: "2015-07-06T13:22:33.339Z",
+ *  authenticationMode: "Password",
+ *  stores: []
+ * }
+ * ```
+ */
 export type CustomerDataReceived = CustomerData & {
   id: string;
   version: number;
 };
 
 export class AuthConnector {
-  private static _accessToken?: Token;
+  private _accessToken?: Token;
 
-  private static _refreshToken?: Token;
+  private _refreshToken?: Token;
 
   /**
-   * @returns if access token is available
+   * @returns If access token is available.
    */
-  public static isLoggedIn(): boolean {
-    return !!AuthConnector.accessToken;
+  public isLoggedIn(): boolean {
+    return !!this.accessToken;
   }
 
-  public static get accessToken(): string | undefined {
-    return AuthConnector._accessToken;
+  public get accessToken(): string | undefined {
+    return this._accessToken;
   }
 
-  public static get refreshToken(): string | undefined {
-    return AuthConnector._refreshToken;
+  public set accessToken(newToken: Token) {
+    this._accessToken = newToken;
   }
 
-  public static set accessToken(newToken: Token) {
-    AuthConnector._accessToken = newToken;
+  public get refreshToken(): string | undefined {
+    return this._refreshToken;
   }
 
-  public static set refreshToken(newToken: Token) {
-    AuthConnector._refreshToken = newToken;
+  public set refreshToken(newToken: Token) {
+    this._refreshToken = newToken;
   }
 
   /**
@@ -89,20 +104,48 @@ export class AuthConnector {
    * @param password - entered password from the form
    * @returns Login information about the user
    */
-  public async makeLoginRequest(
+  public async requestLoginToken(
     username: string,
     password: string
   ): Promise<LoginResponse | null> {
     try {
       const result = await ServerConnector.post(
-        ServerConnector.getAuthURL(),
+        ServerConnector.getOAuthURL('customers/token'),
         {
-          Authorization: ServerConnector.makeBasicAuthHeader(),
+          ...ServerConnector.makeBasicAuthHeader(),
           ...ServerConnector.formDataHeaders,
         },
         `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES_LIMITED}`
       );
+      return result as LoginResponse;
+    } catch (err) {
+      error('Failed to log in', err as object);
+    }
+    return null;
+  }
 
+  /**
+   * Authorize the user.
+   * @param email - entered username from the form
+   * @param password - entered password from the form
+   * @returns Login information about the user
+   */
+  public async requestLoginSignIn(
+    email: string,
+    password: string
+  ): Promise<LoginResponse | null> {
+    try {
+      if (!this.accessToken)
+        throw new Error('Access token for sign in was not initialized.');
+
+      const result = await ServerConnector.post(
+        ServerConnector.getAuthURL('login'),
+        {
+          ...ServerConnector.makeBearerAuthHeader(this.accessToken),
+          ...ServerConnector.formJSONHeaders,
+        },
+        { email, password }
+      );
       return result as LoginResponse;
     } catch (err) {
       error('Failed to log in', err as object);
