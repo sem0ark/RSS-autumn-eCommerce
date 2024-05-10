@@ -1,4 +1,4 @@
-import { error } from '../framework/utilities/logging';
+import { debug, error } from '../framework/utilities/logging';
 import { config } from '../utils/config';
 import {
   APIResponse,
@@ -41,12 +41,11 @@ export interface Address {
 
 export interface CustomerData {
   email: string;
-  password?: string;
 
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
 
-  dateOfBirth?: Date;
+  dateOfBirth: Date;
   addresses: Address[];
 }
 
@@ -75,10 +74,13 @@ export type CustomerDataReceived = CustomerData & {
   version: number;
 };
 
-export class AuthConnector {
+class AuthConnector {
   private _tokenData?: {
     accessToken: Token;
-    expirationDate: Date;
+    /**
+     * Date of expiration in milliseconds
+     */
+    expirationDateMS: number;
     refreshToken: Token;
   };
 
@@ -86,7 +88,7 @@ export class AuthConnector {
    * @returns If access token is available.
    */
   public isLoggedIn(): boolean {
-    return !!this._tokenData?.accessToken;
+    return !!this._tokenData;
   }
 
   public getAuthBearerHeaders() {
@@ -100,15 +102,10 @@ export class AuthConnector {
   }
 
   private configureTokenData(responseData: LoginTokenResponse) {
-    const dateNow = new Date(Date.now());
-    const expirationDate = new Date(
-      dateNow.setSeconds(dateNow.getSeconds() + responseData.expires_in)
-    );
-
     this._tokenData = {
       accessToken: responseData.access_token,
       refreshToken: responseData.refresh_token,
-      expirationDate,
+      expirationDateMS: Date.now() + responseData.expires_in,
     };
   }
 
@@ -142,7 +139,7 @@ export class AuthConnector {
         ...this.getAuthBasicHeaders(),
         ...ServerConnector.formDataHeaders,
       },
-      `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES_LIMITED}`
+      `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES}`
     );
 
     if (result.ok) return result;
@@ -161,7 +158,7 @@ export class AuthConnector {
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerDataReceived>(
-      ServerConnector.getAuthURL('login'),
+      ServerConnector.getAuthURL('me/login'),
       {
         ...this.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
@@ -184,10 +181,25 @@ export class AuthConnector {
     email: string,
     password: string
   ): Promise<APIResponse<CustomerDataReceived>> {
-    const tokenResult = await this.requestLoginToken(email, password);
-    if (!tokenResult.ok) return tokenResult;
+    debug('Trying to run login workflow.');
 
-    this.configureTokenData(tokenResult.body);
-    return this.requestLoginSignIn(email, password);
+    if (!this._tokenData) {
+      const tokenResult = await this.requestLoginToken(email, password);
+      if (!tokenResult.ok) return tokenResult;
+
+      this.configureTokenData(tokenResult.body);
+    } else if (this._tokenData?.expirationDateMS > Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      await this.requestTokenRefresh();
+    }
+
+    const singInResult = await this.requestLoginSignIn(email, password);
+
+    if (singInResult.ok) debug('Singed in successfully', singInResult.body);
+    else debug('Sing In Failed', singInResult.errors);
+
+    return singInResult;
   }
 }
+
+export const authConnector = new AuthConnector();

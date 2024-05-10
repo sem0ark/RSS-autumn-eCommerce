@@ -41,7 +41,7 @@ export class ServerConnector {
   }
 
   public static getAuthURL(postfix = '') {
-    return `https://${config.VITE_CTP_AUTH_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
+    return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
   }
 
   public static makeBearerAuthHeader(token: Token) {
@@ -66,10 +66,10 @@ export class ServerConnector {
     body?: string | object
   ): Promise<APIResponse<T>> {
     const formattedBody = body
-      ? undefined
-      : typeof body === 'object'
+      ? typeof body === 'object'
         ? JSON.stringify(body)
-        : body;
+        : body
+      : undefined;
 
     try {
       const response = await fetch(url, {

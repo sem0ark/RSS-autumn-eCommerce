@@ -6,12 +6,12 @@ interface Config {
   VITE_CTP_CLIENT_SECRET: string;
   VITE_CTP_CLIENT_ID: string;
 
-  VITE_CTP_SCOPES: string;
-
   /**
    * Scopes for basic customer functionality
    */
-  VITE_CTP_SCOPES_LIMITED: string;
+  VITE_CTP_SCOPES: string;
+
+  // VITE_CTP_SCOPES_LIMITED: string;
 }
 
 const getConfig = (): Partial<Config> => {
@@ -24,7 +24,7 @@ const getConfig = (): Partial<Config> => {
     VITE_CTP_CLIENT_ID: import.meta.env.VITE_CTP_CLIENT_ID,
 
     VITE_CTP_SCOPES: import.meta.env.VITE_CTP_SCOPES,
-    VITE_CTP_SCOPES_LIMITED: import.meta.env.VITE_CTP_SCOPES_LIMITED,
+    // VITE_CTP_SCOPES_LIMITED: import.meta.env.VITE_CTP_SCOPES_LIMITED,
   };
 };
 
