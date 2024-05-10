@@ -84,23 +84,24 @@ export class AuthConnector {
    * @returns If access token is available.
    */
   public isLoggedIn(): boolean {
-    return !!this.accessToken;
+    return !!this._accessToken;
   }
 
-  public get accessToken(): string | undefined {
-    return this._accessToken;
-  }
+  public async requestTokenRefresh() {
+    const result = await ServerConnector.post<LoginTokenResponse>(
+      ServerConnector.getOAuthURL('customers/token'),
+      {
+        ...ServerConnector.makeBasicAuthHeader(),
+        ...ServerConnector.formDataHeaders,
+      },
+      `grant_type=refresh_token&refresh_token=${this._refreshToken}`
+    );
 
-  public set accessToken(newToken: Token) {
-    this._accessToken = newToken;
-  }
-
-  public get refreshToken(): string | undefined {
-    return this._refreshToken;
-  }
-
-  public set refreshToken(newToken: Token) {
-    this._refreshToken = newToken;
+    if (result.ok) {
+      this._accessToken = result.body.access_token;
+    } else {
+      error('Failed to refresh token data', result.errors);
+    }
   }
 
   /**
@@ -131,13 +132,13 @@ export class AuthConnector {
    * @returns Login information about the user
    */
   private async requestLoginSignIn(email: string, password: string) {
-    if (!this.accessToken)
+    if (!this._accessToken)
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerDataReceived>(
       ServerConnector.getAuthURL('login'),
       {
-        ...ServerConnector.makeBearerAuthHeader(this.accessToken),
+        ...ServerConnector.makeBearerAuthHeader(this._accessToken),
         ...ServerConnector.formJSONHeaders,
       },
       { email, password }
@@ -162,7 +163,7 @@ export class AuthConnector {
     if (!tokenResult.ok) return tokenResult;
 
     if (tokenResult.body.access_token)
-      this.accessToken = tokenResult.body.access_token;
+      this._accessToken = tokenResult.body.access_token;
 
     return this.requestLoginSignIn(email, password);
   }
