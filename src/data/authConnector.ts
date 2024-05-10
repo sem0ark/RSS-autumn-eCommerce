@@ -190,7 +190,7 @@ class AuthConnector {
       if (!tokenResult.ok) return tokenResult;
 
       this.configureTokenData(tokenResult.body);
-    } else if (this._tokenData?.expirationDateMS > Date.now()) {
+    } else if (this._tokenData.expirationDateMS < Date.now()) {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     }
