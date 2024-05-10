@@ -5,6 +5,7 @@ import { containerComponents } from '../shared/containerComponents';
 import { navContainer } from '../shared/nav/nav';
 import { mainComponents } from './mainLoginPage';
 import { footerComponents } from '../shared/footer/footer';
+import { notificationModal } from '../shared/notifications/notificationContainer';
 import { authContext } from '../../contexts/authContext';
 
 const { wrapper } = containerComponents;
@@ -15,5 +16,10 @@ const { footerContainer } = footerComponents;
 export const loginPage = () =>
   new Page(() => {
     authContext.attemptLogin();
-    return wrapper(navElement(), mainContainer(), footerContainer());
+    return wrapper(
+      notificationModal(),
+      navElement(),
+      mainContainer(),
+      footerContainer()
+    );
   });

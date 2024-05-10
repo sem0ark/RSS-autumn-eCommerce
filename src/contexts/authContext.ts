@@ -11,12 +11,20 @@ class AuthContext {
     'customer_data'
   );
 
-  public readonly userIsLoggedIn = pfunc(() => this.userData.get() !== null);
+  public readonly userIsLoggedIn = pfunc(
+    () => this.userData.get() !== null,
+    [],
+    'userIsLoggedIn'
+  );
 
-  public readonly userName = pfunc(() => {
-    const userData = this.userData.get();
-    return userData ? this.formatName(userData) : 'Unauthorized';
-  });
+  public readonly userName = pfunc(
+    () => {
+      const userData = this.userData.get();
+      return userData ? this.formatName(userData) : 'Unauthorized';
+    },
+    [],
+    'userName'
+  );
 
   constructor() {
     debug('Initiating AuthContext');
@@ -34,8 +42,9 @@ class AuthContext {
       'secret'
     );
 
-    if (result.ok) this.userData.set(result.body.customer);
-    else
+    if (result.ok) {
+      this.userData.set(result.body.customer);
+    } else
       result.errors.forEach(({ message }) =>
         notificationContext.addError(message)
       );

@@ -260,7 +260,8 @@ export class DependentProperty<
   }
 
   public get(): R {
-    return super.get() as R;
+    super.get();
+    return this.updater(...((this.args || []) as T));
   }
 }
 
