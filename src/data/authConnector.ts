@@ -76,29 +76,54 @@ export type CustomerDataReceived = CustomerData & {
 };
 
 export class AuthConnector {
-  private _accessToken?: Token;
-
-  private _refreshToken?: Token;
+  private _tokenData?: {
+    accessToken: Token;
+    expirationDate: Date;
+    refreshToken: Token;
+  };
 
   /**
    * @returns If access token is available.
    */
   public isLoggedIn(): boolean {
-    return !!this._accessToken;
+    return !!this._tokenData?.accessToken;
+  }
+
+  public getAuthBearerHeaders() {
+    if (!this._tokenData?.accessToken)
+      throw new Error('Access token for sign in was not initialized.');
+    return ServerConnector.makeBearerAuthHeader(this._tokenData.accessToken);
+  }
+
+  public getAuthBasicHeaders() {
+    return ServerConnector.makeBasicAuthHeader();
+  }
+
+  private configureTokenData(responseData: LoginTokenResponse) {
+    const dateNow = new Date(Date.now());
+    const expirationDate = new Date(
+      dateNow.setSeconds(dateNow.getSeconds() + responseData.expires_in)
+    );
+
+    this._tokenData = {
+      accessToken: responseData.access_token,
+      refreshToken: responseData.refresh_token,
+      expirationDate,
+    };
   }
 
   public async requestTokenRefresh() {
     const result = await ServerConnector.post<LoginTokenResponse>(
       ServerConnector.getOAuthURL('customers/token'),
       {
-        ...ServerConnector.makeBasicAuthHeader(),
+        ...this.getAuthBasicHeaders(),
         ...ServerConnector.formDataHeaders,
       },
-      `grant_type=refresh_token&refresh_token=${this._refreshToken}`
+      `grant_type=refresh_token&refresh_token=${this._tokenData?.refreshToken}`
     );
 
     if (result.ok) {
-      this._accessToken = result.body.access_token;
+      this.configureTokenData(result.body);
     } else {
       error('Failed to refresh token data', result.errors);
     }
@@ -114,7 +139,7 @@ export class AuthConnector {
     const result = await ServerConnector.post<LoginTokenResponse>(
       ServerConnector.getOAuthURL('customers/token'),
       {
-        ...ServerConnector.makeBasicAuthHeader(),
+        ...this.getAuthBasicHeaders(),
         ...ServerConnector.formDataHeaders,
       },
       `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=${config.VITE_CTP_SCOPES_LIMITED}`
@@ -132,13 +157,13 @@ export class AuthConnector {
    * @returns Login information about the user
    */
   private async requestLoginSignIn(email: string, password: string) {
-    if (!this._accessToken)
+    if (!this._tokenData?.accessToken)
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerDataReceived>(
       ServerConnector.getAuthURL('login'),
       {
-        ...ServerConnector.makeBearerAuthHeader(this._accessToken),
+        ...this.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
       },
       { email, password }
@@ -162,9 +187,7 @@ export class AuthConnector {
     const tokenResult = await this.requestLoginToken(email, password);
     if (!tokenResult.ok) return tokenResult;
 
-    if (tokenResult.body.access_token)
-      this._accessToken = tokenResult.body.access_token;
-
+    this.configureTokenData(tokenResult.body);
     return this.requestLoginSignIn(email, password);
   }
 }
