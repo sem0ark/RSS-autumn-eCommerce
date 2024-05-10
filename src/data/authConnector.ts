@@ -8,18 +8,6 @@ import {
 } from './serverConnector';
 
 /**
- * Response structure on login
- */
-export interface LoginTokenResponse {
-  access_token: Token;
-  expires_in: number;
-
-  // commented out values to hide from the other app's functionality
-  refresh_token: Token;
-  token_type: TokenType;
-}
-
-/**
  * Address object interface based on the commerce tools documentation and RSS requirements.
  */
 export interface Address {
@@ -50,6 +38,7 @@ export interface CustomerData {
 }
 
 /**
+ * Full information about the client after signing in.
  * Example result:
  *
  * ```typescript
@@ -73,6 +62,19 @@ export type CustomerDataReceived = CustomerData & {
   id: string;
   version: number;
 };
+
+interface LoginTokenResponse {
+  access_token: Token;
+  expires_in: number;
+
+  // commented out values to hide from the other app's functionality
+  refresh_token: Token;
+  token_type: TokenType;
+}
+
+interface CustomerSingInResponse {
+  customer: CustomerDataReceived;
+}
 
 class AuthConnector {
   private _tokenData?: {
@@ -157,7 +159,7 @@ class AuthConnector {
     if (!this._tokenData?.accessToken)
       throw new Error('Access token for sign in was not initialized.');
 
-    const result = await ServerConnector.post<CustomerDataReceived>(
+    const result = await ServerConnector.post<CustomerSingInResponse>(
       ServerConnector.getAuthURL('me/login'),
       {
         ...this.getAuthBearerHeaders(),
@@ -180,7 +182,37 @@ class AuthConnector {
   public async runSignInWorkflow(
     email: string,
     password: string
-  ): Promise<APIResponse<CustomerDataReceived>> {
+  ): Promise<APIResponse<CustomerSingInResponse>> {
+    debug('Trying to run login workflow.');
+
+    if (!this._tokenData) {
+      const tokenResult = await this.requestLoginToken(email, password);
+      if (!tokenResult.ok) return tokenResult;
+
+      this.configureTokenData(tokenResult.body);
+    } else if (this._tokenData?.expirationDateMS > Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      await this.requestTokenRefresh();
+    }
+
+    const singInResult = await this.requestLoginSignIn(email, password);
+
+    if (singInResult.ok) debug('Singed in successfully', singInResult.body);
+    else debug('Sing In Failed', singInResult.errors);
+
+    return singInResult;
+  }
+
+  /**
+   * Authorize the user.
+   * @param username - entered username from the form
+   * @param password - entered password from the form
+   * @returns Login information about the user
+   */
+  public async runSignUpWorkflow(
+    email: string,
+    password: string
+  ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run login workflow.');
 
     if (!this._tokenData) {
