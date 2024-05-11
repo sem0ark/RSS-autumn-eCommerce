@@ -10,7 +10,7 @@ import { navBar } from '../shared/navBar/nav';
 import { loginForm } from './loginForm';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
 
-const { div, h2, link, p } = htmlComponents;
+const { div, h2, link, h1 } = htmlComponents;
 
 const { wrapper, containerCenterRoundEdges } = containerComponents;
 const { footerContainer } = footerComponents;
@@ -18,7 +18,7 @@ const { footerContainer } = footerComponents;
 const linkToRegisterPage = () =>
   div(
     'Not Registered Yet? ',
-    link('/signup', 'Create an account').cls('link-subtext')
+    link('/login', 'Create an account').cls('link-subtext')
   ).cls('subtext');
 
 export const loginPage = () =>
@@ -27,8 +27,8 @@ export const loginPage = () =>
       navBar(),
       backgroundImageLayout(background)(
         containerCenterRoundEdges.cls('form-container')(
-          h2('Create your unique bouquet').cls('form-title'),
-          p('Login').cls('form-title'),
+          h2('Create your unique bouquet').cls('form-header'),
+          h1('Login').cls('form-title'),
           loginForm(),
           linkToRegisterPage()
         )

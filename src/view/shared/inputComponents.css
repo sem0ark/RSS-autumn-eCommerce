@@ -1,0 +1,28 @@
+.input-components-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 24px;
+  width: 100%;
+}
+
+.input-components-input {
+  border: 1px solid;
+  border-radius: 7px;
+  height: 60px;
+  font-size: 24px;
+}
+
+.input-components-clue {
+  font-size: 14px;
+  color: var(--subtext);
+}
+
+.input-components-input-submit {
+  font-size: 24px;
+  padding: 15px 30px;
+  border-radius: 30px;
+  color: var(--color-text-light);
+  background-color: var(--primary-color);
+  width: 170px;
+}

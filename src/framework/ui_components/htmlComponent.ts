@@ -154,8 +154,9 @@ export class HTMLComponent extends Component {
   ) {
     const updatedHandler = (e: Event) => {
       if (preventDefault) e.preventDefault();
-      else if (stopPropagation) e.stopPropagation();
-      else handler(e);
+      if (stopPropagation) e.stopPropagation();
+
+      handler(e);
 
       if (preventDefault) return false;
       return true;

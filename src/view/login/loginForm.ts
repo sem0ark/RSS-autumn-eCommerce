@@ -20,6 +20,7 @@ export const loginForm = () => {
       name: 'show password',
       reverseOrder: true,
     }).cls('checkbox-container'),
+
     submitButton.cls('input-submit').attr('type', 'submit')('Submit')
   );
 };

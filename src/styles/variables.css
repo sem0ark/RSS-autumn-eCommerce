@@ -1,7 +1,12 @@
 :root {
   --light-pink: #ffcdc0;
   --primary-color: #ff623b;
+  
+  /* DEPRECATED: kept for legacy */
   --color-text-ligth: #ffffff;
+  --color-text-light: #ffffff;
+
+
   --text-dark: #000000;
   --link: #7f265b;
   --subtext: #666666;

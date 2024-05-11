@@ -1,10 +1,12 @@
-import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
-import { htmlComponents } from './htmlComponents';
+import './inputComponents.css';
 
+import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
+
+import { htmlComponents } from './htmlComponents';
 const { button, input, div, p, label } = htmlComponents;
 
 const inputClue = p.cls('clue');
-const inputContainer = div.cls('input-container');
+const inputContainer = div.cls('input-components-input-container');
 
 /**
  * Add standard validation functionality to the given  HTMLComponent.
@@ -75,21 +77,24 @@ const labelled = (
   return result;
 };
 
-const inputEmail = input.cls('input-email', 'input').attr('type', 'email');
+const inputEmail = input
+  .cls('input-components-input-email', 'input')
+  .attr('type', 'email');
+
 const inputPassword = input
-  .cls('input-password', 'input')
+  .cls('input-components-input-password', 'input')
   .attr('type', 'password');
 
-const checkboxInput = input.cls('input-checkbox').attr('type', 'checkbox');
+const checkboxInput = input
+  .cls('input-components-input-checkbox')
+  .attr('type', 'checkbox');
 
-const submitButton = button
-  .cls('button-submit')
-  .attr('type', 'submit')
-  .attr('id', 'submit');
+const submitButton = button.cls('button-submit').attr('type', 'submit');
 
 export const inputComponents = {
   labelled,
   validated,
+
   inputClue,
   inputContainer,
   inputEmail,

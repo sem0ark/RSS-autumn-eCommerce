@@ -1,6 +1,6 @@
 import { Property } from '../reactive_properties/property';
 import { Storage } from '../persistence/storage';
-import { log } from '../utilities/logging';
+import { info } from '../utilities/logging';
 import { Page } from '../ui_components/page';
 
 /**
@@ -38,21 +38,21 @@ export class Router {
   private constructor(private routes: Route[]) {
     addEventListener('popstate', (e: PopStateEvent) => {
       const appPath = Router.extractPath(document.location.href);
-      log(`Popstate: location: ${appPath}, state: ${JSON.stringify(e.state)}`);
+      info(`Popstate: location: ${appPath}, state: ${JSON.stringify(e.state)}`);
 
       this.matchRoutes(appPath);
     });
   }
 
   private matchRoutes(pathName: string): void {
-    log(`Matching routes for "${pathName}"`);
+    info(`Matching routes for "${pathName}"`);
 
     this.currentPath?.set(pathName);
     for (const route of this.routes) {
       const m = route.match(pathName);
 
       if (m !== null) {
-        log(`Found route "${route.routePath}" for "${pathName}"`);
+        info(`Found route "${route.routePath}" for "${pathName}"`);
         return route.render(...m);
       }
     }
@@ -77,8 +77,8 @@ export class Router {
   public static navigateTo(pathName: string): void {
     const newPath = `${window.location.origin}${window.location.pathname}#${pathName}`;
 
-    log(`Updating "window" path to ${newPath}`);
-    history.pushState({}, pathName, newPath);
+    info(`Updating "window" path to ${newPath}`);
+    history.pushState({}, '', newPath);
     Router.getRouter().matchRoutes(pathName);
   }
 }
@@ -99,7 +99,7 @@ export abstract class Route {
   public abstract match(url: string): string[] | null;
 
   public render(...params: string[]): void {
-    log(
+    info(
       `Rendering page for route "${this.routePath}" with parameters: [${params}]`
     );
     this.page?.render(...params);
@@ -151,7 +151,7 @@ export class RegExpRoute extends Route {
   constructor(routeString: string, page: Page) {
     super(page, routeString);
     this.regex = RegExpRoute.makeRouteRegExp(routeString);
-    log(
+    info(
       `Initializing RegExpRouter{${routeString}} with expression ${this.regex}`
     );
   }
