@@ -7,4 +7,7 @@
   --subtext: #666666;
   --border-dark: #000000;
   --background-body: #ffffff;
+
+  --success-green: #63db63;
+  --fail-red: #d65a5a;
 }

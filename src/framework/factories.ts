@@ -152,13 +152,13 @@ function plist<T extends PropertyValueType>(initial?: T[], name?: string) {
  * @param name Name of the property, useful for logging and debugging.
  * @returns
  */
-function pfunc<K extends (...args: PropertyValueType[]) => PropertyValueType>(
-  updater: K,
-  args?: Parameters<K>,
+function pfunc<T extends PropertyValueType[], R extends PropertyValueType>(
+  updater: (...args: T) => R,
+  args?: T,
   name?: string
 ) {
   if (!name) name = getId('DependentProperty');
-  return new DependentProperty(name, updater, args);
+  return new DependentProperty<T, R>(name, updater, args);
 }
 
 interface RecObj {
