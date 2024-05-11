@@ -8,7 +8,7 @@ import logoSite from '../../../../assets/logo-site.svg';
 
 const { div, header, nav, ul, li, link, iconSvg } = htmlComponents;
 
-const navElement = () =>
+export const navBar = () =>
   header(
     div(
       div(iconSvg(logoSite)).cls('logo-site'),
@@ -29,7 +29,3 @@ const navElement = () =>
       div(userProfileBtn(), shoppingCartBtn()).cls('header-btn-container')
     ).cls('header-container', '_container')
   ).cls('header', 'nav-element');
-
-export const navContainer = {
-  navElement,
-};

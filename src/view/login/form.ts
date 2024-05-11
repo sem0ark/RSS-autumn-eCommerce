@@ -4,7 +4,7 @@ import { htmlComponents } from '../shared/htmlComponents';
 const { div, h2, p, form, label, input, link } = htmlComponents;
 
 const title = () => h2('Create your unique bouquet').cls('form-title');
-const login = () => p('Login').cls('form-title');
+const formTitle = () => p('Login').cls('form-title');
 
 const labelEmail = () => label('Email').cls('email').attr('for', 'email');
 const inputEmail = () =>
@@ -17,6 +17,7 @@ const inputEmail = () =>
 
 const labelPassword = () =>
   label('Password').cls('password').attr('for', 'password');
+
 const inputPassword = () =>
   input()
     .cls('input-password', 'input')
@@ -56,17 +57,18 @@ const linkToRegisterPage = () =>
 const inputContainer = (...children: CC) =>
   div(...children).cls('input-container');
 
-const formEl = () =>
+const loginForm = () =>
   form(
     inputContainer(labelEmail(), inputEmail()),
     inputContainer(labelPassword(), inputPassword(), passwordClue()),
     inputContainer(checkboxContainer(checkboxPassword(), labelShowPassword())),
-    submitForm(),
-    linkToRegisterPage()
+    submitForm()
   ).cls('form');
 
 const formContainer = () =>
-  div(title(), login(), formEl()).cls('form-container');
+  div(title(), formTitle(), loginForm(), linkToRegisterPage()).cls(
+    'form-container'
+  );
 
 export const formComponents = {
   formContainer,
