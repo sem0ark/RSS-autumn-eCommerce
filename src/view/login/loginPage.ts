@@ -10,10 +10,10 @@ import { navBar } from '../shared/navBar/nav';
 import { loginForm } from './loginForm';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
 
+const { div, h2, link, p } = htmlComponents;
+
 const { wrapper, containerCenterRoundEdges } = containerComponents;
 const { footerContainer } = footerComponents;
-
-const { div, h2, link, p } = htmlComponents;
 
 const linkToRegisterPage = () =>
   div(
