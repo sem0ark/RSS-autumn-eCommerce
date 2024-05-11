@@ -7,7 +7,10 @@ import { Component } from './component';
 export class Page {
   public static rootId: string = 'app-root';
 
-  public constructor(private renderPage: (...config: string[]) => Component) {}
+  public constructor(
+    private renderPage: (...config: string[]) => Component,
+    private readonly pageTitle?: string
+  ) {}
 
   public render(...config: string[]): void {
     if (document.getElementById(Page.rootId) === null) {
@@ -20,5 +23,10 @@ export class Page {
     document
       .getElementById('app-root')
       ?.appendChild(this.renderPage(...config).render(false));
+
+    const pageTitleElement = document.getElementById('page-title');
+    if (pageTitleElement && this.pageTitle) {
+      pageTitleElement.innerText = this.pageTitle;
+    }
   }
 }

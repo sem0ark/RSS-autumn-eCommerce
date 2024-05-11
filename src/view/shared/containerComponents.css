@@ -34,3 +34,17 @@
   width: 100vw;
   min-height: 100vh;
 }
+
+
+.container-components.container-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.container-components.container-center.container-round-edges {
+  background-color: var(--background-body);
+  border-radius: 30px;
+  padding: 30px;
+}
