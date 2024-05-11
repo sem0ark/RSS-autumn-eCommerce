@@ -1,3 +1,5 @@
+import './notificationContainer.css';
+
 import { notificationContext } from '../../../contexts/notificationContext';
 import { containerComponents } from '../containerComponents';
 import { notificationEntry } from './notificationEntry';

@@ -27,7 +27,7 @@ class NotificationContext {
       else
         setTimeout(() => {
           this.removeLastNotification();
-        }, 50000);
+        }, 5000);
     });
   }
 

@@ -17,6 +17,6 @@
   --success-green: #63db63;
   --fail-red: #d65a5a;
 
-  --font-family-heading: "Alegreya Sans SC", "Inter", sans-serif;
-  --font-family-default: "Inter", sans-serif;
+  --font-family-heading: 'Alegreya Sans SC', 'Inter', sans-serif;
+  --font-family-default: 'Inter', sans-serif;
 }

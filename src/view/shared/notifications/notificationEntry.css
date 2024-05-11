@@ -1,20 +1,15 @@
-body {
-  margin: 0;
-}
-
-.notification-container {
-  bottom: 40px;
-}
-
 .notification-container > .notification-entry {
   z-index: 10;
 
   display: block;
   width: 200px;
   border-radius: 10px;
-  height: 20px;
+  
+  height: 24px;
+
   padding-left: 10px;
   padding-left: 10px;
+
   box-sizing: border-box;
   border: 1px solid black;
 
