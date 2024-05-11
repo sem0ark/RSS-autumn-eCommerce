@@ -158,8 +158,7 @@ export class HTMLComponent extends Component {
 
       handler(e);
 
-      if (preventDefault) return false;
-      return true;
+      return preventDefault;
     };
 
     if (this._handlers[name] === undefined) this._handlers[name] = [];
@@ -177,7 +176,7 @@ export class HTMLComponent extends Component {
    */
   public onClick(
     handler: (e: Event) => void,
-    preventDefault = false,
+    preventDefault = true,
     stopPropagation = false
   ) {
     this.on('click', handler, preventDefault, stopPropagation);
@@ -193,7 +192,7 @@ export class HTMLComponent extends Component {
    */
   public onRClick(
     handler: (e: Event) => void,
-    preventDefault = false,
+    preventDefault = true,
     stopPropagation = false
   ) {
     this.on('contextmenu', handler, preventDefault, stopPropagation);
@@ -273,7 +272,7 @@ export class HTMLComponent extends Component {
    */
   public onSubmit(
     handler: (e: SubmitEvent) => void,
-    preventDefault = false,
+    preventDefault = true,
     stopPropagation = false
   ) {
     this.on(

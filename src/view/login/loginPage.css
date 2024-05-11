@@ -28,12 +28,13 @@
 }
 
 .login-page .form-container .form-header {
-  font-size: 2.5em;
+  font-size: 48px;
   text-align: center;
+  font-family: var(--font-family-heading);
 }
 
 .login-page .form-container .form-title {
-  font-size: 2em;
+  font-size: 40px;
   text-align: center;
 }
 
@@ -54,27 +55,6 @@
   width: 100%;
 }
 
-.login-page .input {
-  border: 1px solid;
-  border-radius: 7px;
-  height: 60px;
-  font-size: 24px;
-}
-
-.login-page .clue {
-  font-size: 14px;
-  color: var(--subtext);
-}
-
-.login-page .input-submit {
-  font-size: 24px;
-  padding: 15px 30px;
-  border-radius: 30px;
-  color: var(--color-text-light);
-  background-color: var(--primary-color);
-  width: 170px;
-}
-
 .login-page .checkbox-container {
   font-size: 16px;
   display: flex;
@@ -83,18 +63,8 @@
   gap: 10px;
 }
 
-.login-page .checkbox-container input {
-  accent-color: black;
-  height: 18px;
-  width: 18px;
-}
-
 .login-page .subtext {
   color: var(--subtext);
-}
-
-.login-page .link-subtext {
-  color: var(--link);
 }
 
 @media only screen and (max-width: 768px) {

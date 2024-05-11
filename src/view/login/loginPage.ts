@@ -9,6 +9,7 @@ import { htmlComponents } from '../shared/htmlComponents';
 import { navBar } from '../shared/navBar/nav';
 import { loginForm } from './loginForm';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
+import { notificationModal } from '../shared/notifications/notificationContainer';
 
 const { div, h2, link, h1 } = htmlComponents;
 
@@ -17,13 +18,14 @@ const { footerContainer } = footerComponents;
 
 const linkToRegisterPage = () =>
   div(
-    'Not Registered Yet? ',
+    'Not registered yet? ',
     link('/login', 'Create an account').cls('link-subtext')
   ).cls('subtext');
 
 export const loginPage = () =>
   new Page(() => {
     return wrapper(
+      notificationModal(),
       navBar(),
       backgroundImageLayout(background)(
         containerCenterRoundEdges.cls('form-container')(

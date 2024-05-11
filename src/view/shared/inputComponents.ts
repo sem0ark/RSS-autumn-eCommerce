@@ -2,10 +2,12 @@ import './inputComponents.css';
 
 import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
 
+import { factories } from '../../framework/factories';
 import { htmlComponents } from './htmlComponents';
-const { button, input, div, p, label } = htmlComponents;
+import { PBoolean } from '../../framework/reactive_properties/property';
+const { input, div, p, label } = htmlComponents;
 
-const inputClue = p.cls('clue');
+const inputClue = p.cls('input-components-clue');
 const inputContainer = div.cls('input-components-input-container');
 
 /**
@@ -22,25 +24,35 @@ const validated = (
     input_string: string,
     input: HTMLInputElement
   ) => string | boolean)[]
-) =>
-  inputComponent.onInput((e) => {
-    const inputNode = e.target as HTMLInputElement;
-    const entry = inputNode.value;
+): [HTMLComponent, PBoolean] => {
+  const propValid = factories.pboolean(false);
+  const validatedComponent = inputComponent
+    .cls('input-components-validated')
+    .propClass(propValid, (valid) => (valid ? ['success'] : ['error']))
+    .onInput((e) => {
+      const inputNode = e.target as HTMLInputElement;
+      const entry = inputNode.value;
 
-    const errors: string[] = validators
-      .map((v) => v(entry, inputNode))
-      .filter((err) => !!err) as string[];
+      const errors: string[] = validators
+        .map((v) => v(entry, inputNode))
+        .filter((err) => !!err) as string[];
 
-    if (errors.length > 0) {
-      inputNode.setCustomValidity(errors[0]);
-      inputNode.reportValidity();
-    } else {
-      inputNode.setCustomValidity('');
-    }
-  });
+      if (errors.length > 0) {
+        inputNode.setCustomValidity(errors[0]);
+        inputNode.reportValidity();
+        propValid.disable();
+      } else {
+        inputNode.setCustomValidity('');
+        propValid.enable();
+      }
+    });
+
+  return [validatedComponent, propValid];
+};
 
 /**
  * Create a form entry with some input element and a label attached to it.
+ *
  * @param labelText text for the label
  * @param inputComponent input field to be labelled
  * @param id of the element
@@ -77,19 +89,23 @@ const labelled = (
   return result;
 };
 
+const inputText = input.cls('input-components-input-text').attr('type', 'text');
+
 const inputEmail = input
-  .cls('input-components-input-email', 'input')
+  .cls('input-components-input-text', 'input-components-input-email')
   .attr('type', 'email');
 
 const inputPassword = input
-  .cls('input-components-input-password', 'input')
+  .cls('input-components-input-text', 'input-components-input-password')
   .attr('type', 'password');
 
 const checkboxInput = input
   .cls('input-components-input-checkbox')
   .attr('type', 'checkbox');
 
-const submitButton = button.cls('button-submit').attr('type', 'submit');
+const submitButton = input
+  .cls('input-components-input-submit')
+  .attr('type', 'submit');
 
 export const inputComponents = {
   labelled,
@@ -97,6 +113,8 @@ export const inputComponents = {
 
   inputClue,
   inputContainer,
+
+  inputText,
   inputEmail,
   inputPassword,
   checkboxInput,
