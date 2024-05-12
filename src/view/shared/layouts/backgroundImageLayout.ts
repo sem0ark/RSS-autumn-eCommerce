@@ -17,9 +17,10 @@ export const backgroundImageLayout =
       notificationModal(),
       navBar(),
       main.cls('background-image-layout')(
-        div.cls('background-logo-img-container')(
-          img(imageURL).cls('background-logo-img')
-        ),
+        div.cls(
+          'background-logo-img-container',
+          'block-selection'
+        )(img(imageURL).cls('background-logo-img')),
         containerMaxWidth.cls('login-page-container')(...children)
       ),
       footerComponent()

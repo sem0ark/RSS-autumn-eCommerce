@@ -105,10 +105,11 @@ const checkboxInput = input
   .attr('type', 'checkbox');
 
 const submitButton = button
-  .cls('input-components-input-submit')
+  .cls('block-selection', 'input-components-input-submit')
   .attr('type', 'submit');
 
 const buttonPrimary = button.cls(
+  'block-selection',
   'input-components-button',
   'input-components-button-primary',
   'button',
@@ -116,6 +117,7 @@ const buttonPrimary = button.cls(
 );
 
 const buttonSecondary = button.cls(
+  'block-selection',
   'input-components-button',
   'input-components-button-secondary',
   'button',
@@ -140,6 +142,7 @@ const buttonSecondaryLink = (url: string, ...children: CC) =>
 
 const buttonIcon = (svgPath: string) =>
   button(iconSvg(svgPath)).cls(
+    'block-selection',
     'input-components-button-icon',
     'button',
     'button-icon'

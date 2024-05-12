@@ -39,7 +39,7 @@ h6 {
 }
 
 button,
-input[type=submit] {
+input[type='submit'] {
   transition: 0.5s;
   cursor: pointer;
 }
