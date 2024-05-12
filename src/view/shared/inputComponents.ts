@@ -5,7 +5,8 @@ import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
 import { factories } from '../../framework/factories';
 import { htmlComponents } from './htmlComponents';
 import { PBoolean } from '../../framework/reactive_properties/property';
-const { input, div, p, label } = htmlComponents;
+
+const { input, div, p, label, button, iconSvg } = htmlComponents;
 
 const inputClue = p.cls('input-components-clue');
 const inputContainer = div.cls('input-components-input-container');
@@ -107,6 +108,27 @@ const submitButton = input
   .cls('input-components-input-submit')
   .attr('type', 'submit');
 
+const buttonPrimary = button.cls(
+  'input-components-button',
+  'input-components-button-primary',
+  'button',
+  'button-primary'
+);
+
+const buttonSecondary = button.cls(
+  'input-components-button',
+  'input-components-button-secondary',
+  'button',
+  'button-secondary'
+);
+
+const buttonIcon = (svgPath: string) =>
+  button(iconSvg(svgPath)).cls(
+    'input-components-button-icon',
+    'button',
+    'button-icon'
+  );
+
 export const inputComponents = {
   labelled,
   validated,
@@ -118,5 +140,9 @@ export const inputComponents = {
   inputEmail,
   inputPassword,
   checkboxInput,
+
   submitButton,
+  buttonPrimary,
+  buttonSecondary,
+  buttonIcon,
 };

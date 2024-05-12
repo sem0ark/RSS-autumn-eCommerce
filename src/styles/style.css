@@ -15,6 +15,7 @@
 
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 ul,
@@ -62,7 +63,6 @@ body {
   padding: 0 10px;
 }
 
-/* DEPRECATED: Left for compatibility reasons */
 .wrapper {
   overflow: hidden;
   min-height: 100vh;

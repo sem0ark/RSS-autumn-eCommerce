@@ -2,12 +2,9 @@ import './footer.css';
 
 import { htmlComponents } from '../htmlComponents';
 
-const { footer, div } = htmlComponents;
+const { div, footer } = htmlComponents;
 
-const footerContainer = () =>
-  footer.cls('footer')(
-    div('Copyright 2024&copy;').cls('footer-container', '_container')
-  );
+const footerContainer = () => footer(div('Copyright 2024&copy;'));
 
 export const footerComponents = {
   footerContainer,

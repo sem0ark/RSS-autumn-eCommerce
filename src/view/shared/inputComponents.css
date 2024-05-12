@@ -51,3 +51,44 @@ a {
   box-shadow: var(--color-fail) 0 2px 0;
   outline-color: var(--color-fail);
 }
+
+
+.input-components-button {
+  background-color: transparent;
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 10px 15px;
+}
+
+.input-components-button-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--color-text-light);
+}
+
+.input-components-button-primary.active,
+.input-components-button-primary:hover,
+.input-components-button-primary:active:hover {
+  filter: brightness(0.9);
+}
+
+.input-components-button-secondary.active,
+.input-components-button-secondary:hover,
+.input-components-button-secondary:active:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--color-text-light);
+}
+
+.input-components-button-icon {
+  height: 37px;
+  width: 37px;
+  border-radius: 8px;
+}
+
+.input-components-button-icon.active,
+.input-components-button-icon:hover,
+.input-components-button-icon:active:hover {
+  background-color: var(--color-text-light);
+  transform: scale(1.2);
+}

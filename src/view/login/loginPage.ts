@@ -6,13 +6,13 @@ import { Page } from '../../framework/ui_components/page';
 import { containerComponents } from '../shared/containerComponents';
 import { footerComponents } from '../shared/footer/footer';
 import { htmlComponents } from '../shared/htmlComponents';
-import { navBar } from '../shared/navBar/nav';
+import { navBar } from '../shared/navBar/navBar';
 import { loginForm } from './loginForm';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
 
 const { div, h2, link, h1 } = htmlComponents;
 
-const { wrapper, containerCenterRoundEdges } = containerComponents;
+const { containerOuter, containerCenterRoundEdges } = containerComponents;
 const { footerContainer } = footerComponents;
 
 const linkToRegisterPage = () =>
@@ -23,7 +23,7 @@ const linkToRegisterPage = () =>
 
 export const loginPage = () =>
   new Page(() => {
-    return wrapper(
+    return containerOuter(
       navBar(),
       backgroundImageLayout(background)(
         containerCenterRoundEdges.cls('form-container')(

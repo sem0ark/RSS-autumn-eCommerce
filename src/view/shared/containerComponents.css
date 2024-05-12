@@ -2,8 +2,25 @@
   position: relative;
 }
 
+.container-components-outer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.container-components-max-width {
+  width: calc(100% - 20px);
+  max-width: 1200px;
+
+  margin: 0 auto;
+  box-sizing: content-box;
+  padding: 0 10px;
+}
+
 /* prefix like .container-components will allow to encapsulate all styles into a single space at least partially */
-.container-components.container-modal {
+.container-components-modal {
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -13,37 +30,41 @@
   pointer-events: none;
 }
 
-.container-components.container-modal > * {
+.container-components-modal > * {
   pointer-events: all;
 }
 
-.container-components.container-modal-center {
+.container-components-modal-center {
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.container-components.container-modal-column {
+.container-components-modal-column {
   flex-direction: column;
   align-items: left;
   justify-content: flex-end;
 }
 
-.container-components.container-outer {
-  display: block;
-  width: 100vw;
-  min-height: 100vh;
-}
-
-.container-components.container-center {
+.container-components-center {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
 }
 
-.container-components.container-center.container-round-edges {
+.container-components-round-edges {
   background-color: var(--background-body);
   border-radius: 30px;
   padding: 30px;
+}
+
+.container-components-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.container-components-flex-column {
+  display: flex;
+  flex-direction: column;
 }
