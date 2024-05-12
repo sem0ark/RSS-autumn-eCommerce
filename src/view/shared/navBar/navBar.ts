@@ -48,8 +48,8 @@ export const navBar = () => {
       ).cls('header-nav-container'),
 
       containerFlexRow({ gap: 20 })(
-        buttonIcon(userSVG),
-        buttonIcon(cartSVG)
+        buttonIcon(userSVG).onClick(() => Router.navigateTo('/user')),
+        buttonIcon(cartSVG).onClick(() => Router.navigateTo('/cart'))
       ).cls('navbar-buttons')
     )
     .propClass(menuOpen, (o) => (o ? ['navbar-menu-open'] : []))

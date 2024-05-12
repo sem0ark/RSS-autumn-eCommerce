@@ -7,12 +7,15 @@ import { containerComponents } from '../shared/containerComponents';
 import { htmlComponents } from '../shared/htmlComponents';
 import { loginForm } from './loginForm';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
+import { authContext } from '../../contexts/authContext';
+import { Router } from '../../framework/routing/router';
 
 const { div, h2, link, h1 } = htmlComponents;
-
 const { containerCenterRoundEdges } = containerComponents;
 
 export const loginPage = new Page(() => {
+  if (authContext.userIsLoggedIn.get()) Router.navigateTo('/');
+
   return backgroundImageLayout(background)(
     containerCenterRoundEdges.cls('form-container', 'login-page')(
       h2('Create your unique bouquet').cls('form-header'),

@@ -56,6 +56,15 @@
     padding-bottom: 15px;
   }
 
+  .navbar .logo-site {
+    cursor: pointer;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .navbar.navbar-menu-open .logo-site {
+    transform: rotate(90deg);
+  }
+
   .navbar .header-nav-container {
     display: none;
     flex-wrap: wrap;

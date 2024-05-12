@@ -14,9 +14,9 @@ export const backgroundImageLayout =
   (imageURL: string) =>
   (...children: CC) =>
     containerOuter(
+      notificationModal(),
       navBar(),
       main.cls('background-image-layout')(
-        notificationModal(),
         div.cls('background-logo-img-container')(
           img(imageURL).cls('background-logo-img')
         ),

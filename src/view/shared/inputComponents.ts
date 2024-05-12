@@ -1,12 +1,12 @@
 import './inputComponents.css';
 
-import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
+import { CC, HTMLComponent } from '../../framework/ui_components/htmlComponent';
 
 import { factories } from '../../framework/factories';
 import { htmlComponents } from './htmlComponents';
 import { PBoolean } from '../../framework/reactive_properties/property';
 
-const { input, div, p, label, button, iconSvg } = htmlComponents;
+const { input, div, p, label, button, iconSvg, link } = htmlComponents;
 
 const inputClue = p.cls('input-components-clue');
 const inputContainer = div.cls('input-components-input-container');
@@ -104,7 +104,7 @@ const checkboxInput = input
   .cls('input-components-input-checkbox')
   .attr('type', 'checkbox');
 
-const submitButton = input
+const submitButton = button
   .cls('input-components-input-submit')
   .attr('type', 'submit');
 
@@ -121,6 +121,22 @@ const buttonSecondary = button.cls(
   'button',
   'button-secondary'
 );
+
+const buttonPrimaryLink = (url: string, ...children: CC) =>
+  link(url, ...children).cls(
+    'input-components-button',
+    'input-components-button-primary',
+    'button',
+    'button-primary'
+  );
+
+const buttonSecondaryLink = (url: string, ...children: CC) =>
+  link(url, ...children).cls(
+    'input-components-button',
+    'input-components-button-secondary',
+    'button',
+    'button-secondary'
+  );
 
 const buttonIcon = (svgPath: string) =>
   button(iconSvg(svgPath)).cls(
@@ -145,4 +161,6 @@ export const inputComponents = {
   buttonPrimary,
   buttonSecondary,
   buttonIcon,
+  buttonPrimaryLink,
+  buttonSecondaryLink,
 };

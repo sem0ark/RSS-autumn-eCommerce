@@ -63,8 +63,8 @@ class AuthContext {
   constructor() {
     debug('Initiating AuthContext');
 
-    this.userIsLoggedIn.onChange((isLoggedIn) => {
-      if (isLoggedIn)
+    this.userData.onChange((data) => {
+      if (data)
         notificationContext.addSuccess(`Welcome, ${this.userName.get()}!`);
       else notificationContext.addInformation(`Goodbye!`);
     });
@@ -75,12 +75,13 @@ class AuthContext {
 
     if (result.ok) {
       this.userData.set(result.body.customer);
-    } else
-      result.errors.forEach(({ message }) =>
-        notificationContext.addError(message)
-      );
+      return Promise.resolve(true);
+    }
 
-    return Promise.resolve();
+    result.errors.forEach(({ message }) =>
+      notificationContext.addError(message)
+    );
+    return Promise.resolve(false);
   }
 
   private formatName(data: CustomerDataReceived) {

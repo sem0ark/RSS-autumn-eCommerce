@@ -1,5 +1,6 @@
 import { authContext } from '../../contexts/authContext';
 import { factories } from '../../framework/factories';
+import { Router } from '../../framework/routing/router';
 import { debug } from '../../framework/utilities/logging';
 import { htmlComponents } from '../shared/htmlComponents';
 import { inputComponents } from '../shared/inputComponents';
@@ -55,10 +56,14 @@ export const loginForm = () => {
 
       if (formValid.get()) {
         debug('Attempting to login.');
-        authContext.attemptLogin(
-          (inputEmailField.getNode() as HTMLInputElement).value,
-          (inputPasswordField.getNode() as HTMLInputElement).value
-        );
+        authContext
+          .attemptLogin(
+            (inputEmailField.getNode() as HTMLInputElement).value,
+            (inputPasswordField.getNode() as HTMLInputElement).value
+          )
+          .then((success) => {
+            if (success) Router.navigateTo('/');
+          });
       } else {
         debug('Attempt failed, form is not valid.');
       }
