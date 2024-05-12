@@ -52,7 +52,6 @@ a {
   outline-color: var(--color-fail);
 }
 
-
 .input-components-button {
   background-color: transparent;
   border: 1px solid var(--border-dark);
