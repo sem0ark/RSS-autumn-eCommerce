@@ -24,7 +24,7 @@
 .notification-container > .notification-entry:hover {
   height: unset;
   width: 300px;
-  min-height: 20px;
+  min-height: 24px;
   overflow: unset;
   text-overflow: ellipsis;
   word-break: break-all;
