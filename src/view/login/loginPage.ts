@@ -15,12 +15,6 @@ const { div, h2, link, h1 } = htmlComponents;
 const { containerOuter, containerCenterRoundEdges } = containerComponents;
 const { footerContainer } = footerComponents;
 
-const linkToRegisterPage = () =>
-  div(
-    'Not registered yet? ',
-    link('/login', 'Create an account').cls('link-subtext')
-  ).cls('subtext');
-
 export const loginPage = () =>
   new Page(() => {
     return containerOuter(
@@ -30,7 +24,10 @@ export const loginPage = () =>
           h2('Create your unique bouquet').cls('form-header'),
           h1('Login').cls('form-title'),
           loginForm(),
-          linkToRegisterPage()
+          div(
+            'Not registered yet? ',
+            link('/signup', 'Create an account').cls('link-subtext')
+          ).cls('subtext')
         )
       ),
       footerContainer()
