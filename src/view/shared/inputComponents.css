@@ -58,6 +58,9 @@ a {
   border: 1px solid var(--border-dark);
   border-radius: 8px;
   padding: 10px 15px;
+
+  height: 35px;
+  width: fit-content;
 }
 
 .input-components-button-primary {
@@ -91,4 +94,14 @@ a {
 .input-components-button-icon:active:hover {
   background-color: var(--color-text-light);
   transform: scale(1.2);
+}
+
+@media only screen and (max-width: 768px) {
+  .input-components-input-container label {
+    font-size: 15px;
+  }
+
+  .input-components-clue {
+    font-size: 12px;
+  }
 }
