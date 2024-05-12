@@ -7,6 +7,7 @@ import { htmlComponents } from '../htmlComponents';
 import { inputComponents } from '../inputComponents';
 import { containerComponents } from '../containerComponents';
 import { factories } from '../../../framework/factories';
+import { authContext } from '../../../contexts/authContext';
 
 const { div, nav, ul, li, link, iconSvg } = htmlComponents;
 const { buttonSecondary, buttonPrimary, buttonIcon } = inputComponents;
@@ -28,10 +29,19 @@ export const navBar = () => {
             li(link('/about', 'About us').cls('header-link'))
           ).cls('header-list')
         ),
-        containerFlexRow({ gap: 20 })(
-          buttonSecondary('Sign up'),
-          buttonPrimary('Login')
-        ).cls('navbar-buttons')
+
+        factories.functional(() => {
+          if (authContext.userIsLoggedIn.get()) {
+            return containerFlexRow({ gap: 20 })(buttonPrimary('Logout')).cls(
+              'navbar-buttons'
+            );
+          } else {
+            return containerFlexRow({ gap: 20 })(
+              buttonSecondary('Sign up'),
+              buttonPrimary('Login')
+            ).cls('navbar-buttons');
+          }
+        })
       ).cls('header-nav-container'),
 
       containerFlexRow({ gap: 20 })(
