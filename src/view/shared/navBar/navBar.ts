@@ -8,6 +8,7 @@ import { inputComponents } from '../inputComponents';
 import { containerComponents } from '../containerComponents';
 import { factories } from '../../../framework/factories';
 import { authContext } from '../../../contexts/authContext';
+import { Router } from '../../../framework/routing/router';
 
 const { div, nav, ul, li, link, iconSvg } = htmlComponents;
 const { buttonSecondary, buttonPrimary, buttonIcon } = inputComponents;
@@ -37,8 +38,10 @@ export const navBar = () => {
             );
           } else {
             return containerFlexRow({ gap: 20 })(
-              buttonSecondary('Sign up'),
-              buttonPrimary('Login')
+              buttonSecondary('Sign up').onClick(() =>
+                Router.navigateTo('/login/signup')
+              ),
+              buttonPrimary('Login').onClick(() => Router.navigateTo('/login'))
             ).cls('navbar-buttons');
           }
         })

@@ -6,6 +6,8 @@ const { footer } = htmlComponents;
 
 const footerContainer = () => footer();
 
+export const footerComponent = footerContainer;
+
 export const footerComponents = {
   footerContainer,
 };

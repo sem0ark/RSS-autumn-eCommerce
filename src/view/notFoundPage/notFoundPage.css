@@ -1,0 +1,26 @@
+.not-found-page.container {
+  align-items: center;
+  text-align: center;
+
+  color: var(--color-text-light);
+}
+
+.not-found-page p {
+  font-size: 22px;
+}
+
+.not-found-page h1 {
+  font-size: 198px;
+  font-weight: bold;
+}
+
+.not-found-page h2 {
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.not-found-page button {
+  width: 200px;
+  font-size: 18px;
+  height: auto;
+}

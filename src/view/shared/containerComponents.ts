@@ -42,7 +42,7 @@ const containerFlexColumn =
   (options?: { gap?: number; padding?: number }) =>
   (...children: CC) =>
     container
-      .cls('container-components-flex-row')(...children)
+      .cls('container-components-flex-column')(...children)
       .if(!!(options && options.gap), (c) =>
         c.style('gap', `${options?.gap}px`)
       )
