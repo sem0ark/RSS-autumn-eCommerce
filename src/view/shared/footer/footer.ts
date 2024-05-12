@@ -2,9 +2,9 @@ import './footer.css';
 
 import { htmlComponents } from '../htmlComponents';
 
-const { div, footer } = htmlComponents;
+const { footer } = htmlComponents;
 
-const footerContainer = () => footer(div('Copyright 2024&copy;'));
+const footerContainer = () => footer();
 
 export const footerComponents = {
   footerContainer,
