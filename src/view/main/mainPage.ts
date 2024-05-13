@@ -25,7 +25,7 @@ export const mainPage = new Page(() => {
       ),
       p(
         'Choose one of the ready-made bouquets or order a unique one that will meet all your wishes'
-      ),
+      ).cls('util-drop-shadow'),
       buttonPrimary('Go to catalog')
         .cls('util-drop-shadow')
         .onClick(() => Router.navigateTo('/catalog'))

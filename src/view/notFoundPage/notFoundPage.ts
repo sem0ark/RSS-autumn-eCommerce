@@ -25,7 +25,7 @@ export const notFoundPage = new Page(() => {
       ),
       p(
         'The page you are looking for might have been removed or temporarily unavailable.'
-      ),
+      ).cls('util-drop-shadow'),
       buttonPrimary('Back to Home')
         .cls('util-drop-shadow')
         .onClick(() => Router.navigateTo('/'))
