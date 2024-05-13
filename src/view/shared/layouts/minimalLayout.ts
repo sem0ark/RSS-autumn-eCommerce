@@ -1,4 +1,4 @@
-import './backgroundImageLayout.css';
+import './minimalLayout.css';
 
 import { CC } from '../../../framework/ui_components/htmlComponent';
 import { containerComponents } from '../containerComponents';
@@ -7,21 +7,16 @@ import { notificationModal } from '../notifications/notificationContainer';
 import { footerComponent } from '../footer/footer';
 import { navBar } from '../navBar/navBar';
 
-const { main, div, img } = htmlComponents;
+const { main, h1 } = htmlComponents;
 const { containerMaxWidth, containerOuter } = containerComponents;
 
-export const backgroundImageLayout =
-  (imageURL: string) =>
+export const minimalLayout =
+  (heading: string) =>
   (...children: CC) =>
-    containerOuter(
+    containerOuter.cls('minimal-layout-outer-container')(
       navBar(),
-      main.cls('background-image-layout')(
-        div.cls(
-          'background-logo-img-container',
-          'block-selection'
-        )(img(imageURL).cls('background-logo-img')),
-        containerMaxWidth(...children)
-      ),
+      h1(heading).cls('minimal-layout-header'),
+      main(containerMaxWidth.cls('minimal-layout')(...children)),
       footerComponent(),
       notificationModal()
     );

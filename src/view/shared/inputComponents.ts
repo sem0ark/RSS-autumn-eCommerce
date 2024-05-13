@@ -74,17 +74,22 @@ const labelled = (
   let result;
   if (options?.reverseOrder) {
     result = inputContainer(
-      inputComponent.id(id).attr('name', options?.name || id),
+      inputComponent
+        .id(id)
+        .attr('name', options?.name || id)
+        .if(!!options?.required, (c) => c.attr('required')),
       label(labelText).attr('for', id)
     );
   } else {
     result = inputContainer(
       label(labelText).attr('for', id),
-      inputComponent.id(id).attr('name', options?.name || id)
+      inputComponent
+        .id(id)
+        .attr('name', options?.name || id)
+        .if(!!options?.required, (c) => c.attr('required'))
     );
   }
 
-  if (options?.required) result.attr('required');
   if (options?.clue) result.add(inputClue(options?.clue));
 
   return result;

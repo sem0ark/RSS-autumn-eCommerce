@@ -17,6 +17,7 @@ const {
 
 export const loginForm = () => {
   const showPassword = factories.pboolean(false, 'show_password');
+
   const checkboxShowPasswordField = checkboxInput()
     .cls('checkbox-password')
     .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));

@@ -1,0 +1,67 @@
+.signup-page {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding: 60px 0;
+}
+
+.signup-page .form-block {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.signup-page .form-block h2 {
+  display: flex;
+  width: 100%;
+  font-size: 28px;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.signup-page .form-block h2 span {
+  display: inline-block;
+  width: 6px;
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--primary-color);
+  margin-right: 10px;
+}
+
+.signup-page .form-block > div {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 25px;
+}
+
+.signup-page .form-block > div,
+.signup-page .form-block input[type=text],
+.signup-page .form-block input[type=email] {
+  display: block;
+  width: 340px;
+}
+
+.signup-page .form-block .checkbox-container {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  padding-top: 25px;
+}
+
+.signup-page .form-block input {
+  height: 50px;
+  line-height: 50px;
+  font-size: 20px;
+}
+
+.signup-page .form-block input::placeholder {
+  color: var(--subtext);
+  font-size: 14px;
+}
+
+.signup-page .form-block label {
+  font-size: 16px;
+  font-weight: bold;
+}
