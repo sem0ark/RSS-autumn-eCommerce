@@ -1,13 +1,22 @@
 :root {
   --light-pink: #ffcdc0;
   --primary-color: #ff623b;
+
+  /* DEPRECATED: kept for legacy */
   --color-text-ligth: #ffffff;
+  --color-text-light: #ffffff;
+
   --text-dark: #000000;
   --link: #7f265b;
   --subtext: #666666;
   --border-dark: #000000;
   --background-body: #ffffff;
 
+  --color-success: #63db63;
+  --color-fail: #d65a5a;
   --success-green: #63db63;
   --fail-red: #d65a5a;
+
+  --font-family-heading: 'Alegreya Sans SC', 'Inter', sans-serif;
+  --font-family-default: 'Inter', sans-serif;
 }

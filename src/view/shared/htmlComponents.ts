@@ -39,7 +39,7 @@ const link = (url: string, ...children: CC) =>
   html('a')(...children)
     .cls('link', 'link-local')
     .attr('href', url)
-    .on('click', () => Router.navigateTo(url), true);
+    .onClick(() => Router.navigateTo(url), true);
 
 const img = (url: string) => htmlTag('img').attr('src', url).cls('image');
 

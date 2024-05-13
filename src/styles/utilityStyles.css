@@ -4,3 +4,15 @@
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+
+.util-drop-shadow {
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+p.util-drop-shadow,
+h1.util-drop-shadow,
+h2.util-drop-shadow,
+h3.util-drop-shadow {
+  box-shadow: none;
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}

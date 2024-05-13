@@ -7,7 +7,10 @@ import { Component } from './component';
 export class Page {
   public static rootId: string = 'app-root';
 
-  public constructor(private renderPage: (...config: string[]) => Component) {}
+  public constructor(
+    private renderPage: (...config: string[]) => Component,
+    private readonly pageTitle?: string
+  ) {}
 
   public render(...config: string[]): void {
     if (document.getElementById(Page.rootId) === null) {
@@ -16,9 +19,17 @@ export class Page {
       document.body.appendChild(appRoot);
     }
 
-    (document.getElementById('app-root') as HTMLElement).innerHTML = '';
-    document
-      .getElementById('app-root')
-      ?.appendChild(this.renderPage(...config).render(false));
+    // to avoid mishaps such as page not rendering fully before adding a new
+    setTimeout(() => {
+      (document.getElementById(Page.rootId) as HTMLElement).innerHTML = '';
+      document
+        .getElementById(Page.rootId)
+        ?.appendChild(this.renderPage(...config).render(false));
+    });
+
+    const pageTitleElement = document.getElementById('page-title');
+    if (pageTitleElement && this.pageTitle) {
+      pageTitleElement.innerText = this.pageTitle;
+    }
   }
 }

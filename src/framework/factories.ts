@@ -296,7 +296,7 @@ function html(tag: string) {
      * @param name
      * @param value
      */
-    attr(name: string, value: unknown): HTMLClsConstructor;
+    attr(name: string, value?: unknown): HTMLClsConstructor;
 
     /**
      * Create a new constructor, which will create an element with all previously specified parameters as well as specified "id" value.
