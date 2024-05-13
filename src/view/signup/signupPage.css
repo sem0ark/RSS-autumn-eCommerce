@@ -35,8 +35,8 @@
 }
 
 .signup-page .form-block > div,
-.signup-page .form-block input[type=text],
-.signup-page .form-block input[type=email] {
+.signup-page .form-block input[type='text'],
+.signup-page .form-block input[type='email'] {
   display: block;
   width: 340px;
 }
