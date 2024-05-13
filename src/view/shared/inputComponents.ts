@@ -4,9 +4,13 @@ import { CC, HTMLComponent } from '../../framework/ui_components/htmlComponent';
 
 import { factories } from '../../framework/factories';
 import { htmlComponents } from './htmlComponents';
-import { PBoolean } from '../../framework/reactive_properties/property';
+import {
+  PBoolean,
+  Property,
+} from '../../framework/reactive_properties/property';
 
-const { input, div, p, label, button, iconSvg, link } = htmlComponents;
+const { input, div, p, label, button, iconSvg, link, select, option } =
+  htmlComponents;
 
 const inputClue = p.cls('input-components-clue');
 const inputContainer = div.cls('input-components-input-container');
@@ -25,30 +29,34 @@ const validated = (
     input_string: string,
     input: HTMLInputElement
   ) => string | boolean)[]
-): [HTMLComponent, PBoolean] => {
+): [HTMLComponent, PBoolean, Property<string>] => {
   const propValid = factories.pboolean(false);
+  const propValue = factories.property<string>('');
+
   const validatedComponent = inputComponent
     .cls('input-components-validated')
     .propClass(propValid, (valid) => (valid ? ['success'] : ['error']))
     .onInput((e) => {
       const inputNode = e.target as HTMLInputElement;
       const entry = inputNode.value;
+      propValue.set(entry);
 
-      const errors: string[] = validators
-        .map((v) => v(entry, inputNode))
-        .filter((err) => !!err) as string[];
+      for (const validator of validators) {
+        const error = validator(entry, inputNode);
 
-      if (errors.length > 0) {
-        inputNode.setCustomValidity(errors[0]);
-        inputNode.reportValidity();
-        propValid.disable();
-      } else {
-        inputNode.setCustomValidity('');
-        propValid.enable();
+        if (error && typeof error === 'string') {
+          inputNode.setCustomValidity(error);
+          inputNode.reportValidity();
+          propValid.disable();
+          return;
+        }
       }
+
+      inputNode.setCustomValidity('');
+      propValid.enable();
     });
 
-  return [validatedComponent, propValid];
+  return [validatedComponent, propValid, propValue];
 };
 
 /**
@@ -101,6 +109,10 @@ const inputEmail = input
   .cls('input-components-input-text', 'input-components-input-email')
   .attr('type', 'email');
 
+const inputDate = input
+  .cls('input-components-input-text', 'input-components-input-date')
+  .attr('type', 'date');
+
 const inputPassword = input
   .cls('input-components-input-text', 'input-components-input-password')
   .attr('type', 'password');
@@ -108,6 +120,11 @@ const inputPassword = input
 const checkboxInput = input
   .cls('input-components-input-checkbox')
   .attr('type', 'checkbox');
+
+const selectInput = (entries: [string, string][]) =>
+  select.cls('input-components-input-select')(
+    ...entries.map(([k, v]) => option(v).attr('value', k))
+  );
 
 const submitButton = button
   .cls('block-selection', 'input-components-input-submit')
@@ -161,9 +178,11 @@ export const inputComponents = {
   inputContainer,
 
   inputText,
+  inputDate,
   inputEmail,
   inputPassword,
   checkboxInput,
+  selectInput,
 
   submitButton,
   buttonPrimary,

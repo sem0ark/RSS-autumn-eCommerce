@@ -2,6 +2,10 @@ import { authContext } from '../../contexts/authContext';
 import { factories } from '../../framework/factories';
 import { Router } from '../../framework/routing/router';
 import { debug } from '../../framework/utilities/logging';
+import {
+  emailValidators,
+  passwordValidators,
+} from '../../utils/validation/userDataValidation';
 import { htmlComponents } from '../shared/htmlComponents';
 import { inputComponents } from '../shared/inputComponents';
 
@@ -22,16 +26,13 @@ export const loginForm = () => {
     .cls('checkbox-password')
     .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));
 
-  const [inputEmailField, emailValid] = validated(
-    inputText(),
-    authContext.emailValidators
-  );
+  const [inputEmailField, emailValid] = validated(inputText(), emailValidators);
 
   const [inputPasswordField, passwordValid] = validated(
     inputPassword().propAttr(showPassword, 'type', (show) =>
       show ? 'text' : 'password'
     ),
-    authContext.passwordValidators
+    passwordValidators
   );
 
   const formValid = factories.pfunc(

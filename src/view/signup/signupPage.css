@@ -19,6 +19,20 @@
   margin-bottom: 25px;
 }
 
+.signup-page .form-block h3 {
+  display: block;
+  width: 100%;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.signup-page .form-block p {
+  display: block;
+  width: 100%;
+  color: var(--subtext);
+}
+
+
 .signup-page .form-block h2 span {
   display: inline-block;
   width: 6px;
@@ -36,9 +50,20 @@
 
 .signup-page .form-block > div,
 .signup-page .form-block input[type='text'],
-.signup-page .form-block input[type='email'] {
+.signup-page .form-block input[type='password'],
+.signup-page .form-block input[type='email'],
+.signup-page .form-block select {
   display: block;
   width: 340px;
+}
+
+.signup-page .form-block input[type='text'],
+.signup-page .form-block input[type='password'],
+.signup-page .form-block input[type='email'],
+.signup-page .form-block select {
+  height: 50px;
+  background-color: var(--background-color-light);
+  font-size: 20px;
 }
 
 .signup-page .form-block .checkbox-container {

@@ -1,44 +1,54 @@
 import './signupPage.css';
 
 import { Page } from '../../framework/ui_components/page';
-
 import { htmlComponents } from '../shared/htmlComponents';
-// import { authContext } from '../../contexts/authContext';
-// import { Router } from '../../framework/routing/router';
-// import { notificationContext } from '../../contexts/notificationContext';
 import { minimalLayout } from '../shared/layouts/minimalLayout';
 import { inputComponents } from '../shared/inputComponents';
+import { userDataForm } from './userDataForm';
+import { addressForm } from './addressForm';
 import { factories } from '../../framework/factories';
 
-const { pboolean } = factories;
-const { div, h2, span, form } = htmlComponents;
-const { submitButton, inputEmail, inputText, labelled, checkboxInput } =
-  inputComponents;
+const { pboolean, functional } = factories;
+const { form, div, h3, p, hidden } = htmlComponents;
+const { submitButton, checkboxInput, labelled } = inputComponents;
 
 const formBlock = div.cls('form-block');
 
 export const signupPage = new Page(() => {
-  const showPassword = pboolean(false, 'show_password');
-
-  const checkboxShowPasswordField = checkboxInput()
+  const sameShippingAddress = pboolean(false, 'same_shipping_address');
+  const checkboxSameShippingAddress = checkboxInput()
     .cls('checkbox-password')
-    .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));
+    .onInput((e) =>
+      sameShippingAddress.set((e.target as HTMLInputElement).checked)
+    );
+
+  const [userForm] = userDataForm('Main Information');
+  const [billingAddressForm] = addressForm('Billing Address');
+  const [shippingAddressForm] = addressForm('Shipping Address');
 
   return minimalLayout('Create an account')(
     form(
+      userForm,
+      billingAddressForm,
       formBlock(
-        h2(span(), 'Main Information'),
-        labelled('First Name *', inputText(), 'first-name', { required: true }),
-        labelled('Last Name *', inputText(), 'last-name', { required: true }),
-
-        labelled('Email *', inputEmail(), 'email', { required: true }),
-        labelled('Show password', checkboxShowPasswordField, 'show-password', {
-          name: 'show password',
-          reverseOrder: true,
-        }).cls('checkbox-container')
+        h3('Shipping Address'),
+        p('Select the address that matches your payment method'),
+        labelled(
+          'Same as billing address',
+          checkboxSameShippingAddress,
+          'same-shipping-address',
+          {
+            name: 'shipping address is the same as the billing address',
+            reverseOrder: true,
+          }
+        ).cls('checkbox-container')
       ),
-      formBlock(h2(span(), 'Billing Address')),
+      functional(() =>
+        sameShippingAddress.get() ? hidden() : shippingAddressForm
+      ),
       submitButton('Submit')
-    ).cls('signup-page')
+    )
+      .cls('signup-page')
+      .onSubmit(() => {})
   );
 }, 'Login | True Colors');
