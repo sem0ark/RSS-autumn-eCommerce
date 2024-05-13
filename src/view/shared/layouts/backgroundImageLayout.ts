@@ -14,7 +14,6 @@ export const backgroundImageLayout =
   (imageURL: string) =>
   (...children: CC) =>
     containerOuter(
-      notificationModal(),
       navBar(),
       main.cls('background-image-layout')(
         div.cls(
@@ -23,5 +22,6 @@ export const backgroundImageLayout =
         )(img(imageURL).cls('background-logo-img')),
         containerMaxWidth.cls('login-page-container')(...children)
       ),
-      footerComponent()
+      footerComponent(),
+      notificationModal()
     );

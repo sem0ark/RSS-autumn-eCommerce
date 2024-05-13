@@ -1,4 +1,5 @@
 import './navBar.css';
+
 import userSVG from '../../../../assets/icon-user-profile.svg';
 import cartSVG from '../../../../assets/shopping-cart.svg';
 import logoSVG from '../../../../assets/logo-site.svg';
@@ -10,7 +11,8 @@ import { factories } from '../../../framework/factories';
 import { authContext } from '../../../contexts/authContext';
 import { Router } from '../../../framework/routing/router';
 
-const { div, nav, ul, li, link, iconSvg } = htmlComponents;
+const { functional } = factories;
+const { div, nav, ul, li, link, iconSvg, hidden } = htmlComponents;
 const { buttonSecondary, buttonPrimary, buttonIcon } = inputComponents;
 const { containerMaxWidth, containerFlexRow } = containerComponents;
 
@@ -31,20 +33,23 @@ export const navBar = () => {
           ).cls('header-list')
         ),
 
-        factories.functional(() => {
-          if (authContext.userIsLoggedIn.get()) {
-            return containerFlexRow({ gap: 20 })(buttonPrimary('Logout')).cls(
-              'navbar-buttons'
-            );
-          } else {
-            return containerFlexRow({ gap: 20 })(
-              buttonSecondary('Sign up').onClick(() =>
-                Router.navigateTo('/login/signup')
-              ),
-              buttonPrimary('Login').onClick(() => Router.navigateTo('/login'))
-            ).cls('navbar-buttons');
-          }
-        })
+        containerFlexRow({ gap: 20 })(
+          buttonSecondary('Sign Up').onClick(() =>
+            Router.navigateTo('/login/signup')
+          ),
+
+          buttonPrimary('Login').onClick(() => Router.navigateTo('/login')),
+
+          functional(() =>
+            authContext.userIsLoggedIn.get()
+              ? buttonSecondary('Logout').onClick(() =>
+                  authContext.attemptLogout().then((success) => {
+                    if (success) Router.navigateTo('/');
+                  })
+                )
+              : hidden()
+          )
+        ).cls('navbar-buttons')
       ).cls('header-nav-container'),
 
       containerFlexRow({ gap: 20 })(

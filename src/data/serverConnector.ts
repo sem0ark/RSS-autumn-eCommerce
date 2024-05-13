@@ -1,3 +1,4 @@
+import { trace } from '../framework/utilities/logging';
 import { config } from '../utils/config';
 
 export type Token = string;
@@ -72,6 +73,7 @@ export class ServerConnector {
       : undefined;
 
     try {
+      trace(`Sending a new request ${url}:${method}, ${body}`);
       const response = await fetch(url, {
         method: method,
         headers,

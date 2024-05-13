@@ -9,7 +9,7 @@ const { form } = htmlComponents;
 const {
   validated,
   labelled,
-  inputEmail,
+  inputText,
   inputPassword,
   submitButton,
   checkboxInput,
@@ -22,7 +22,7 @@ export const loginForm = () => {
     .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));
 
   const [inputEmailField, emailValid] = validated(
-    inputEmail(),
+    inputText(),
     authContext.emailValidators
   );
 

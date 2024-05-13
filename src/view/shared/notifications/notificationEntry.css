@@ -1,6 +1,4 @@
 .notification-container > .notification-entry {
-  z-index: 10;
-
   display: block;
   width: 200px;
   border-radius: 10px;

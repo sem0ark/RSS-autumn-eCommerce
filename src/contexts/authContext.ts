@@ -27,24 +27,32 @@ class AuthContext {
   );
 
   public readonly emailValidators = [
-    // Email address must be properly formatted (e.g., user@example.com).
     (text: string) =>
-      !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(text) &&
-      'Email address must be properly formatted (e.g., user@example.com)',
+      /^[A-Za-z0-9\-\@\.]+$/.test(text)
+        ? false
+        : 'Email must only contain letters (a-z), digits & symbols (@-.).',
+
     // Email address must not contain leading or trailing whitespace.
     (text: string) =>
-      (text.startsWith(' ') || text.endsWith(' ')) &&
-      'Email must not contain leading/trailing whitespace',
+      text.startsWith(' ') || text.endsWith(' ')
+        ? 'Email must not contain leading/trailing whitespace'
+        : false,
+    // Email address must be properly formatted (e.g., user@example.com).
+    (text: string) =>
+      /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(text)
+        ? false
+        : 'Email address must be properly formatted (e.g., user@example.com)',
   ];
 
   public readonly passwordValidators = [
     // Password must be at least 8 characters long.
     (text: string) =>
-      text.length < 8 && 'Password must be at least 8 characters long.',
+      text.length < 8 ? 'Password must be at least 8 characters long.' : false,
     // Password must contain at least one uppercase letter (A-Z).
     (text: string) =>
-      !/[A-Z]/g.test(text) &&
-      'Password must contain at least one uppercase letter (A-Z).',
+      /[A-Z]/g.test(text)
+        ? false
+        : 'Password must contain at least one uppercase letter (A-Z).',
     // Password must contain at least one lowercase letter (a-z).
     (text: string) =>
       !/[a-z]/g.test(text) &&
@@ -58,16 +66,15 @@ class AuthContext {
     (text: string) =>
       (text.startsWith(' ') || text.endsWith(' ')) &&
       'Password must not contain leading or trailing whitespace.',
+
+    (text: string) =>
+      /^[A-Za-z0-9\!\@\#\$\%\^\&\*]+$/.test(text)
+        ? false
+        : 'Password must only contain letters (a-z), digits and symbols (!@#$%^&*).',
   ];
 
   constructor() {
     debug('Initiating AuthContext');
-
-    this.userData.onChange((data) => {
-      if (data)
-        notificationContext.addSuccess(`Welcome, ${this.userName.get()}!`);
-      else notificationContext.addInformation(`Goodbye!`);
-    });
   }
 
   public async attemptLogin(email: string, password: string) {
@@ -75,6 +82,7 @@ class AuthContext {
 
     if (result.ok) {
       this.userData.set(result.body.customer);
+      notificationContext.addSuccess(`Welcome, ${this.userName.get()}!`);
       return Promise.resolve(true);
     }
 
@@ -82,6 +90,12 @@ class AuthContext {
       notificationContext.addError(message)
     );
     return Promise.resolve(false);
+  }
+
+  public async attemptLogout() {
+    notificationContext.addInformation(`Goodbye!`);
+    this.userData.set(null);
+    return Promise.resolve(true);
   }
 
   private formatName(data: CustomerDataReceived) {
