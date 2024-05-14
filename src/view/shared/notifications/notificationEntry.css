@@ -3,7 +3,7 @@
   width: 200px;
   border-radius: 10px;
 
-  height: 24px;
+  height: 30px;
 
   padding-left: 10px;
   padding-left: 10px;
@@ -16,18 +16,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .notification-container > .notification-entry:hover {
   height: unset;
   width: 300px;
-  min-height: 24px;
+  min-height: 30px;
   overflow: unset;
   text-overflow: ellipsis;
   word-break: break-all;
   white-space: unset;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .notification-entry.success {

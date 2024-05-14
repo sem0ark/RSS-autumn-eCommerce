@@ -316,7 +316,10 @@ class AuthConnector {
     const result = await this.requestSignUp(requestBody);
 
     if (result.ok) debug('Received signup result', result.body);
-    else debug('Sing Up Failed', result.errors);
+    else {
+      debug('Sing Up Failed', result.errors);
+      return result;
+    }
 
     const { email, password } = formData.user;
     return this.runSignInWorkflow(email, password);

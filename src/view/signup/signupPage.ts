@@ -12,7 +12,7 @@ import { Router } from '../../framework/routing/router';
 import { debug } from '../../framework/utilities/logging';
 
 const { pboolean, functional } = factories;
-const { form, div, h3, p, hidden } = htmlComponents;
+const { link, form, div, h3, p, hidden } = htmlComponents;
 const { submitButton, checkboxInput, labelled } = inputComponents;
 
 const formBlock = div.cls('form-block');
@@ -76,6 +76,10 @@ export const signupPage = new Page(() => {
         } else {
           debug('Attempt failed, form is not valid.');
         }
-      })
+      }),
+    div(
+      'Already have an account? ',
+      link('/login', 'Log in').cls('link-subtext')
+    ).cls('subtext')
   );
 }, 'Login | True Colors');
