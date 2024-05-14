@@ -82,4 +82,4 @@ export const signupPage = new Page(() => {
       link('/login', 'Log in').cls('link-subtext')
     ).cls('subtext')
   );
-}, 'Login | True Colors');
+}, 'Sign Up | True Colors');
