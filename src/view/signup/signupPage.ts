@@ -7,6 +7,8 @@ import { inputComponents } from '../shared/inputComponents';
 import { userDataForm } from './userDataForm';
 import { addressForm } from './addressForm';
 import { factories } from '../../framework/factories';
+import { authContext } from '../../contexts/authContext';
+import { Router } from '../../framework/routing/router';
 
 const { pboolean, functional } = factories;
 const { form, div, h3, p, hidden } = htmlComponents;
@@ -22,9 +24,12 @@ export const signupPage = new Page(() => {
       sameShippingAddress.set((e.target as HTMLInputElement).checked)
     );
 
-  const [userForm] = userDataForm('Main Information');
-  const [billingAddressForm] = addressForm('Billing Address');
-  const [shippingAddressForm] = addressForm('Shipping Address');
+  const [userForm, userFormValid, userFormValue] =
+    userDataForm('Main Information');
+  const [billingAddressForm, billingAddressFormValid, billingAddressValue] =
+    addressForm('Billing Address');
+  const [shippingAddressForm, shippingAddressFormValid, shippingAddressValue] =
+    addressForm('Shipping Address');
 
   return minimalLayout('Create an account')(
     form(
@@ -49,6 +54,23 @@ export const signupPage = new Page(() => {
       submitButton('Submit')
     )
       .cls('signup-page')
-      .onSubmit(() => {})
+      .onSubmit(() => {
+        if (
+          userFormValid.get() &&
+          billingAddressFormValid.get() &&
+          (shippingAddressFormValid.get() || sameShippingAddress.get())
+        ) {
+          authContext
+            .attemptSignUp({
+              user: userFormValue.get(),
+              sameShippingAddress: sameShippingAddress.get(),
+              billingAddress: billingAddressValue.get(),
+              shippingAddress: shippingAddressValue.get(),
+            })
+            .then(() => {
+              Router.navigateTo('/');
+            });
+        }
+      })
   );
 }, 'Login | True Colors');

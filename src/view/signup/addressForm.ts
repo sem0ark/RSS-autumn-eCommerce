@@ -24,7 +24,15 @@ export const addressForm = (
 ): [
   HTMLComponent,
   DependentProperty<[], boolean>,
-  DependentProperty<[], object>,
+  DependentProperty<
+    [],
+    {
+      country: string;
+      city: string;
+      postalCode: string;
+      streetName: string;
+    }
+  >,
 ] => {
   const [inputCityField, cityValid, cityValue] = validated(
     inputText(),
@@ -45,6 +53,8 @@ export const addressForm = (
 
   countryValue.onChange(() => {
     (inputPostalCodeField.getNode() as HTMLInputElement).value = '';
+    postalCodeValid.disable();
+    postalCodeValue.set('');
   });
 
   const [inputStreetField, streetValid, streetValue] = validated(
@@ -63,7 +73,7 @@ export const addressForm = (
     city: cityValue.get(),
     country: countryValue.get(),
     postalCode: postalCodeValue.get(),
-    street: streetValue.get(),
+    streetName: streetValue.get(),
   }));
 
   return [

@@ -33,8 +33,8 @@ export const userDataForm = (
   DependentProperty<
     [],
     {
-      first: string;
-      last: string;
+      firstName: string;
+      lastName: string;
       email: string;
       password: string;
       dateOfBirth: string;
@@ -84,8 +84,8 @@ export const userDataForm = (
   );
 
   const resultingData = pfunc(() => ({
-    first: firstNameValue.get(),
-    last: lastNameValue.get(),
+    firstName: firstNameValue.get(),
+    lastName: lastNameValue.get(),
     email: emailValue.get(),
     password: passwordValue.get(),
     dateOfBirth: dateOfBirthValue.get(),

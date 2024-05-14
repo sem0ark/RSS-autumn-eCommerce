@@ -29,13 +29,33 @@ export interface Address {
 
 export interface CustomerData {
   email: string;
+  password: string;
 
   firstName: string;
   lastName: string;
 
-  dateOfBirth: Date;
+  dateOfBirth: string;
   addresses: Address[];
 }
+
+export type FormData = {
+  user: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+  };
+  billingAddress: Address;
+} & (
+  | {
+      sameShippingAddress: false;
+      shippingAddress: Address;
+    }
+  | {
+      sameShippingAddress: true;
+    }
+);
 
 /**
  * Full information about the client after signing in.
@@ -160,12 +180,43 @@ class AuthConnector {
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerSingInResponse>(
-      ServerConnector.getAuthURL('me/login'),
+      ServerConnector.getAPIURL('me/login'),
       {
         ...this.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
       },
       { email, password }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   * Unauthorize the user.
+   */
+  public async requestLogout() {
+    delete this._tokenData;
+  }
+
+  /**
+   * Authorize the user.
+   * @param email - entered username from the form
+   * @param password - entered password from the form
+   * @returns Login information about the user
+   */
+  private async requestSignUp(userData: CustomerData) {
+    if (!this._tokenData?.accessToken)
+      throw new Error('Access token for sign up was not initialized.');
+
+    const result = await ServerConnector.post<CustomerSingInResponse>(
+      ServerConnector.getAPIURL('customers'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      userData
     );
 
     if (result.ok) return result;
@@ -210,27 +261,25 @@ class AuthConnector {
    * @returns Login information about the user
    */
   public async runSignUpWorkflow(
-    email: string,
-    password: string
+    formData: FormData
   ): Promise<APIResponse<CustomerSingInResponse>> {
-    debug('Trying to run login workflow.');
+    debug('Trying to run sign up workflow.');
 
-    if (!this._tokenData) {
-      const tokenResult = await this.requestLoginToken(email, password);
-      if (!tokenResult.ok) return tokenResult;
-
-      this.configureTokenData(tokenResult.body);
-    } else if (this._tokenData?.expirationDateMS > Date.now()) {
-      debug('Token already exists, but it is outdated.');
-      await this.requestTokenRefresh();
+    const addresses = [formData.billingAddress];
+    if (!formData.sameShippingAddress) {
+      addresses.push(formData.shippingAddress);
     }
 
-    const singInResult = await this.requestLoginSignIn(email, password);
+    const result = await this.requestSignUp({
+      ...formData.user,
+      addresses,
+    });
 
-    if (singInResult.ok) debug('Singed in successfully', singInResult.body);
-    else debug('Sing In Failed', singInResult.errors);
+    if (result.ok) debug('Received signup result', result.body);
+    else debug('Sing Up Failed', result.errors);
 
-    return singInResult;
+    const { email, password } = formData.user;
+    return this.runSignInWorkflow(email, password);
   }
 }
 
