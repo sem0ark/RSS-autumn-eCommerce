@@ -1,7 +1,7 @@
 type LoggingEntries = (object | string | number)[];
 
 const DEVMODE = true;
-const TRACEMODE = false;
+const TRACEMODE = true;
 
 const config = {
   logFunction: console.log,

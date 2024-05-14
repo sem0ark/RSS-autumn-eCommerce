@@ -4,6 +4,7 @@ import {
   FormData,
 } from '../data/authConnector';
 import { factories } from '../framework/factories';
+import { Storage } from '../framework/persistence/storage';
 import { debug } from '../framework/utilities/logging';
 import { notificationContext } from './notificationContext';
 
@@ -32,6 +33,22 @@ class AuthContext {
 
   constructor() {
     debug('Initiating AuthContext');
+    const storage = new Storage('AuthContext');
+    storage.registerProperty(this.userData);
+
+    if (this.userIsLoggedIn.get() && !authConnector.isLoggedIn()) {
+      this.userData.set(null);
+    }
+
+    if (this.userIsLoggedIn.get() || authConnector.isLoggedIn()) {
+      authConnector.runReSignInWorkflow().catch(() => {
+        notificationContext.addError('Session expired');
+        this.userData.set(null);
+        return Promise.resolve();
+      });
+    } else {
+      this.userData.set(null);
+    }
   }
 
   public async attemptLogin(email: string, password: string) {

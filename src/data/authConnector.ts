@@ -1,11 +1,13 @@
-import { debug, error } from '../framework/utilities/logging';
 import { config } from '../utils/config';
+import { debug, error } from '../framework/utilities/logging';
 import {
   APIResponse,
   ServerConnector,
   Token,
   TokenType,
 } from './serverConnector';
+import { factories } from '../framework/factories';
+import { Storage } from '../framework/persistence/storage';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -100,27 +102,34 @@ interface CustomerSingInResponse {
 }
 
 class AuthConnector {
-  private _tokenData?: {
-    accessToken: Token;
-    /**
-     * Date of expiration in milliseconds
-     */
-    expirationDateMS: number;
-    refreshToken: Token;
-    isAnonymous: boolean;
-  };
+  constructor(
+    private _tokenData = factories.property<{
+      accessToken: Token;
+      refreshToken: Token;
+      /**
+       * Date of expiration in milliseconds
+       */
+      expirationDateMS: number;
+      isAnonymous: boolean;
+    } | null>(null)
+  ) {
+    const storage = new Storage('AuthConnector');
+    storage.registerProperty(_tokenData);
+  }
 
   /**
    * @returns If access token is available.
    */
   public isLoggedIn(): boolean {
-    return !!this._tokenData;
+    const token = this._tokenData.get();
+    return token !== null && !token.isAnonymous && !!token.refreshToken;
   }
 
   public getAuthBearerHeaders() {
-    if (!this._tokenData?.accessToken)
+    const token = this._tokenData.get();
+    if (!token)
       throw new Error('Access token for sign in was not initialized.');
-    return ServerConnector.makeBearerAuthHeader(this._tokenData.accessToken);
+    return ServerConnector.makeBearerAuthHeader(token.accessToken);
   }
 
   public getAuthBasicHeaders() {
@@ -131,22 +140,26 @@ class AuthConnector {
     responseData: LoginTokenResponse,
     isAnonymous = false
   ) {
-    this._tokenData = {
+    this._tokenData.set({
       accessToken: responseData.access_token,
       refreshToken: responseData.refresh_token,
-      expirationDateMS: Date.now() + responseData.expires_in,
+      expirationDateMS: Date.now() + responseData.expires_in * 1000,
       isAnonymous,
-    };
+    });
   }
 
   public async requestTokenRefresh() {
+    const token = this._tokenData.get();
+    if (!token)
+      throw new Error('Access token for refresh  was not initialized.');
+
     const result = await ServerConnector.post<LoginTokenResponse>(
       ServerConnector.getOAuthURL('customers/token'),
       {
         ...this.getAuthBasicHeaders(),
         ...ServerConnector.formDataHeaders,
       },
-      `grant_type=refresh_token&refresh_token=${this._tokenData?.refreshToken}`
+      `grant_type=refresh_token&refresh_token=${token.refreshToken}`
     );
 
     if (result.ok) {
@@ -203,7 +216,8 @@ class AuthConnector {
    * @returns Login information about the user
    */
   private async requestLoginSignIn(email: string, password: string) {
-    if (!this._tokenData?.accessToken)
+    const token = this._tokenData.get();
+    if (!token)
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerSingInResponse>(
@@ -224,7 +238,7 @@ class AuthConnector {
    * Unauthorize the user.
    */
   public async requestLogout() {
-    delete this._tokenData;
+    this._tokenData.set(null);
   }
 
   /**
@@ -234,7 +248,8 @@ class AuthConnector {
    * @returns Login information about the user
    */
   private async requestSignUp(userData: CustomerData) {
-    if (!this._tokenData?.accessToken)
+    const token = this._tokenData.get();
+    if (!token)
       throw new Error('Access token for sign up was not initialized.');
 
     const result = await ServerConnector.post<CustomerSingInResponse>(
@@ -262,13 +277,14 @@ class AuthConnector {
     password: string
   ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run login workflow.');
+    const token = this._tokenData.get();
 
-    if (!this._tokenData || this._tokenData.isAnonymous) {
+    if (!token || token.isAnonymous) {
       const tokenResult = await this.requestLoginToken(email, password);
       if (!tokenResult.ok) return tokenResult;
 
       this.configureTokenData(tokenResult.body);
-    } else if (this._tokenData.expirationDateMS < Date.now()) {
+    } else if (token.expirationDateMS < Date.now() && !!token.refreshToken) {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     }
@@ -282,6 +298,22 @@ class AuthConnector {
   }
 
   /**
+   * Attempt to re-authorize the user.
+   * @returns void or error on validation failure
+   */
+  public async runReSignInWorkflow(): Promise<void> {
+    debug('Trying to run re-login workflow.');
+    const token = this._tokenData.get();
+    if (!token || token.isAnonymous)
+      throw new Error('Access token for sign in was not initialized.');
+
+    if (token.expirationDateMS < Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      return this.requestTokenRefresh();
+    }
+  }
+
+  /**
    * Authorize the user.
    * @param username - entered username from the form
    * @param password - entered password from the form
@@ -291,12 +323,13 @@ class AuthConnector {
     formData: FormData
   ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run sign up workflow.');
+    const token = this._tokenData.get();
 
-    if (!this._tokenData || !this._tokenData.isAnonymous) {
+    if (!token || !token.isAnonymous) {
       const tokenResult = await this.requestAnonymousToken();
       if (!tokenResult.ok) return tokenResult;
       this.configureTokenData(tokenResult.body, true);
-    } else if (this._tokenData.expirationDateMS < Date.now()) {
+    } else if (token.expirationDateMS < Date.now()) {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     }
