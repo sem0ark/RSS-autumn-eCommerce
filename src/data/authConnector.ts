@@ -34,6 +34,9 @@ export interface CustomerData {
   firstName: string;
   lastName: string;
 
+  defaultShippingAddress: number;
+  defaultBillingAddress: number;
+
   dateOfBirth: string;
   addresses: Address[];
 }
@@ -104,6 +107,7 @@ class AuthConnector {
      */
     expirationDateMS: number;
     refreshToken: Token;
+    isAnonymous: boolean;
   };
 
   /**
@@ -123,11 +127,15 @@ class AuthConnector {
     return ServerConnector.makeBasicAuthHeader();
   }
 
-  private configureTokenData(responseData: LoginTokenResponse) {
+  private configureTokenData(
+    responseData: LoginTokenResponse,
+    isAnonymous = false
+  ) {
     this._tokenData = {
       accessToken: responseData.access_token,
       refreshToken: responseData.refresh_token,
       expirationDateMS: Date.now() + responseData.expires_in,
+      isAnonymous,
     };
   }
 
@@ -166,6 +174,25 @@ class AuthConnector {
 
     if (result.ok) return result;
     error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   * Create an anonymous token
+   * @returns Login information about the user
+   */
+  private async requestAnonymousToken() {
+    const result = await ServerConnector.post<LoginTokenResponse>(
+      ServerConnector.getOAuthURL('anonymous/token'),
+      {
+        ...this.getAuthBasicHeaders(),
+        ...ServerConnector.formDataHeaders,
+      },
+      `grant_type=client_credentials&scope=${config.VITE_CTP_SCOPES}`
+    );
+
+    if (result.ok) return result;
+    error('Failed to request anonymous token data', result.errors);
     return result;
   }
 
@@ -211,7 +238,7 @@ class AuthConnector {
       throw new Error('Access token for sign up was not initialized.');
 
     const result = await ServerConnector.post<CustomerSingInResponse>(
-      ServerConnector.getAPIURL('customers'),
+      ServerConnector.getAPIURL('me/signup'),
       {
         ...this.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
@@ -236,7 +263,7 @@ class AuthConnector {
   ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run login workflow.');
 
-    if (!this._tokenData) {
+    if (!this._tokenData || this._tokenData.isAnonymous) {
       const tokenResult = await this.requestLoginToken(email, password);
       if (!tokenResult.ok) return tokenResult;
 
@@ -265,15 +292,28 @@ class AuthConnector {
   ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run sign up workflow.');
 
-    const addresses = [formData.billingAddress];
-    if (!formData.sameShippingAddress) {
-      addresses.push(formData.shippingAddress);
+    if (!this._tokenData || !this._tokenData.isAnonymous) {
+      const tokenResult = await this.requestAnonymousToken();
+      if (!tokenResult.ok) return tokenResult;
+      this.configureTokenData(tokenResult.body, true);
+    } else if (this._tokenData.expirationDateMS < Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      await this.requestTokenRefresh();
     }
 
-    const result = await this.requestSignUp({
+    const requestBody: CustomerData = {
       ...formData.user,
-      addresses,
-    });
+      addresses: [formData.billingAddress],
+      defaultBillingAddress: 0,
+      defaultShippingAddress: 0,
+    };
+
+    if (!formData.sameShippingAddress) {
+      requestBody.addresses.push(formData.shippingAddress);
+      requestBody.defaultShippingAddress = 1;
+    }
+
+    const result = await this.requestSignUp(requestBody);
 
     if (result.ok) debug('Received signup result', result.body);
     else debug('Sing Up Failed', result.errors);

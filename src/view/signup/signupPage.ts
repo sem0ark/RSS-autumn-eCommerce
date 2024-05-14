@@ -9,6 +9,7 @@ import { addressForm } from './addressForm';
 import { factories } from '../../framework/factories';
 import { authContext } from '../../contexts/authContext';
 import { Router } from '../../framework/routing/router';
+import { debug } from '../../framework/utilities/logging';
 
 const { pboolean, functional } = factories;
 const { form, div, h3, p, hidden } = htmlComponents;
@@ -55,6 +56,8 @@ export const signupPage = new Page(() => {
     )
       .cls('signup-page')
       .onSubmit(() => {
+        debug('Attempting to sign up.');
+
         if (
           userFormValid.get() &&
           billingAddressFormValid.get() &&
@@ -67,9 +70,11 @@ export const signupPage = new Page(() => {
               billingAddress: billingAddressValue.get(),
               shippingAddress: shippingAddressValue.get(),
             })
-            .then(() => {
-              Router.navigateTo('/');
+            .then((success) => {
+              if (success) Router.navigateTo('/');
             });
+        } else {
+          debug('Attempt failed, form is not valid.');
         }
       })
   );
