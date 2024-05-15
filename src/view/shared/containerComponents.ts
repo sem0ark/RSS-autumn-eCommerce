@@ -23,6 +23,11 @@ const containerModalColumn = container.cls(
   'container-components-modal-column'
 );
 
+const containerModalRow = container.cls(
+  'container-components-modal',
+  'container-components-modal-row'
+);
+
 const containerOuter = container.cls('container-components-outer');
 const containerMaxWidth = container.cls('container-components-max-width');
 
@@ -55,6 +60,7 @@ export const containerComponents = {
   containerCenterRoundEdges,
   containerModalCenter,
   containerModalColumn,
+  containerModalRow,
   containerOuter,
   containerMaxWidth,
   containerFlexRow,

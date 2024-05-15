@@ -67,8 +67,8 @@ export class ObservableList<T extends PropertyValueType> {
     const property = new Property<T>('', value);
 
     this._properties.splice(index, 0, property);
-    this.insertHandlers.forEach((h) => h(property, index));
     this.pLength.set(this._properties.length);
+    this.insertHandlers.forEach((h) => h(property, index));
 
     return property;
   }
@@ -77,16 +77,16 @@ export class ObservableList<T extends PropertyValueType> {
     const property = new Property<T>(`${this.name}_listProperty`, value);
 
     this._properties.push(property);
-    this.pushHandlers.forEach((h) => h(property, this._properties.length - 1));
     this.pLength.set(this._properties.length);
+    this.pushHandlers.forEach((h) => h(property, this._properties.length - 1));
 
     return property;
   }
 
   public remove(index: number) {
     this.removeHandlers.forEach((h) => h(index));
-    this._properties.splice(index, 1);
     this.pLength.set(this._properties.length);
+    this._properties.splice(index, 1);
   }
 
   public removeByProperty(property: Property<T>) {
@@ -97,6 +97,15 @@ export class ObservableList<T extends PropertyValueType> {
   public removeByValue(value: T) {
     const index = this._properties.map((p) => p.get()).indexOf(value);
     if (index !== -1) this.remove(index);
+  }
+
+  public indexOf(value: T) {
+    const index = this._properties.map((p) => p.get()).indexOf(value);
+    return index;
+  }
+
+  public includes(value: T) {
+    return this.indexOf(value) !== -1;
   }
 
   public clear() {

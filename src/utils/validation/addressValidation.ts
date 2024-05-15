@@ -346,10 +346,10 @@ export const postalCodeValidators = (selectedCountry: Property<string>) => [
     if (!regex)
       return defaultPostalCodeRegex.test(text)
         ? false
-        : 'Please, use a correct postal code format (found only default NNNNNN)';
+        : 'Please, use a correct postal code format (default NNNNNN)';
 
     return regex.test(text)
       ? false
-      : `Please, use a correct postal code format: ${regex.toString()}`;
+      : `Please, use a correct postal code format`;
   },
 ];
