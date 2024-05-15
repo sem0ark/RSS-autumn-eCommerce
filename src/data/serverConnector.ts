@@ -41,7 +41,7 @@ export class ServerConnector {
     return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
   }
 
-  public static getAuthURL(postfix = '') {
+  public static getAPIURL(postfix = '') {
     return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
   }
 

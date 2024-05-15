@@ -23,11 +23,17 @@ class NotificationContext {
     });
 
     this.notifications.onPush(() => {
+      // don't add a new notification if it is the same as already existing one
+      // if (this.notifications.includes(prop.get())) {
+      //   this.notifications.removeByProperty(prop);
+      //   return;
+      // }
+
       if (this.notifications.length > 5) this.removeLastNotification();
       else
         setTimeout(() => {
           this.removeLastNotification();
-        }, 500000);
+        }, 10000);
     });
   }
 

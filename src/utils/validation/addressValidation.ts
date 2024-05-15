@@ -1,4 +1,8 @@
-export const countryData = [
+import { Property } from '../../framework/reactive_properties/property';
+
+const defaultPostalCodeRegex = /^\d{6}$/;
+
+const countries = [
   { code: 'AD', name: 'Andorra', regex: /^AD\d{3}$/ },
   { code: 'AE', name: 'United Arab Emirates' },
   { code: 'AF', name: 'Afghanistan' },
@@ -310,4 +314,42 @@ export const countryData = [
   { code: 'ZA', name: 'South Africa', regex: /^\d{4}$/ },
   { code: 'ZM', name: 'Zambia', regex: /^\d{5}$/ },
   { code: 'ZW', name: 'Zimbabwe' },
+];
+
+export const countryData: Map<
+  string,
+  {
+    code: string;
+    name: string;
+    regex?: RegExp;
+  }
+> = new Map(countries.map((v) => [v.code, v]));
+
+export const streetValidators = [
+  (text: string) =>
+    /^[a-z0-9]/i.test(text) ? false : 'Must contain at least one character',
+];
+
+export const cityValidators = [
+  (text: string) =>
+    /^[a-z][a-z ,.'-]*$/i.test(text)
+      ? false
+      : 'Must contain at least one character and no special characters or numbers',
+];
+
+export const postalCodeValidators = (selectedCountry: Property<string>) => [
+  (text: string) => {
+    const code = selectedCountry.get();
+    if (!code) return 'Please, select a country first';
+
+    const regex = countryData.get(code)?.regex;
+    if (!regex)
+      return defaultPostalCodeRegex.test(text)
+        ? false
+        : 'Please, use a correct postal code format (default NNNNNN)';
+
+    return regex.test(text)
+      ? false
+      : `Please, use a correct postal code format`;
+  },
 ];

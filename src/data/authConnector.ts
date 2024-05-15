@@ -1,11 +1,13 @@
-import { debug, error } from '../framework/utilities/logging';
 import { config } from '../utils/config';
+import { debug, error } from '../framework/utilities/logging';
 import {
   APIResponse,
   ServerConnector,
   Token,
   TokenType,
 } from './serverConnector';
+import { factories } from '../framework/factories';
+import { Storage } from '../framework/persistence/storage';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -29,13 +31,36 @@ export interface Address {
 
 export interface CustomerData {
   email: string;
+  password: string;
 
   firstName: string;
   lastName: string;
 
-  dateOfBirth: Date;
+  defaultShippingAddress: number;
+  defaultBillingAddress: number;
+
+  dateOfBirth: string;
   addresses: Address[];
 }
+
+export type FormData = {
+  user: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+  };
+  billingAddress: Address;
+} & (
+  | {
+      sameShippingAddress: false;
+      shippingAddress: Address;
+    }
+  | {
+      sameShippingAddress: true;
+    }
+);
 
 /**
  * Full information about the client after signing in.
@@ -77,48 +102,64 @@ interface CustomerSingInResponse {
 }
 
 class AuthConnector {
-  private _tokenData?: {
-    accessToken: Token;
-    /**
-     * Date of expiration in milliseconds
-     */
-    expirationDateMS: number;
-    refreshToken: Token;
-  };
+  constructor(
+    private _tokenData = factories.property<{
+      accessToken: Token;
+      refreshToken: Token;
+      /**
+       * Date of expiration in milliseconds
+       */
+      expirationDateMS: number;
+      isAnonymous: boolean;
+    } | null>(null)
+  ) {
+    const storage = new Storage('AuthConnector');
+    storage.registerProperty(_tokenData);
+  }
 
   /**
    * @returns If access token is available.
    */
   public isLoggedIn(): boolean {
-    return !!this._tokenData;
+    const token = this._tokenData.get();
+    return token !== null && !token.isAnonymous && !!token.refreshToken;
   }
 
   public getAuthBearerHeaders() {
-    if (!this._tokenData?.accessToken)
+    const token = this._tokenData.get();
+    if (!token)
       throw new Error('Access token for sign in was not initialized.');
-    return ServerConnector.makeBearerAuthHeader(this._tokenData.accessToken);
+    return ServerConnector.makeBearerAuthHeader(token.accessToken);
   }
 
   public getAuthBasicHeaders() {
     return ServerConnector.makeBasicAuthHeader();
   }
 
-  private configureTokenData(responseData: LoginTokenResponse) {
-    this._tokenData = {
+  private configureTokenData(
+    responseData: LoginTokenResponse,
+    isAnonymous = false
+  ) {
+    this._tokenData.set({
       accessToken: responseData.access_token,
       refreshToken: responseData.refresh_token,
-      expirationDateMS: Date.now() + responseData.expires_in,
-    };
+      expirationDateMS: Date.now() + responseData.expires_in * 1000,
+      isAnonymous,
+    });
   }
 
   public async requestTokenRefresh() {
+    const token = this._tokenData.get();
+    if (!token)
+      throw new Error('Access token for refresh  was not initialized.');
+
     const result = await ServerConnector.post<LoginTokenResponse>(
       ServerConnector.getOAuthURL('customers/token'),
       {
         ...this.getAuthBasicHeaders(),
         ...ServerConnector.formDataHeaders,
       },
-      `grant_type=refresh_token&refresh_token=${this._tokenData?.refreshToken}`
+      `grant_type=refresh_token&refresh_token=${token.refreshToken}`
     );
 
     if (result.ok) {
@@ -150,22 +191,74 @@ class AuthConnector {
   }
 
   /**
+   * Create an anonymous token
+   * @returns Login information about the user
+   */
+  private async requestAnonymousToken() {
+    const result = await ServerConnector.post<LoginTokenResponse>(
+      ServerConnector.getOAuthURL('anonymous/token'),
+      {
+        ...this.getAuthBasicHeaders(),
+        ...ServerConnector.formDataHeaders,
+      },
+      `grant_type=client_credentials&scope=${config.VITE_CTP_SCOPES}`
+    );
+
+    if (result.ok) return result;
+    error('Failed to request anonymous token data', result.errors);
+    return result;
+  }
+
+  /**
    * Authorize the user.
    * @param email - entered username from the form
    * @param password - entered password from the form
    * @returns Login information about the user
    */
   private async requestLoginSignIn(email: string, password: string) {
-    if (!this._tokenData?.accessToken)
+    const token = this._tokenData.get();
+    if (!token)
       throw new Error('Access token for sign in was not initialized.');
 
     const result = await ServerConnector.post<CustomerSingInResponse>(
-      ServerConnector.getAuthURL('me/login'),
+      ServerConnector.getAPIURL('me/login'),
       {
         ...this.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
       },
       { email, password }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   * Unauthorize the user.
+   */
+  public async requestLogout() {
+    this._tokenData.set(null);
+  }
+
+  /**
+   * Authorize the user.
+   * @param email - entered username from the form
+   * @param password - entered password from the form
+   * @returns Login information about the user
+   */
+  private async requestSignUp(userData: CustomerData) {
+    const token = this._tokenData.get();
+    if (!token)
+      throw new Error('Access token for sign up was not initialized.');
+
+    const result = await ServerConnector.post<CustomerSingInResponse>(
+      ServerConnector.getAPIURL('me/signup'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      userData
     );
 
     if (result.ok) return result;
@@ -184,13 +277,14 @@ class AuthConnector {
     password: string
   ): Promise<APIResponse<CustomerSingInResponse>> {
     debug('Trying to run login workflow.');
+    const token = this._tokenData.get();
 
-    if (!this._tokenData) {
+    if (!token || token.isAnonymous) {
       const tokenResult = await this.requestLoginToken(email, password);
       if (!tokenResult.ok) return tokenResult;
 
       this.configureTokenData(tokenResult.body);
-    } else if (this._tokenData.expirationDateMS < Date.now()) {
+    } else if (token.expirationDateMS < Date.now() && !!token.refreshToken) {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     }
@@ -204,33 +298,64 @@ class AuthConnector {
   }
 
   /**
+   * Attempt to re-authorize the user.
+   * @returns void or error on validation failure
+   */
+  public async runReSignInWorkflow(): Promise<void> {
+    debug('Trying to run re-login workflow.');
+    const token = this._tokenData.get();
+    if (!token || token.isAnonymous)
+      throw new Error('Access token for sign in was not initialized.');
+
+    if (token.expirationDateMS < Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      return this.requestTokenRefresh();
+    }
+  }
+
+  /**
    * Authorize the user.
    * @param username - entered username from the form
    * @param password - entered password from the form
    * @returns Login information about the user
    */
   public async runSignUpWorkflow(
-    email: string,
-    password: string
+    formData: FormData
   ): Promise<APIResponse<CustomerSingInResponse>> {
-    debug('Trying to run login workflow.');
+    debug('Trying to run sign up workflow.');
+    const token = this._tokenData.get();
 
-    if (!this._tokenData) {
-      const tokenResult = await this.requestLoginToken(email, password);
+    if (!token || !token.isAnonymous) {
+      const tokenResult = await this.requestAnonymousToken();
       if (!tokenResult.ok) return tokenResult;
-
-      this.configureTokenData(tokenResult.body);
-    } else if (this._tokenData?.expirationDateMS > Date.now()) {
+      this.configureTokenData(tokenResult.body, true);
+    } else if (token.expirationDateMS < Date.now()) {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     }
 
-    const singInResult = await this.requestLoginSignIn(email, password);
+    const requestBody: CustomerData = {
+      ...formData.user,
+      addresses: [formData.billingAddress],
+      defaultBillingAddress: 0,
+      defaultShippingAddress: 0,
+    };
 
-    if (singInResult.ok) debug('Singed in successfully', singInResult.body);
-    else debug('Sing In Failed', singInResult.errors);
+    if (!formData.sameShippingAddress) {
+      requestBody.addresses.push(formData.shippingAddress);
+      requestBody.defaultShippingAddress = 1;
+    }
 
-    return singInResult;
+    const result = await this.requestSignUp(requestBody);
+
+    if (result.ok) debug('Received signup result', result.body);
+    else {
+      debug('Sing Up Failed', result.errors);
+      return result;
+    }
+
+    const { email, password } = formData.user;
+    return this.runSignInWorkflow(email, password);
   }
 }
 

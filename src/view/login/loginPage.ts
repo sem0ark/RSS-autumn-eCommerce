@@ -27,7 +27,7 @@ export const loginPage = new Page(() => {
       loginForm(),
       div(
         'Not registered yet? ',
-        link('/signup', 'Create an account').cls('link-subtext')
+        link('/login/signup', 'Create an account').cls('link-subtext')
       ).cls('subtext')
     )
   );
