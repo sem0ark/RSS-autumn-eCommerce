@@ -13,7 +13,7 @@ import {
   passwordValidators,
 } from '../../utils/validation/userDataValidation';
 
-const { form, div, p, hidden } = htmlComponents;
+const { form, div, p } = htmlComponents;
 const { functional, pboolean } = factories;
 const {
   buttonSecondary,
@@ -44,18 +44,17 @@ const formChange = (
 
     functional(() =>
       !changing.get()
-        ? buttonSecondary('Edit')
-            .cls('edit-button')
-            .onClick(() => changing.enable(), true)
-        : buttonSecondary('Submit').attr('type', 'submit').cls('edit-button')
-    ),
-
-    functional(() =>
-      !changing.get()
-        ? hidden()
-        : buttonSecondary('Cancel')
-            .cls('cancel-button')
-            .onClick(() => changing.disable())
+        ? div(
+            buttonSecondary('Edit')
+              .cls('edit-button')
+              .onClick(() => changing.enable(), true)
+          ).cls('button-container')
+        : div(
+            buttonSecondary('Submit').attr('type', 'submit').cls('edit-button'),
+            buttonSecondary('Cancel')
+              .cls('cancel-button')
+              .onClick(() => changing.disable())
+          ).cls('button-container')
     )
   ).cls('form-entry');
 };
@@ -118,14 +117,35 @@ export const userData = () => {
       'Password',
       () => '********',
       div(
-        inputOldPasswordField.propAttr(showPassword, 'type', (show) =>
-          show ? 'text' : 'password'
+        labelled(
+          'Old Password',
+          inputOldPasswordField.propAttr(showPassword, 'type', (show) =>
+            show ? 'text' : 'password'
+          ),
+          'old-password',
+          {
+            required: true,
+          }
         ),
-        inputNewPasswordField.propAttr(showPassword, 'type', (show) =>
-          show ? 'text' : 'password'
+        labelled(
+          'New Password',
+          inputNewPasswordField.propAttr(showPassword, 'type', (show) =>
+            show ? 'text' : 'password'
+          ),
+          'new-password',
+          {
+            required: true,
+          }
         ),
-        inputReconfirmPasswordField.propAttr(showPassword, 'type', (show) =>
-          show ? 'text' : 'password'
+        labelled(
+          'Confirm Password',
+          inputReconfirmPasswordField.propAttr(showPassword, 'type', (show) =>
+            show ? 'text' : 'password'
+          ),
+          'confirm-password',
+          {
+            required: true,
+          }
         ),
         labelled('Show password', checkboxShowPasswordField, 'show-password', {
           name: 'show password',

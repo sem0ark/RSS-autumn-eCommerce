@@ -100,9 +100,11 @@
 
   .sidebar-layout-aside > * {
     opacity: 0;
+    pointer-events: none;
   }
 
   .sidebar-layout-aside.active > * {
     opacity: 1;
+    pointer-events: unset;
   }
 }

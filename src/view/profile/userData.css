@@ -38,6 +38,12 @@
   font-size: 18px;
 }
 
+.profile-page .user-data-form .form-entry .button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 .profile-page .user-data-form .form-entry .edit-button {
   font-size: 18px;
   padding: 0 10px;

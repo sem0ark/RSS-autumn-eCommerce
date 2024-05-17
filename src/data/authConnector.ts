@@ -8,6 +8,7 @@ import {
 } from './serverConnector';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
+import { ProfileChangeAction } from './fieldEditBuilder';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -272,6 +273,68 @@ class AuthConnector {
   }
 
   /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param actions list of actions for updating the client, see FieldEditBuilder
+   * @returns Updated information about the user
+   */
+  private async requestProfileUpdate(
+    userVersion: number,
+    actions: ProfileChangeAction
+  ) {
+    const token = this._tokenData.get();
+    if (!token) throw new Error('Access token  was not initialized.');
+
+    const result = await ServerConnector.post<CustomerSingInResponse>(
+      ServerConnector.getAPIURL('me'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      {
+        version: userVersion,
+        actions,
+      }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param actions list of actions for updating the client, see FieldEditBuilder
+   * @returns Updated information about the user
+   */
+  private async requestPasswordUpdate(
+    userVersion: number,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    const token = this._tokenData.get();
+    if (!token) throw new Error('Access token  was not initialized.');
+
+    const result = await ServerConnector.post<CustomerSingInResponse>(
+      ServerConnector.getAPIURL('me/password'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      {
+        version: userVersion,
+        currentPassword,
+        newPassword,
+      }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
    * Authorize the user.
    * @param username - entered username from the form
    * @param password - entered password from the form
@@ -297,7 +360,7 @@ class AuthConnector {
     const singInResult = await this.requestLoginSignIn(email, password);
 
     if (singInResult.ok) debug('Singed in successfully', singInResult.body);
-    else debug('Sing In Failed', singInResult.errors);
+    else error('Sing In Failed', singInResult.errors);
 
     return singInResult;
   }
@@ -356,7 +419,7 @@ class AuthConnector {
 
     if (result.ok) debug('Received signup result', result.body);
     else {
-      debug('Sing Up Failed', result.errors);
+      error('Sing Up Failed', result.errors);
       return result;
     }
 
