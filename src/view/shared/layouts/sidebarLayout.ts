@@ -17,7 +17,7 @@ export const sidebarLayout =
       h1(heading).cls('sidebar-layout-header'),
       containerMaxWidth.cls('sidebar-layout')(
         sideBlock.cls('sidebar-layout-aside'),
-        mainBlock.cls('sidebar-layout-aside')
+        mainBlock.cls('sidebar-layout-main')
       ),
       footerComponent(),
       notificationModal()

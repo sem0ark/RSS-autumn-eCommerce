@@ -11,6 +11,9 @@
   --subtext: #666666;
   --border-dark: #000000;
   --background-body: #ffffff;
+
+  --background-light-darker: #fafafa;
+  --background-light: #fff;
   --background-primary: #ffcdc0;
   --background-primary-darker: #d4a599;
 
