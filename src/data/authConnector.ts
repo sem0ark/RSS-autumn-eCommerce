@@ -122,7 +122,7 @@ class AuthConnector {
    */
   public isLoggedIn(): boolean {
     const token = this._tokenData.get();
-    return token !== null && !token.isAnonymous && !!token.refreshToken;
+    return token !== null && !token.isAnonymous;
   }
 
   public getAuthBearerHeaders() {
@@ -152,6 +152,11 @@ class AuthConnector {
     const token = this._tokenData.get();
     if (!token)
       throw new Error('Access token for refresh  was not initialized.');
+
+    if (!token.refreshToken) {
+      error('Failed to find refreshToken!');
+      return;
+    }
 
     const result = await ServerConnector.post<LoginTokenResponse>(
       ServerConnector.getOAuthURL('customers/token'),
@@ -304,6 +309,7 @@ class AuthConnector {
   public async runReSignInWorkflow(): Promise<void> {
     debug('Trying to run re-login workflow.');
     const token = this._tokenData.get();
+
     if (!token || token.isAnonymous)
       throw new Error('Access token for sign in was not initialized.');
 
