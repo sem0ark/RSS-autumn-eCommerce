@@ -38,16 +38,18 @@ class AuthContext {
 
     if (!authConnector.isLoggedIn()) {
       debug('!authConnector.isLoggedIn()');
-      this.userData.set(null);
+      this.attemptLogout();
     }
 
     if (this.userIsLoggedIn.get() || authConnector.isLoggedIn()) {
       debug('this.userIsLoggedIn.get() || authConnector.isLoggedIn()');
       authConnector.runReSignInWorkflow().catch(() => {
         notificationContext.addError('Session expired');
-        this.userData.set(null);
+        this.attemptLogout();
         return Promise.resolve();
       });
+    } else {
+      this.attemptLogout();
     }
   }
 
