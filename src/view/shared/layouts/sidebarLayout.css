@@ -18,8 +18,9 @@
 
 .sidebar-layout-aside {
   background-color: var(--background-light);
-
   transition: all ease-in-out 0.5s;
+
+  box-shadow: 4px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-layout-aside > * {
@@ -58,9 +59,11 @@
 
   .sidebar-layout-main {
     width: 100%;
+    margin-left: 40px;
   }
 
   .sidebar-layout-aside {
+    z-index: 3;
     position: absolute;
     width: 50px;
     border-radius: 0 20px 20px 0;
@@ -74,11 +77,10 @@
     border-top: 5px solid var(--primary-color);
     border-right: 5px solid var(--primary-color);
     border-bottom: 5px solid var(--primary-color);
+    cursor: pointer;
   }
 
-  .sidebar-layout-aside.active,
-  .sidebar-layout-aside:hover,
-  .sidebar-layout-aside:active {
+  .sidebar-layout-aside.active {
     width: 300px;
     padding: unset;
     margin: unset;
@@ -88,6 +90,7 @@
     border-top: 0px solid var(--background-light);
     border-right: 0px solid var(--background-light);
     border-bottom: 0px solid var(--background-light);
+    cursor: unset;
   }
 
   .sidebar-layout {
@@ -99,9 +102,7 @@
     opacity: 0;
   }
 
-  .sidebar-layout-aside.active > *,
-  .sidebar-layout-aside:hover > *,
-  .sidebar-layout-aside:active > * {
+  .sidebar-layout-aside.active > * {
     opacity: 1;
   }
 }

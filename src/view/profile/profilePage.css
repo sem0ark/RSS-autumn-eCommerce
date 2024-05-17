@@ -5,14 +5,16 @@ aside.profile-page .menu {
 .profile-page h2 {
   font-weight: 800;
   font-size: 28px;
+  margin: 20px 0;
 }
 
 .profile-page h3 {
   font-weight: 800;
   font-size: 22px;
+  margin: 20px 0;
 }
 
 .profile-page p {
   font-weight: 800;
-  font-weight: 14px;
+  font-size: 14px;
 }

@@ -33,28 +33,33 @@ const validated = (
   const propValid = factories.pboolean(false);
   const propValue = factories.property<string>('');
 
+  const updateValidity = (n: EventTarget | null) => {
+    if (n === null) return;
+
+    const inputNode = n as HTMLInputElement;
+    const entry = inputNode.value;
+    propValue.set(entry);
+
+    for (const validator of validators) {
+      const error = validator(entry, inputNode);
+
+      if (error && typeof error === 'string') {
+        inputNode.setCustomValidity(error);
+        inputNode.reportValidity();
+        propValid.disable();
+        return;
+      }
+    }
+
+    inputNode.setCustomValidity('');
+    propValid.enable();
+  };
+
   const validatedComponent = inputComponent
     .cls('input-components-validated')
     .propClass(propValid, (valid) => (valid ? ['success'] : ['error']))
-    .onInput((e) => {
-      const inputNode = e.target as HTMLInputElement;
-      const entry = inputNode.value;
-      propValue.set(entry);
-
-      for (const validator of validators) {
-        const error = validator(entry, inputNode);
-
-        if (error && typeof error === 'string') {
-          inputNode.setCustomValidity(error);
-          inputNode.reportValidity();
-          propValid.disable();
-          return;
-        }
-      }
-
-      inputNode.setCustomValidity('');
-      propValid.enable();
-    });
+    .onRender(updateValidity)
+    .onInput((e) => updateValidity(e.target));
 
   return [validatedComponent, propValid, propValue];
 };

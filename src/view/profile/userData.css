@@ -1,0 +1,77 @@
+.profile-page .user-data-form .form-entry {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  height: fit-content;
+  min-height: 60px;
+
+  align-items: flex-end;
+  padding: 10px 0;
+
+  padding-top: 30px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-weight: 400;
+}
+
+.profile-page .user-data-form .form-entry input {
+  max-height: 40px;
+  width: 100%;
+}
+
+.profile-page .user-data-form .form-entry:not(:first-child) {
+  border-top: 1px solid black;
+}
+
+.profile-page .user-data-form .form-entry .form-heading {
+  font-weight: 600;
+  position: absolute;
+  top: 5px;
+  left: 0;
+}
+
+.profile-page .user-data-form .form-entry .form-value {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.profile-page .user-data-form .form-entry .edit-button {
+  font-size: 18px;
+  padding: 0 10px;
+}
+
+.profile-page .user-data-form .form-entry .edit-button {
+  font-size: 18px;
+  padding: 0 10px;
+}
+
+.profile-page .user-data-form .form-entry .password-entry {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-page .user-data-form .form-entry .checkbox-container {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  gap: 10px;
+  padding-top: 25px;
+}
+
+.profile-page .user-data-form .form-entry .checkbox-container > input {
+  width: 16px;
+}
+
+@media only screen and (max-width: 768px) {
+  .profile-page .user-data-form .form-entry {
+    flex-direction: column;
+  }
+}

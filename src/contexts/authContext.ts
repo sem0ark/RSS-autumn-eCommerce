@@ -8,24 +8,24 @@ import { Storage } from '../framework/persistence/storage';
 import { debug } from '../framework/utilities/logging';
 import { notificationContext } from './notificationContext';
 
-const { property, pfunc } = factories;
+const { pobject, pfunc } = factories;
 
 class AuthContext {
-  public readonly userData = property<CustomerDataReceived | null>(
-    null,
+  public readonly userData = pobject<Partial<CustomerDataReceived>>(
+    {},
     'customer_data'
   );
 
   public readonly userIsLoggedIn = pfunc(
-    () => this.userData.get() !== null,
+    () => !!this.userData.get().email,
     [],
     'userIsLoggedIn'
   );
 
   public readonly userName = pfunc(
     () => {
-      const userData = this.userData.get();
-      return userData ? this.formatName(userData) : 'Unauthorized';
+      const data = this.userData.get();
+      return this.formatName(data);
     },
     [],
     'userName'
@@ -70,7 +70,7 @@ class AuthContext {
 
   public async attemptLogout() {
     notificationContext.addInformation(`Goodbye!`);
-    this.userData.set(null);
+    this.userData.set({});
     await authConnector.requestLogout();
     return Promise.resolve(true);
   }
@@ -90,9 +90,24 @@ class AuthContext {
     return Promise.resolve(false);
   }
 
-  private formatName(data: CustomerDataReceived) {
+  private formatName(data: Partial<CustomerDataReceived>) {
     if (data.firstName) return data.firstName;
-    return data.email;
+    return data.email || 'Unauthorized';
+  }
+
+  public async attemptFieldEdit(formData: FormData) {
+    const result = await authConnector.runSignUpWorkflow(formData);
+
+    if (result.ok) {
+      this.userData.set(result.body.customer);
+      notificationContext.addSuccess(`Welcome, ${this.userName.get()}!`);
+      return Promise.resolve(true);
+    }
+
+    result.errors.forEach(({ message }) =>
+      notificationContext.addError(message)
+    );
+    return Promise.resolve(false);
   }
 }
 
