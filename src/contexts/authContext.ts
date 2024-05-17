@@ -36,18 +36,18 @@ class AuthContext {
     const storage = new Storage('AuthContext');
     storage.registerProperty(this.userData);
 
-    if (this.userIsLoggedIn.get() && !authConnector.isLoggedIn()) {
+    if (!authConnector.isLoggedIn()) {
+      debug('!authConnector.isLoggedIn()');
       this.userData.set(null);
     }
 
     if (this.userIsLoggedIn.get() || authConnector.isLoggedIn()) {
+      debug('this.userIsLoggedIn.get() || authConnector.isLoggedIn()');
       authConnector.runReSignInWorkflow().catch(() => {
         notificationContext.addError('Session expired');
         this.userData.set(null);
         return Promise.resolve();
       });
-    } else {
-      this.userData.set(null);
     }
   }
 

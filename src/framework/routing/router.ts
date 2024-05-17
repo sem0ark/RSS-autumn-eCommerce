@@ -74,11 +74,13 @@ export class Router {
     delete Router.router;
   }
 
-  public static navigateTo(pathName: string): void {
+  public static navigateTo(pathName: string, overridePath = false): void {
     const newPath = `${window.location.origin}${window.location.pathname}#${pathName}`;
 
     info(`Updating "window" path to ${newPath}`);
-    history.pushState({}, '', newPath);
+    if (overridePath) history.replaceState({}, '', newPath);
+    else history.pushState({}, '', newPath);
+
     Router.getRouter().matchRoutes(pathName);
   }
 }
