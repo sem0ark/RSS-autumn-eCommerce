@@ -8,7 +8,7 @@ import {
 } from './serverConnector';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
-import { ProfileChangeAction } from './fieldEditBuilder';
+import { ProfileUpdateAction } from './fieldEditBuilder';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -280,7 +280,7 @@ class AuthConnector {
    */
   private async requestProfileUpdate(
     userVersion: number,
-    actions: ProfileChangeAction
+    actions: ProfileUpdateAction
   ) {
     const token = this._tokenData.get();
     if (!token) throw new Error('Access token  was not initialized.');
@@ -305,8 +305,9 @@ class AuthConnector {
   /**
    *
    * @param userVersion user's version, which is being updated, internal value
-   * @param actions list of actions for updating the client, see FieldEditBuilder
-   * @returns Updated information about the user
+   * @param currentPassword old password
+   * @param newPassword new password
+   * @returns
    */
   private async requestPasswordUpdate(
     userVersion: number,
@@ -425,6 +426,52 @@ class AuthConnector {
 
     const { email, password } = formData.user;
     return this.runSignInWorkflow(email, password);
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param currentPassword old password
+   * @param newPassword new password
+   * @returns
+   */
+  public async runPasswordUpdateWorkflow(
+    userVersion: number,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<APIResponse<CustomerSingInResponse>> {
+    debug('Trying to run password update workflow.');
+
+    const result = await this.requestPasswordUpdate(
+      userVersion,
+      currentPassword,
+      newPassword
+    );
+
+    if (result.ok) debug('Received password update result', result.body);
+    else error('Password update failed', result.errors);
+
+    return result;
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param actions list of actions for updating the client, see FieldEditBuilder
+   * @returns Updated information about the user
+   */
+  public async runProfileUpdateWorkflow(
+    userVersion: number,
+    actions: ProfileUpdateAction
+  ): Promise<APIResponse<CustomerSingInResponse>> {
+    debug('Trying to run profile update workflow.', actions);
+
+    const result = await this.requestProfileUpdate(userVersion, actions);
+
+    if (result.ok) debug('Received profile update result', result.body);
+    else error('Profile update failed', result.errors);
+
+    return result;
   }
 }
 
