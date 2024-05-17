@@ -8,8 +8,9 @@ import { htmlComponents } from '../shared/htmlComponents';
 import { textComponents } from '../shared/textComponents';
 import { factories } from '../../framework/factories';
 import { authContext } from '../../contexts/authContext';
-import { userData } from './userData';
+import { userDataForm } from './userDataForm';
 import { Router } from '../../framework/routing/router';
+import { notificationContext } from '../../contexts/notificationContext';
 
 const { functional } = factories;
 const { aside, main, div, hidden } = htmlComponents;
@@ -19,6 +20,7 @@ const { header2Orange, header3Orange, textSubtext, textMenuEntry } =
 export const profilePage = new Page(() => {
   if (!authContext.userIsLoggedIn.get()) {
     Router.navigateTo('/', true);
+    notificationContext.addInformation('You are not logged in');
     return hidden();
   }
 
@@ -39,7 +41,7 @@ export const profilePage = new Page(() => {
       header2Orange('My Info'),
 
       header3Orange('Profile Details'),
-      userData(),
+      userDataForm(),
 
       header3Orange('Addresses')
     ).cls('profile-page')

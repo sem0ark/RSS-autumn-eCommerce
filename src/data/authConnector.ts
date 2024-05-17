@@ -280,12 +280,12 @@ class AuthConnector {
    */
   private async requestProfileUpdate(
     userVersion: number,
-    actions: ProfileUpdateAction
+    actions: ProfileUpdateAction[]
   ) {
     const token = this._tokenData.get();
     if (!token) throw new Error('Access token  was not initialized.');
 
-    const result = await ServerConnector.post<CustomerSingInResponse>(
+    const result = await ServerConnector.post<CustomerDataReceived>(
       ServerConnector.getAPIURL('me'),
       {
         ...this.getAuthBearerHeaders(),
@@ -317,7 +317,7 @@ class AuthConnector {
     const token = this._tokenData.get();
     if (!token) throw new Error('Access token  was not initialized.');
 
-    const result = await ServerConnector.post<CustomerSingInResponse>(
+    const result = await ServerConnector.post<CustomerDataReceived>(
       ServerConnector.getAPIURL('me/password'),
       {
         ...this.getAuthBearerHeaders(),
@@ -439,7 +439,7 @@ class AuthConnector {
     userVersion: number,
     currentPassword: string,
     newPassword: string
-  ): Promise<APIResponse<CustomerSingInResponse>> {
+  ): Promise<APIResponse<CustomerDataReceived>> {
     debug('Trying to run password update workflow.');
 
     const result = await this.requestPasswordUpdate(
@@ -462,8 +462,8 @@ class AuthConnector {
    */
   public async runProfileUpdateWorkflow(
     userVersion: number,
-    actions: ProfileUpdateAction
-  ): Promise<APIResponse<CustomerSingInResponse>> {
+    actions: ProfileUpdateAction[]
+  ): Promise<APIResponse<CustomerDataReceived>> {
     debug('Trying to run profile update workflow.', actions);
 
     const result = await this.requestProfileUpdate(userVersion, actions);

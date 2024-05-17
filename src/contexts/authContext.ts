@@ -3,21 +3,22 @@ import {
   CustomerDataReceived,
   FormData,
 } from '../data/authConnector';
+import { ProfileUpdateAction } from '../data/fieldEditBuilder';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
 import { debug } from '../framework/utilities/logging';
 import { notificationContext } from './notificationContext';
 
-const { pobject, pfunc } = factories;
+const { pfunc, property } = factories;
 
 class AuthContext {
-  public readonly userData = pobject<Partial<CustomerDataReceived>>(
-    {},
+  public readonly userData = property<CustomerDataReceived | null>(
+    null,
     'customer_data'
   );
 
   public readonly userIsLoggedIn = pfunc(
-    () => !!this.userData.get().email,
+    () => this.userData.get() !== null,
     [],
     'userIsLoggedIn'
   );
@@ -70,7 +71,7 @@ class AuthContext {
 
   public async attemptLogout() {
     notificationContext.addInformation(`Goodbye!`);
-    this.userData.set({});
+    this.userData.set(null);
     await authConnector.requestLogout();
     return Promise.resolve(true);
   }
@@ -90,9 +91,10 @@ class AuthContext {
     return Promise.resolve(false);
   }
 
-  private formatName(data: Partial<CustomerDataReceived>) {
+  private formatName(data: CustomerDataReceived | null) {
+    if (data === null) return 'Unauthorized';
     if (data.firstName) return data.firstName;
-    return data.email || 'Unauthorized';
+    return data.email;
   }
 
   public async attemptFieldEdit(formData: FormData) {
@@ -104,6 +106,60 @@ class AuthContext {
       return Promise.resolve(true);
     }
 
+    result.errors.forEach(({ message }) =>
+      notificationContext.addError(message)
+    );
+    return Promise.resolve(false);
+  }
+
+  public async attemptProfileUpdate(...actions: ProfileUpdateAction[]) {
+    const userVersion = this.userData.get()?.version;
+    if (userVersion === undefined) {
+      notificationContext.addError('You are not logged in!');
+      return Promise.resolve(false);
+    }
+
+    const result = await authConnector.runProfileUpdateWorkflow(
+      userVersion,
+      actions
+    );
+
+    if (result.ok) {
+      this.userData.set(result.body);
+      notificationContext.addSuccess(`Successfully updated profile!`);
+      return Promise.resolve(true);
+    }
+
+    notificationContext.addSuccess(`Profile update failed`);
+    result.errors.forEach(({ message }) =>
+      notificationContext.addError(message)
+    );
+    return Promise.resolve(false);
+  }
+
+  public async attemptProfilePasswordUpdate(
+    oldPassword: string,
+    newPassword: string
+  ) {
+    const userVersion = this.userData.get()?.version;
+    if (userVersion === undefined || !this.userIsLoggedIn.get()) {
+      notificationContext.addError('You are not logged in!');
+      return Promise.resolve(false);
+    }
+
+    const result = await authConnector.runPasswordUpdateWorkflow(
+      userVersion,
+      oldPassword,
+      newPassword
+    );
+
+    if (result.ok) {
+      this.userData.set(result.body);
+      notificationContext.addSuccess(`Successfully updated profile!`);
+      return Promise.resolve(true);
+    }
+
+    notificationContext.addSuccess(`Profile update failed`);
     result.errors.forEach(({ message }) =>
       notificationContext.addError(message)
     );

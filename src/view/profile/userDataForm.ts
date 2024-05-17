@@ -12,6 +12,7 @@ import {
   nameValidators,
   passwordValidators,
 } from '../../utils/validation/userDataValidation';
+import { FieldEditBuilder } from '../../data/fieldEditBuilder';
 
 const { form, div, p } = htmlComponents;
 const { functional, pboolean } = factories;
@@ -56,30 +57,57 @@ const formChange = (
               .onClick(() => changing.disable())
           ).cls('button-container')
     )
-  ).cls('form-entry');
+  )
+    .cls('form-entry')
+    .onSubmit(() => changing.disable());
 };
 
-export const userData = () => {
+export const userDataForm = () => {
   const showPassword = pboolean(false, 'show_password');
 
   const checkboxShowPasswordField = checkboxInput()
     .cls('checkbox-password')
     .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));
 
-  const [inputFirstNameField] = validated(inputText(), nameValidators);
-  const [inputLastNameField] = validated(inputText(), nameValidators);
-  const [inputEmailField] = validated(inputText(), emailValidators);
+  const [inputFirstNameField, firstNameValid, firstName] = validated(
+    inputText(),
+    [
+      ...nameValidators,
+      (text) =>
+        text === authContext.userData.get()?.firstName && 'Value is the same',
+    ]
+  );
+  const [inputLastNameField, lastNameValid, lastName] = validated(inputText(), [
+    ...nameValidators,
+    (text) =>
+      text === authContext.userData.get()?.lastName && 'Value is the same',
+  ]);
+  const [inputEmailField, emailValid, email] = validated(inputText(), [
+    ...emailValidators,
+    (text) => text === authContext.userData.get()?.email && 'Value is the same',
+  ]);
 
-  const [inputDateOfBirthField] = validated(inputDate(), dateOfBirthValidators);
+  const [inputDateOfBirthField, dateOfBirthValid, dateOfBirth] = validated(
+    inputDate(),
+    [
+      ...dateOfBirthValidators,
+      (text) =>
+        text === authContext.userData.get()?.dateOfBirth && 'Value is the same',
+    ]
+  );
 
-  const [inputOldPasswordField] = validated(
+  const [inputOldPasswordField, oldPasswordValid, oldPassword] = validated(
     inputPassword(),
     passwordValidators
   );
 
-  const [inputNewPasswordField, , newPassword] = validated(
+  const [inputNewPasswordField, newPasswordValid, newPassword] = validated(
     inputPassword(),
-    passwordValidators
+    [
+      ...passwordValidators,
+      (text) =>
+        text === authContext.userData.get()?.password && 'Value is the same',
+    ]
   );
 
   const [inputReconfirmPasswordField] = validated(inputPassword(), [
@@ -92,27 +120,59 @@ export const userData = () => {
   return div(
     formChange(
       'First Name',
-      () => authContext.userData.get().firstName,
-      inputFirstNameField.attr('value', authContext.userData.get().firstName)
-    ).onSubmit(() => {}, true),
+      () => authContext.userData.get()?.firstName,
+      inputFirstNameField
+    ).onSubmit(
+      () =>
+        firstNameValid.get() &&
+        authContext.attemptProfileUpdate(
+          FieldEditBuilder.setFirstName(firstName.get())
+        ),
+      true
+    ),
+
     formChange(
       'Last Name',
-      () => authContext.userData.get().lastName,
-      inputLastNameField.attr('value', authContext.userData.get().lastName)
-    ).onSubmit(() => {}, true),
+      () => authContext.userData.get()?.lastName,
+      inputLastNameField
+    ).onSubmit(
+      () =>
+        lastNameValid.get() &&
+        authContext.attemptProfileUpdate(
+          FieldEditBuilder.setLastName(lastName.get())
+        ),
+      true
+    ),
+
     formChange(
       'Date of Birth',
-      () => authContext.userData.get().dateOfBirth,
+      () => authContext.userData.get()?.dateOfBirth,
       inputDateOfBirthField.attr(
         'value',
-        authContext.userData.get().dateOfBirth
+        authContext.userData.get()?.dateOfBirth
       )
-    ).onSubmit(() => {}, true),
+    ).onSubmit(
+      () =>
+        dateOfBirthValid.get() &&
+        authContext.attemptProfileUpdate(
+          FieldEditBuilder.setDateOfBirth(dateOfBirth.get())
+        ),
+      true
+    ),
+
     formChange(
       'Email Address',
-      () => authContext.userData.get().email,
-      inputEmailField.attr('value', authContext.userData.get().email)
-    ).onSubmit(() => {}, true),
+      () => authContext.userData.get()?.email,
+      inputEmailField
+    ).onSubmit(
+      () =>
+        emailValid.get() &&
+        authContext.attemptProfileUpdate(
+          FieldEditBuilder.changeEmail(email.get())
+        ),
+      true
+    ),
+
     formChange(
       'Password',
       () => '********',
@@ -152,6 +212,14 @@ export const userData = () => {
           reverseOrder: true,
         }).cls('checkbox-container')
       ).cls('password-entry')
+    ).onSubmit(
+      () =>
+        oldPasswordValid.get() &&
+        newPasswordValid.get() &&
+        authContext.attemptProfilePasswordUpdate(
+          oldPassword.get(),
+          newPassword.get()
+        )
     )
   ).cls('user-data-form');
 };
