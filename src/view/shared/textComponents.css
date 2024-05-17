@@ -4,12 +4,15 @@ h2.text-components-header {
   font-size: 28px;
   align-items: center;
   margin-bottom: 25px;
+  height: 30px;
+  margin: 5px;
 }
 
 .text-components-header span {
   display: inline-block;
   width: 6px;
   height: 100%;
+
   border-radius: 10px;
   background-color: var(--primary-color);
   margin-right: 10px;
@@ -22,9 +25,38 @@ h3.text-components-header {
   margin-bottom: 10px;
 }
 
-
 p.text-components-subtext {
   display: block;
   width: 100%;
   color: var(--subtext);
+}
+
+.text-components-menu-entry {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 38px;
+
+  gap: 18px;
+  height: 44px;
+  background-color: var(--background-light);
+  border-radius: 0 10px 10px 0;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--subtext);
+}
+
+.text-components-menu-entry.active {
+  border-left: 2px #3c4242 solid;
+  background-color: var(--background-grey);
+}
+
+@media only screen and (max-width: 768px) {
+  .text-components-header {
+    font-size: 20px;
+  }
 }
