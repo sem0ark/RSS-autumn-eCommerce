@@ -38,8 +38,6 @@ export const profilePage = new Page(() => {
       ).cls('menu')
     ).cls('profile-page'),
     main(
-      header2Orange('My Info'),
-
       header3Orange('Profile Details'),
       userDataForm(),
 

@@ -1,6 +1,6 @@
 .sidebar-layout-outer-container {
   position: relative;
-  background-color: var(--background-light-darker);
+  background-color: var(--background-light);
 }
 
 .sidebar-layout {
@@ -17,10 +17,11 @@
 }
 
 .sidebar-layout-aside {
+  height: 100%;
   background-color: var(--background-light);
   transition: all ease-in-out 0.5s;
 
-  box-shadow: 4px 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-layout-aside > * {
@@ -70,8 +71,7 @@
     padding: 0;
     margin: 0;
 
-    height: 100%;
-
+    height: fit-content;
     overflow: hidden;
 
     border-top: 5px solid var(--primary-color);

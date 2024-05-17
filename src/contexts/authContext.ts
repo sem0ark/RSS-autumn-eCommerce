@@ -6,10 +6,13 @@ import {
 import { ProfileUpdateAction } from '../data/fieldEditBuilder';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
-import { debug } from '../framework/utilities/logging';
+import { debug, error } from '../framework/utilities/logging';
 import { notificationContext } from './notificationContext';
 
 const { pfunc, property } = factories;
+
+const wait = (time: number) =>
+  new Promise<void>((res) => setTimeout(() => res(), time));
 
 class AuthContext {
   public readonly userData = property<CustomerDataReceived | null>(
@@ -97,21 +100,6 @@ class AuthContext {
     return data.email;
   }
 
-  public async attemptFieldEdit(formData: FormData) {
-    const result = await authConnector.runSignUpWorkflow(formData);
-
-    if (result.ok) {
-      this.userData.set(result.body.customer);
-      notificationContext.addSuccess(`Welcome, ${this.userName.get()}!`);
-      return Promise.resolve(true);
-    }
-
-    result.errors.forEach(({ message }) =>
-      notificationContext.addError(message)
-    );
-    return Promise.resolve(false);
-  }
-
   public async attemptProfileUpdate(...actions: ProfileUpdateAction[]) {
     const userVersion = this.userData.get()?.version;
     if (userVersion === undefined) {
@@ -130,7 +118,7 @@ class AuthContext {
       return Promise.resolve(true);
     }
 
-    notificationContext.addSuccess(`Profile update failed`);
+    notificationContext.addError(`Profile update failed`);
     result.errors.forEach(({ message }) =>
       notificationContext.addError(message)
     );
@@ -155,14 +143,26 @@ class AuthContext {
 
     if (result.ok) {
       this.userData.set(result.body);
-      notificationContext.addSuccess(`Successfully updated profile!`);
-      return Promise.resolve(true);
+      notificationContext.addSuccess(
+        `Successfully updated profile! Re-logging in...`
+      );
+
+      const email =
+        this.userData.get()?.email ||
+        error('No Email was found during password change.') ||
+        '';
+
+      if (!(await this.attemptLogout())) return Promise.resolve(false);
+      await wait(1000);
+      if (!(await this.attemptLogin(email, newPassword)))
+        return Promise.resolve(false);
+    } else {
+      notificationContext.addError(`Profile update failed`);
+      result.errors.forEach(({ message }) =>
+        notificationContext.addError(message)
+      );
     }
 
-    notificationContext.addSuccess(`Profile update failed`);
-    result.errors.forEach(({ message }) =>
-      notificationContext.addError(message)
-    );
     return Promise.resolve(false);
   }
 }
