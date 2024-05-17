@@ -11,6 +11,7 @@ import { authContext } from '../../contexts/authContext';
 import { userDataForm } from './userDataForm';
 import { Router } from '../../framework/routing/router';
 import { notificationContext } from '../../contexts/notificationContext';
+import { addressDataForm } from './addressDataForm';
 
 const { functional } = factories;
 const { aside, main, div, hidden } = htmlComponents;
@@ -29,7 +30,9 @@ export const profilePage = new Page(() => {
       functional(() => header2Orange(`Hello, ${authContext.userName.get()}`)),
       textSubtext('Welcome to your account'),
       div(
-        textMenuEntry(profileSVG, 'My Info').cls('active'),
+        textMenuEntry(profileSVG, 'My Info')
+          .cls('active')
+          .onClick(() => {}),
         textMenuEntry(signOutSVG, 'Sign Out').onClick(() => {
           authContext.attemptLogout().then((success) => {
             if (success) Router.navigateTo('/');
@@ -41,7 +44,8 @@ export const profilePage = new Page(() => {
       header3Orange('Profile Details'),
       userDataForm(),
 
-      header3Orange('Addresses')
+      header3Orange('Addresses'),
+      addressDataForm()
     ).cls('profile-page')
   );
 }, 'Profile | True Colors');

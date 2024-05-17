@@ -14,6 +14,7 @@ import { ProfileUpdateAction } from './fieldEditBuilder';
  * Address object interface based on the commerce tools documentation and RSS requirements.
  */
 export interface Address {
+  id?: string;
   key?: string;
   // title: string;
   // firstName: string;
@@ -37,8 +38,14 @@ export interface CustomerData {
   firstName: string;
   lastName: string;
 
-  defaultShippingAddress: number;
-  defaultBillingAddress: number;
+  shippingAddressIds?: string[];
+  billingAddressIds?: string[];
+
+  defaultShippingAddress?: string;
+  defaultBillingAddress?: string;
+
+  defaultShippingAddressId?: string;
+  defaultBillingAddressId?: string;
 
   dateOfBirth: string;
   addresses: Address[];
@@ -408,14 +415,14 @@ class AuthConnector {
     const requestBody: CustomerData = {
       ...formData.user,
       addresses: [formData.billingAddress],
-      defaultBillingAddress: 0,
-      defaultShippingAddress: 0,
+      defaultBillingAddress: '0',
+      defaultShippingAddress: '0',
     };
 
     if (!formData.sameShippingAddress) {
       formData.shippingAddress.key ||= 'Shipping';
       requestBody.addresses.push(formData.shippingAddress);
-      requestBody.defaultShippingAddress = 1;
+      requestBody.defaultShippingAddress = '1';
     }
 
     const result = await this.requestSignUp(requestBody);
