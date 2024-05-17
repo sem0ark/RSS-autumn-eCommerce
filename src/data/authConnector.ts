@@ -284,7 +284,7 @@ class AuthConnector {
     debug('Trying to run login workflow.');
     const token = this._tokenData.get();
 
-    if (!token || token.isAnonymous || !token.refreshToken) {
+    if (!token || token.isAnonymous) {
       const tokenResult = await this.requestLoginToken(email, password);
       if (!tokenResult.ok) return tokenResult;
 
