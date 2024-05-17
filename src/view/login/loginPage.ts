@@ -16,7 +16,7 @@ const { containerCenterRoundEdges } = containerComponents;
 
 export const loginPage = new Page(() => {
   if (authContext.userIsLoggedIn.get()) {
-    Router.navigateTo('/');
+    Router.navigateTo('/', true);
     notificationContext.addInformation(`You are already logged in.`);
   }
 
