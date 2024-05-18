@@ -90,3 +90,12 @@
   font-weight: 500;
   font-size: 16px;
 }
+
+.address-data-form label {
+  font-size: 16px;
+}
+
+.address-data-form .button-container {
+  flex-wrap: wrap;
+  row-gap: 5px;
+}
