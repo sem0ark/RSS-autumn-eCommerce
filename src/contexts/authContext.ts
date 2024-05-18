@@ -69,7 +69,8 @@ class AuthContext {
   }
 
   public async attemptLogout() {
-    notificationContext.addInformation(`Goodbye!`);
+    if (this.userIsLoggedIn.get())
+      notificationContext.addInformation(`Goodbye!`);
     this.userData.set(null);
     await authConnector.requestLogout();
     return Promise.resolve(true);
