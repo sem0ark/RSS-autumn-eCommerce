@@ -8,12 +8,14 @@ import {
 } from './serverConnector';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
+import { ProfileUpdateAction } from './fieldEditBuilder';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
  */
 export interface Address {
-  // key: string;
+  id?: string;
+  key?: string;
   // title: string;
   // firstName: string;
   // lastName: string;
@@ -36,8 +38,14 @@ export interface CustomerData {
   firstName: string;
   lastName: string;
 
-  defaultShippingAddress: number;
-  defaultBillingAddress: number;
+  shippingAddressIds?: string[];
+  billingAddressIds?: string[];
+
+  defaultShippingAddress?: string;
+  defaultBillingAddress?: string;
+
+  defaultShippingAddressId?: string;
+  defaultBillingAddressId?: string;
 
   dateOfBirth: string;
   addresses: Address[];
@@ -272,6 +280,69 @@ class AuthConnector {
   }
 
   /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param actions list of actions for updating the client, see FieldEditBuilder
+   * @returns Updated information about the user
+   */
+  private async requestProfileUpdate(
+    userVersion: number,
+    actions: ProfileUpdateAction[]
+  ) {
+    const token = this._tokenData.get();
+    if (!token) throw new Error('Access token  was not initialized.');
+
+    const result = await ServerConnector.post<CustomerDataReceived>(
+      ServerConnector.getAPIURL('me'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      {
+        version: userVersion,
+        actions,
+      }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param currentPassword old password
+   * @param newPassword new password
+   * @returns
+   */
+  private async requestPasswordUpdate(
+    userVersion: number,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    const token = this._tokenData.get();
+    if (!token) throw new Error('Access token  was not initialized.');
+
+    const result = await ServerConnector.post<CustomerDataReceived>(
+      ServerConnector.getAPIURL('me/password'),
+      {
+        ...this.getAuthBearerHeaders(),
+        ...ServerConnector.formJSONHeaders,
+      },
+      {
+        version: userVersion,
+        currentPassword,
+        newPassword,
+      }
+    );
+
+    if (result.ok) return result;
+    error('Failed to request token data', result.errors);
+    return result;
+  }
+
+  /**
    * Authorize the user.
    * @param username - entered username from the form
    * @param password - entered password from the form
@@ -297,7 +368,7 @@ class AuthConnector {
     const singInResult = await this.requestLoginSignIn(email, password);
 
     if (singInResult.ok) debug('Singed in successfully', singInResult.body);
-    else debug('Sing In Failed', singInResult.errors);
+    else error('Sing In Failed', singInResult.errors);
 
     return singInResult;
   }
@@ -340,28 +411,76 @@ class AuthConnector {
       await this.requestTokenRefresh();
     }
 
+    formData.billingAddress.key ||= 'Billing';
     const requestBody: CustomerData = {
       ...formData.user,
       addresses: [formData.billingAddress],
-      defaultBillingAddress: 0,
-      defaultShippingAddress: 0,
+      defaultBillingAddress: '0',
+      defaultShippingAddress: '0',
     };
 
     if (!formData.sameShippingAddress) {
+      formData.shippingAddress.key ||= 'Shipping';
       requestBody.addresses.push(formData.shippingAddress);
-      requestBody.defaultShippingAddress = 1;
+      requestBody.defaultShippingAddress = '1';
     }
 
     const result = await this.requestSignUp(requestBody);
 
     if (result.ok) debug('Received signup result', result.body);
     else {
-      debug('Sing Up Failed', result.errors);
+      error('Sing Up Failed', result.errors);
       return result;
     }
 
     const { email, password } = formData.user;
     return this.runSignInWorkflow(email, password);
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param currentPassword old password
+   * @param newPassword new password
+   * @returns
+   */
+  public async runPasswordUpdateWorkflow(
+    userVersion: number,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<APIResponse<CustomerDataReceived>> {
+    debug('Trying to run password update workflow.');
+
+    const result = await this.requestPasswordUpdate(
+      userVersion,
+      currentPassword,
+      newPassword
+    );
+
+    if (result.ok) debug('Received password update result', result.body);
+    else error('Password update failed', result.errors);
+
+    return result;
+  }
+
+  /**
+   *
+   * @param userVersion user's version, which is being updated, internal value
+   * @param actions list of actions for updating the client, see FieldEditBuilder
+   * @returns Updated information about the user
+   */
+  public async runProfileUpdateWorkflow(
+    userVersion: number,
+    actions: ProfileUpdateAction[]
+  ): Promise<APIResponse<CustomerDataReceived>> {
+    debug('Trying to run profile update workflow.', actions);
+
+    const result = await this.requestProfileUpdate(userVersion, actions);
+
+    if (result.ok) debug('Received profile update result', result.body);
+    else error('Profile update failed', result.errors);
+
+    return result;
   }
 }
 

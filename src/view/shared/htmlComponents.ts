@@ -13,6 +13,7 @@ const main = html('main');
 const nav = html('nav');
 const header = html('header');
 const footer = html('footer');
+const aside = html('aside');
 
 const h1 = html('h1');
 const h2 = html('h2');
@@ -113,4 +114,5 @@ export const htmlComponents = {
   ul,
   header,
   footer,
+  aside,
 };

@@ -11,13 +11,14 @@ import { authContext } from '../../contexts/authContext';
 import { Router } from '../../framework/routing/router';
 import { notificationContext } from '../../contexts/notificationContext';
 
-const { div, h2, link, h1 } = htmlComponents;
+const { div, h2, link, h1, hidden } = htmlComponents;
 const { containerCenterRoundEdges } = containerComponents;
 
 export const loginPage = new Page(() => {
   if (authContext.userIsLoggedIn.get()) {
     Router.navigateTo('/', true);
     notificationContext.addInformation(`You are already logged in.`);
+    return hidden();
   }
 
   return backgroundImageLayout(background)(
