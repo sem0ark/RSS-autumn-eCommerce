@@ -73,7 +73,7 @@ export class ServerConnector {
       : undefined;
 
     try {
-      trace(`Sending a new request ${url}:${method}, ${body}`);
+      trace(`Sending a new request ${url}:${method}`, body as object);
       const response = await fetch(url, {
         method: method,
         headers,

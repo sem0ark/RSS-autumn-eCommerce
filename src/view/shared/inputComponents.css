@@ -11,6 +11,7 @@ a {
 }
 
 .input-components-input-text {
+  background-color: (--background-light);
   display: block;
   border: 1px solid;
   border-radius: 7px;
@@ -21,6 +22,7 @@ a {
 }
 
 .input-components-input-select {
+  background-color: (--background-light);
   display: block;
   border: 1px solid;
   border-radius: 7px;
@@ -31,6 +33,7 @@ a {
 }
 
 .input-components-input-date {
+  background-color: (--background-light);
   width: 100%;
 }
 

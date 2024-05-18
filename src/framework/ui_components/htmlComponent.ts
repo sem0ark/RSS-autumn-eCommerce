@@ -108,12 +108,15 @@ export class HTMLComponent extends Component {
   public propAttr<T extends PropertyValueType>(
     prop: Property<T>,
     attributeName: string,
-    resolver: (newValue: T) => string
+    resolver: (newValue: T) => string = (v) => `${v}`
   ) {
     prop.onChange((n) => {
       if (this._node) this._node.setAttribute(attributeName, resolver(n));
       else this.attr(attributeName, resolver(n));
     });
+
+    const initial = resolver(prop.get());
+    this.onRender(() => this._node?.setAttribute(attributeName, initial));
 
     return this;
   }
