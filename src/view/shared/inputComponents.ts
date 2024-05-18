@@ -126,9 +126,13 @@ const checkboxInput = input
   .cls('input-components-input-checkbox')
   .attr('type', 'checkbox');
 
-const selectInput = (entries: [string, string][]) =>
+const selectInput = (entries: [string, string][], selected?: string) =>
   select.cls('input-components-input-select')(
-    ...entries.map(([k, v]) => option(v).attr('value', k))
+    ...entries.map(([k, v]) =>
+      selected === k
+        ? option(v).attr('value', k).attr('selected')
+        : option(v).attr('value', k)
+    )
   );
 
 const submitButton = button

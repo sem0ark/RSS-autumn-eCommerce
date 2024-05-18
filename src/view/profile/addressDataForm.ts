@@ -89,7 +89,8 @@ const addressEditForm = (address: Address, changing: PBoolean) => {
 
   const [inputCountryField, , countryValue] = validated(
     selectInput(
-      [...countryData.entries()].map(([code, data]) => [code, data.name])
+      [...countryData.entries()].map(([code, data]) => [code, data.name]),
+      address.country
     ),
     cityValidators
   );
@@ -151,7 +152,7 @@ const addressEditForm = (address: Address, changing: PBoolean) => {
       }
     ),
     containerFlexRow({ gap: 10 })(
-      buttonPrimary('Add').attr('type', 'submit'),
+      buttonPrimary('Save changes').attr('type', 'submit'),
       buttonSecondary('Cancel').onClick(() => changing.disable(), true)
     )
   )
@@ -159,7 +160,7 @@ const addressEditForm = (address: Address, changing: PBoolean) => {
     .onSubmit(
       () =>
         authContext.attemptProfileUpdate(
-          FieldEditBuilder.addAddress(resultingData.get())
+          FieldEditBuilder.changeAddress(resultingData.get(), address.id || '')
         ),
       true
     );
