@@ -18,3 +18,8 @@ main.catalog-page {
   font-weight: 300;
   font-size: 18px;
 }
+
+.catalog-page .category-breadcrumps a:hover,
+.catalog-page .category-breadcrumps a:active {
+  color: var(--primary-color);
+}

@@ -8,6 +8,7 @@ import { htmlComponents } from '../shared/htmlComponents';
 import { inputComponents } from '../shared/inputComponents';
 import { factories } from '../../framework/factories';
 import { spinnerComponents } from '../shared/spinnerComponents';
+import { Router } from '../../framework/routing/router';
 
 const { asynchronous } = factories;
 const { p, div, span, img, iconSvg } = htmlComponents;
@@ -42,6 +43,16 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
           span(product.price).cls('discount', 'strike-through')
         ).cls('price', 'price-discount')
       : div(product.price).cls('price'),
-    buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button')
-  ).cls('product-card');
+    buttonPrimary(iconSvg(cartSVG), 'Buy')
+      .cls('buy-button')
+      .onClick(() => {}, true, true)
+  )
+    .cls('product-card')
+    .onClick(
+      () => {
+        Router.navigateTo(`/products/${product.id}`);
+      },
+      true,
+      true
+    );
 };

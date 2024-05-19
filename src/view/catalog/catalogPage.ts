@@ -10,6 +10,7 @@ import { sidebarLayout } from '../shared/layouts/sidebarLayout';
 import { spinnerComponents } from '../shared/spinnerComponents';
 import { productCard } from './productCard';
 import { categoryPanel } from './categoryPanel';
+import { categoryBreadcrumps } from './categoryBreadcrumps';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -18,7 +19,7 @@ const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
-  if (categoryId) catalogContext.filters.get().selectedCategoryId = categoryId;
+  catalogContext.filters.get().selectedCategoryId = categoryId;
 
   const loadingProducts = pboolean(false);
 
@@ -30,6 +31,7 @@ export const catalogPage = new Page((categoryId?: string) => {
   return sidebarLayout('Catalog')(
     aside(categoryPanel(categoryId)).cls('catalog-page'),
     main(
+      categoryBreadcrumps(categoryId || ''),
       containerFlexRow({
         gap: 10,
         padding: 10,
