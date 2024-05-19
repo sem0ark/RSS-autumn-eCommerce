@@ -2,7 +2,8 @@ import { debug, error } from '../framework/utilities/logging';
 import { authConnector } from './authConnector';
 import { PagedResponse, ServerConnector } from './serverConnector';
 
-const CATALOG_LIMIT = 20;
+export const DEFAULT_LOCALE: LanguageLocale = 'en';
+export const CATALOG_LIMIT_PER_PAGE = 20;
 
 export interface FilterSelection {
   selectedCategoryId: string;
@@ -14,20 +15,12 @@ export interface FilterSelection {
   };
 }
 
-export const currencyString = (price: TypedMoney) => {
-  return `${(price.centAmount / Math.pow(10, price.fractionDigits)).toFixed(price.fractionDigits)} ${{
-    USD: '$',
-    EUR: '€',
-    RUB: '₽',
-  }}`;
-};
-
 interface CategoryReference {
   id: string;
   name: LocalizedString;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: LocalizedString;
   description: LocalizedString;
@@ -35,14 +28,14 @@ interface Category {
   parent?: CategoryReference;
 }
 
-interface Product {
+export interface Product {
   id: string;
   masterData: {
     current: ProductData;
   };
 }
 
-interface ProductProjection {
+export interface ProductProjection {
   id: string;
   name: LocalizedString;
   description?: LocalizedString;
@@ -87,7 +80,7 @@ interface Price {
   };
 }
 
-interface TypedMoney {
+export interface TypedMoney {
   centAmount: number;
   currencyCode: 'USD' | 'EUR' | 'RUB' | 'RSD' | 'GBP';
   fractionDigits: number;
@@ -123,7 +116,10 @@ class QueryBuilder {
   }
 
   static categoryFilterQuery(categoryIds: string[]): QueryElement {
-    return QueryBuilder.filterQuerySelect('categories.id', categoryIds);
+    return QueryBuilder.filterQuerySelect(
+      'categories.id',
+      categoryIds.map((v) => `subtree("${v}")`)
+    );
   }
 
   static filterQueryRange(
@@ -168,7 +164,10 @@ class QueryBuilder {
     const elements = [];
     if (filters.searchString)
       elements.push(
-        QueryBuilder.searchQuery(filters.searchString, options.locale || 'en')
+        QueryBuilder.searchQuery(
+          filters.searchString,
+          options.locale || DEFAULT_LOCALE
+        )
       );
     if (filters.selectedCategoryId)
       elements.push(
@@ -184,13 +183,14 @@ class QueryBuilder {
 }
 
 export class CatalogConnector {
-  private selectedLanguage: LanguageLocale = 'en';
-
   public async requestCategoryList() {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.post<PagedResponse<Category>>(
-      ServerConnector.getAPIURL('categories'),
+      ServerConnector.getAPIURL(
+        'categories',
+        QueryBuilder.buildQueryString({ name: 'limit', value: '100' })
+      ),
       { ...authConnector.getAuthBasicHeaders() }
     );
 
@@ -213,9 +213,9 @@ export class CatalogConnector {
       ServerConnector.getAPIURL(
         'product-projections/search',
         QueryBuilder.buildQuery(filters, {
-          locale: this.selectedLanguage,
-          limit: CATALOG_LIMIT,
-          offset: CATALOG_LIMIT * page,
+          locale: DEFAULT_LOCALE,
+          limit: CATALOG_LIMIT_PER_PAGE,
+          offset: CATALOG_LIMIT_PER_PAGE * page,
         })
       )
     );
