@@ -96,10 +96,7 @@ function getProductData(initial: ProductProjection): ProductDataExternal {
 
 class CatalogContext {
   constructor(
-    private readonly canContinue = pboolean(
-      false,
-      'CatalogContext_canContinue'
-    ),
+    public readonly canContinue = pboolean(false, 'CatalogContext_canContinue'),
 
     private readonly page = pinteger(0, 'CatalogContext_page'),
 
@@ -141,7 +138,9 @@ class CatalogContext {
 
     if (result.ok) {
       debug('Received a new set of products');
-      this.canContinue.set(result.body.count < CATALOG_LIMIT_PER_PAGE);
+      this.canContinue.set(
+        result.body.total > CATALOG_LIMIT_PER_PAGE * (this.page.get() + 1)
+      );
 
       for (const v of result.body.results)
         this.products.push(getProductData(v));

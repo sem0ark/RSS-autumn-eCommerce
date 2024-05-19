@@ -1,6 +1,9 @@
 .spinner-components-spinner {
   position: relative;
   display: block;
+
+  width: 48px;
+  height: 48px;
 }
 
 .spinner-components-spinner .loader-spinner {

@@ -1,4 +1,4 @@
-import { trace } from '../framework/utilities/logging';
+import { debug } from '../framework/utilities/logging';
 import { config } from '../utils/config';
 
 export type Token = string;
@@ -8,6 +8,7 @@ export interface PagedResponse<T> {
   limit: number;
   offset: number;
   count: number;
+  total: number;
 
   results: T[];
 }
@@ -46,11 +47,13 @@ export class ServerConnector {
   };
 
   public static getOAuthURL(postfix = '', query = '') {
-    return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query.trim() ? '?' + query.trim() : ''}`;
+    debug('Query', query);
+    return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query}`;
   }
 
   public static getAPIURL(postfix = '', query = '') {
-    return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query.trim() ? '?' + query.trim() : ''}`;
+    debug('Query', query);
+    return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query}`;
   }
 
   public static makeBearerAuthHeader(token: Token) {
@@ -81,7 +84,7 @@ export class ServerConnector {
       : undefined;
 
     try {
-      trace(`Sending a new request ${url}:${method}`, body as object);
+      debug(`Sending a new request ${method}:${url}`, body as object);
       const response = await fetch(url, {
         method: method,
         headers,

@@ -134,6 +134,10 @@ class QueryBuilder {
     };
   }
 
+  static element(name: string, value: string | number | boolean): QueryElement {
+    return { name, value: `${value}` };
+  }
+
   static sortQuery(
     field: string,
     direction: 'asc' | 'desc' = 'asc'
@@ -145,7 +149,7 @@ class QueryBuilder {
     const queryEntries = (
       elements.filter((v) => v !== undefined) as QueryElement[]
     ).map(({ name, value }) => `${name}=${value}`);
-    return queryEntries.join('&');
+    return queryEntries.length !== 0 ? '?' + queryEntries.join('&') : '';
   }
 
   public static buildQuery(
@@ -161,14 +165,22 @@ class QueryBuilder {
           options.locale || DEFAULT_LOCALE
         )
       );
+
     if (filters.selectedCategoryId)
       elements.push(
         QueryBuilder.categoryFilterQuery([filters.selectedCategoryId])
       );
+
     if (filters.sort)
       elements.push(
         QueryBuilder.sortQuery(filters.sort.by, filters.sort.direction)
       );
+
+    if (options.limit)
+      elements.push(QueryBuilder.element('limit', options.limit));
+
+    if (options.offset)
+      elements.push(QueryBuilder.element('offset', options.offset));
 
     return QueryBuilder.buildQueryString(...elements);
   }
@@ -203,12 +215,12 @@ export class CatalogConnector {
 
     const result = await ServerConnector.get<PagedResponse<ProductProjection>>(
       ServerConnector.getAPIURL(
-        'product-projections/search',
-        QueryBuilder.buildQuery(filters, {
-          locale: DEFAULT_LOCALE,
-          limit: CATALOG_LIMIT_PER_PAGE,
-          offset: CATALOG_LIMIT_PER_PAGE * page,
-        })
+        'product-projections/search' +
+          QueryBuilder.buildQuery(filters, {
+            locale: DEFAULT_LOCALE,
+            limit: CATALOG_LIMIT_PER_PAGE,
+            offset: CATALOG_LIMIT_PER_PAGE * page,
+          })
       ),
       { ...authConnector.getAuthBearerHeaders() }
     );
