@@ -2,6 +2,7 @@ import {
   CATALOG_LIMIT_PER_PAGE,
   Category,
   FilterSelection,
+  LocalizedString,
   ProductProjection,
   TypedMoney,
   catalogConnector,
@@ -31,6 +32,13 @@ export type ProductDataExternal = {
   imageUrl?: string;
 };
 
+function localizedToString(
+  name: LocalizedString = {},
+  otherwise: string = 'No name'
+) {
+  return name['en-GB'] || name['en-US'] || Object.values(name)[0] || otherwise;
+}
+
 function currencyString(price: TypedMoney) {
   const priceText = (
     price.centAmount / Math.pow(10, price.fractionDigits)
@@ -56,7 +64,7 @@ function constructCategoryTree(categories: Category[]): CategoryExternal[] {
   for (const category of categories)
     map.set(category.id, {
       id: category.id,
-      name: category.name.en,
+      name: localizedToString(category.name),
       subcategories: [],
     });
 
@@ -74,19 +82,19 @@ function constructCategoryTree(categories: Category[]): CategoryExternal[] {
 function getProductData(initial: ProductProjection): ProductDataExternal {
   return {
     id: initial.id,
-    name: initial.name.en,
-    shortDescription: initial.description?.en || 'No description',
+    name: localizedToString(initial.name),
+    shortDescription: localizedToString(initial.description, 'No description'),
 
-    price: currencyString(initial.masterVariant.price.value),
-    discount: initial.masterVariant.price.discounted
-      ? currencyString(initial.masterVariant.price.discounted.value)
+    price: currencyString(initial.masterVariant.prices[0].value),
+    discount: initial.masterVariant.prices[0].discounted
+      ? currencyString(initial.masterVariant.prices[0].discounted.value)
       : undefined,
 
     imageUrl: initial.masterVariant.images[0]?.url,
   };
 }
 
-export class CatalogContext {
+class CatalogContext {
   constructor(
     private readonly canContinue = pboolean(
       false,
@@ -125,10 +133,7 @@ export class CatalogContext {
     return [];
   }
 
-  public async newRequest(): Promise<void> {
-    this.page.set(0);
-    this.products.clear();
-
+  private async getProducts(): Promise<void> {
     const result = await catalogConnector.requestProductList(
       this.filters.get(),
       this.page.get()
@@ -148,25 +153,18 @@ export class CatalogContext {
     }
   }
 
+  public async newRequest(): Promise<void> {
+    this.page.set(0);
+    this.products.clear();
+
+    await this.getProducts();
+  }
+
   public async nextPage(): Promise<void> {
     this.page.inc();
 
-    const result = await catalogConnector.requestProductList(
-      this.filters.get(),
-      this.page.get()
-    );
-
-    if (result.ok) {
-      debug('Received a new set of products');
-      this.canContinue.set(result.body.count < CATALOG_LIMIT_PER_PAGE);
-
-      for (const v of result.body.results)
-        this.products.push(getProductData(v));
-    } else {
-      error('Failed to receive the next page.');
-      notificationContext.addError(
-        'Something went wrong: Failed to receive the next page.'
-      );
-    }
+    await this.getProducts();
   }
 }
+
+export const catalogContext = new CatalogContext();

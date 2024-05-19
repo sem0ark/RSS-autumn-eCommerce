@@ -2,7 +2,9 @@ import { debug, error } from '../framework/utilities/logging';
 import { authConnector } from './authConnector';
 import { PagedResponse, ServerConnector } from './serverConnector';
 
-export const DEFAULT_LOCALE: LanguageLocale = 'en';
+type LanguageLocale = 'en-GB' | 'en-US' | 'ru' | 'de' | 'rs';
+
+export const DEFAULT_LOCALE: LanguageLocale = 'en-US';
 export const CATALOG_LIMIT_PER_PAGE = 20;
 
 export interface FilterSelection {
@@ -57,12 +59,8 @@ interface ProductData {
 
 interface ProductVariant {
   id: string;
-
-  price: Price;
   prices: Price[];
-
   images: Image[];
-
   attributes: Attribute<object>[];
 }
 
@@ -90,14 +88,7 @@ interface Image {
   url: string;
 }
 
-interface LocalizedString {
-  en: string;
-  ru?: string;
-  de?: string;
-  rs?: string;
-}
-
-type LanguageLocale = 'en' | 'ru' | 'de' | 'rs';
+export type LocalizedString = Partial<Record<LanguageLocale, string>>;
 
 type QueryElement = { name: string; value: string };
 type QueryOptions = {
@@ -118,7 +109,7 @@ class QueryBuilder {
   static categoryFilterQuery(categoryIds: string[]): QueryElement {
     return QueryBuilder.filterQuerySelect(
       'categories.id',
-      categoryIds.map((v) => `subtree("${v}")`)
+      ...categoryIds.map((v) => `subtree("${v}")`)
     );
   }
 
@@ -135,7 +126,7 @@ class QueryBuilder {
 
   static filterQuerySelect(
     field: string,
-    values: (string | number | boolean)[]
+    ...values: (string | number | boolean)[]
   ): QueryElement {
     return {
       name: `filter`,
@@ -162,6 +153,7 @@ class QueryBuilder {
     options: Partial<QueryOptions>
   ) {
     const elements = [];
+
     if (filters.searchString)
       elements.push(
         QueryBuilder.searchQuery(
@@ -217,7 +209,8 @@ export class CatalogConnector {
           limit: CATALOG_LIMIT_PER_PAGE,
           offset: CATALOG_LIMIT_PER_PAGE * page,
         })
-      )
+      ),
+      { ...authConnector.getAuthBearerHeaders() }
     );
 
     if (result.ok) {
@@ -238,7 +231,8 @@ export class CatalogConnector {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.get<Product>(
-      ServerConnector.getAPIURL(`products/${productId}`)
+      ServerConnector.getAPIURL(`products/${productId}`),
+      { ...authConnector.getAuthBearerHeaders() }
     );
 
     if (result.ok) {

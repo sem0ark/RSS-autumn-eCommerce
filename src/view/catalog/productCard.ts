@@ -1,25 +1,47 @@
+import './productCard.css';
+
 import cartSVG from '../../../assets/shopping-cart.svg';
-import { ProductData } from '../../contexts/catalogContext';
+import { ProductDataExternal } from '../../contexts/catalogContext';
+import { Property } from '../../framework/reactive_properties/property';
 
 import { htmlComponents } from '../shared/htmlComponents';
 import { inputComponents } from '../shared/inputComponents';
+import { factories } from '../../framework/factories';
+import { spinnerComponents } from '../shared/spinnerComponents';
 
-const { div, span, img, iconSvg } = htmlComponents;
+const { asynchronous } = factories;
+const { p, div, span, img, iconSvg } = htmlComponents;
 const { buttonPrimary } = inputComponents;
+const { spinner } = spinnerComponents;
 
-export const productCard = (product: ProductData) => {
+export const productCard = (productProp: Property<ProductDataExternal>) => {
+  const product = productProp.get();
+
+  const cardImage = asynchronous(
+    async () => {
+      const url = product.imageUrl;
+      if (!url) return div('Image not found').cls('image');
+
+      return new Promise((res) => {
+        const image = new Image();
+        image.src = url;
+        image.onload = () => res(img(url).cls('image'));
+      });
+    },
+    () => spinner().cls('image')
+  );
+
   return div(
-    product.imageUrl
-      ? img(product.imageUrl).cls('image')
-      : div('Image not found').cls('image'),
+    cardImage,
 
-    span(product.name).cls('name'),
-    span(product.shortDescription).cls('description'),
+    p(product.name).cls('name'),
 
     product.discount
-      ? div(product.discount, span(product.price).cls('discount')).cls('price')
+      ? div(product.discount, span(product.price).cls('discount')).cls(
+          'price',
+          'price-discount'
+        )
       : div(product.price).cls('price'),
-
     buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button')
   ).cls('product-card');
 };

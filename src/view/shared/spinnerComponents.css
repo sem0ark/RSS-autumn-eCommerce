@@ -1,10 +1,22 @@
-.spinner-Components-spinner {
+.spinner-components-spinner {
+  position: relative;
+  display: block;
+}
+
+.spinner-components-spinner .loader-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: inline-block;
   width: 48px;
   height: 48px;
-  border: 5px solid var(--background-color-light);
-  border-bottom-color: var(--color-primary);
+
+  border: 5px solid var(--border-dark);
+  border-bottom-color: var(--background-primary);
   border-radius: 50%;
-  display: inline-block;
+
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }
