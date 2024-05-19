@@ -12,7 +12,7 @@ import {
   nameValidators,
   passwordValidators,
 } from '../../utils/validation/userDataValidation';
-import { FieldEditBuilder } from '../../data/fieldEditBuilder';
+import { FieldEditBuilder } from '../../contexts/fieldEditBuilder';
 
 const { form, div, p } = htmlComponents;
 const { functional, pboolean } = factories;

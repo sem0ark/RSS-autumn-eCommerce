@@ -4,6 +4,14 @@ import { config } from '../utils/config';
 export type Token = string;
 export type TokenType = 'Bearer';
 
+export interface PagedResponse<T> {
+  limit: number;
+  offset: number;
+  count: number;
+
+  results: T[];
+}
+
 /**
  * Describes a single error entry in the errors array from the API.
  */
@@ -37,12 +45,12 @@ export class ServerConnector {
     'Content-Type': 'application/json',
   };
 
-  public static getOAuthURL(postfix = '') {
-    return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
+  public static getOAuthURL(postfix = '', query = '') {
+    return `https://${config.VITE_CTP_AUTH_HOST}/oauth/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query.trim() ? '?' + query.trim() : ''}`;
   }
 
-  public static getAPIURL(postfix = '') {
-    return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}`;
+  public static getAPIURL(postfix = '', query = '') {
+    return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query.trim() ? '?' + query.trim() : ''}`;
   }
 
   public static makeBearerAuthHeader(token: Token) {

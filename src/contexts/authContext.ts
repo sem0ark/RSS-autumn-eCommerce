@@ -3,7 +3,7 @@ import {
   CustomerDataReceived,
   FormData,
 } from '../data/authConnector';
-import { ProfileUpdateAction } from '../data/fieldEditBuilder';
+import { ProfileUpdateAction } from './fieldEditBuilder';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
 import { debug, error } from '../framework/utilities/logging';

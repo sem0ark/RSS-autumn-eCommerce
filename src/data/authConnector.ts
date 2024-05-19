@@ -8,7 +8,7 @@ import {
 } from './serverConnector';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
-import { ProfileUpdateAction } from './fieldEditBuilder';
+import { ProfileUpdateAction } from '../contexts/fieldEditBuilder';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -391,9 +391,34 @@ class AuthConnector {
   }
 
   /**
-   * Authorize the user.
-   * @param username - entered username from the form
-   * @param password - entered password from the form
+   * Authorize the user for the standard catalog functionality.
+   * Will automatically update the session information before making request.
+   * @returns
+   */
+  public async runGeneralAuthWorkflow(): Promise<void> {
+    debug('Trying to run general authentication workflow.');
+    const token = this._tokenData.get();
+
+    if (!token) {
+      debug('User is not logged in, trying to get an anonymous token.');
+
+      const tokenResult = await this.requestAnonymousToken();
+      if (!tokenResult.ok) {
+        error('Failed to request the anonymous token');
+        return;
+      }
+
+      this.configureTokenData(tokenResult.body, true);
+    } else if (token.expirationDateMS < Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      await this.requestTokenRefresh();
+    } else {
+      debug('User is already logged in, doing nothing.');
+    }
+  }
+
+  /**
+   * Sign up the user based on the form data.
    * @returns Login information about the user
    */
   public async runSignUpWorkflow(

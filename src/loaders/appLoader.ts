@@ -7,6 +7,7 @@ import { mainPage } from '../view/main/mainPage';
 import { notFoundPage } from '../view/notFoundPage/notFoundPage';
 import { signupPage } from '../view/signup/signupPage';
 import { profilePage } from '../view/profile/profilePage';
+import { catalogPage } from '../view/catalog/catalogPage';
 
 export const loadApp = () => {
   log('Loading the application');
@@ -18,6 +19,7 @@ export const loadApp = () => {
     new RegExpRoute('/login/signup', signupPage),
     new RegExpRoute('/login', loginPage),
     new RegExpRoute('/user', profilePage),
+    new RegExpRoute('/catalog', catalogPage),
     new DefaultRoute(notFoundPage)
   );
 

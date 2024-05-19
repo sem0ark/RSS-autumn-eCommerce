@@ -11,7 +11,7 @@ import {
   postalCodeValidators,
   streetValidators,
 } from '../../utils/validation/addressValidation';
-import { FieldEditBuilder } from '../../data/fieldEditBuilder';
+import { FieldEditBuilder } from '../../contexts/fieldEditBuilder';
 import { PBoolean } from '../../framework/reactive_properties/property';
 import { getId } from '../../framework/utilities/id';
 import { containerComponents } from '../shared/containerComponents';
