@@ -10,6 +10,21 @@
   padding: 5px 0;
 }
 
+.category-panel ul.categories > li {
+  margin-bottom: 20px;
+  color: black;
+}
+
+.category-panel ul.categories > li > a {
+  color: black;
+  font-size: 18px;
+}
+
+.category-panel ul.categories > li > a:hover,
+.category-panel ul.categories > li > a:active {
+  color: var(--primary-color);
+}
+
 .category-panel li {
   display: block;
   margin-left: 10px;

@@ -11,6 +11,7 @@ import { spinnerComponents } from '../shared/spinnerComponents';
 import { productCard } from './productCard';
 import { categoryPanel } from './categoryPanel';
 import { categoryBreadcrumps } from './categoryBreadcrumps';
+import { sortPanel } from './sortPanel';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -29,9 +30,10 @@ export const catalogPage = new Page((categoryId?: string) => {
   });
 
   return sidebarLayout('Catalog')(
-    aside(categoryPanel(categoryId)).cls('catalog-page'),
+    aside(sortPanel(), categoryPanel(categoryId)).cls('catalog-page'),
     main(
       categoryBreadcrumps(categoryId || ''),
+
       containerFlexRow({
         gap: 10,
         padding: 10,
