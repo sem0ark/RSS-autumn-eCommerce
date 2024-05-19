@@ -8,7 +8,7 @@ export const DEFAULT_LOCALE: LanguageLocale = 'en-US';
 export const CATALOG_LIMIT_PER_PAGE = 20;
 
 export interface FilterSelection {
-  selectedCategoryId: string;
+  selectedCategoryIds: string[];
   searchString: string;
 
   sort: {
@@ -106,10 +106,9 @@ class QueryBuilder {
     return QueryBuilder.filterQueryRange('variants.price.centAmount', from, to);
   }
 
-  static categoryFilterQuery(categoryIds: string[]): QueryElement {
-    return QueryBuilder.filterQuerySelect(
-      'categories.id',
-      ...categoryIds.map((v) => `subtree("${v}")`)
+  static categoryFilterQuery(categoryIds: string[]): QueryElement[] {
+    return categoryIds.map((v) =>
+      QueryBuilder.filterQuerySelect('categories.id', `subtree("${v}")`)
     );
   }
 
@@ -166,9 +165,9 @@ class QueryBuilder {
         )
       );
 
-    if (filters.selectedCategoryId)
+    if (filters.selectedCategoryIds?.length)
       elements.push(
-        QueryBuilder.categoryFilterQuery([filters.selectedCategoryId])
+        ...QueryBuilder.categoryFilterQuery(filters.selectedCategoryIds)
       );
 
     if (filters.sort)

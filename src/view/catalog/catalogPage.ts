@@ -20,7 +20,11 @@ const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
-  catalogContext.filters.get().selectedCategoryId = categoryId;
+  if (categoryId) {
+    catalogContext.filters.get().selectedCategoryIds = [categoryId];
+  } else {
+    catalogContext.filters.get().selectedCategoryIds = [];
+  }
 
   const loadingProducts = pboolean(false);
 
@@ -49,8 +53,10 @@ export const catalogPage = new Page((categoryId?: string) => {
         .list(catalogContext.products, productCard),
 
       functional(() => (loadingProducts.get() ? spinner() : hidden())),
-      functional(() =>
-        !loadingProducts.get() && catalogContext.canContinue.get()
+      functional(() => {
+        const canContinue = catalogContext.canContinue.get();
+        const loading = loadingProducts.get();
+        return !loading && canContinue
           ? buttonSecondary('Load More')
               .cls('load-more')
               .onClick(() => {
@@ -60,8 +66,8 @@ export const catalogPage = new Page((categoryId?: string) => {
                   .then(() => loadingProducts.disable())
                   .catch(() => loadingProducts.disable());
               })
-          : hidden()
-      )
+          : hidden();
+      })
     ).cls('catalog-page')
   );
 }, 'Catalog | True Colors');

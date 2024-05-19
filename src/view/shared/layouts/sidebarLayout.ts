@@ -22,13 +22,7 @@ export const sidebarLayout =
       containerMaxWidth.cls('sidebar-layout')(
         sideBlock
           .cls('sidebar-layout-aside')
-          .onClick(
-            () => {
-              active.toggle();
-            },
-            true,
-            true
-          )
+          .onClick(() => active.toggle(), false, true)
           .propClass(active, (v) => (v ? ['active'] : [])),
         mainBlock.cls('sidebar-layout-main')
       ),

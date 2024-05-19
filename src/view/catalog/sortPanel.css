@@ -9,3 +9,13 @@
 
   background-color: var(--background-color-light);
 }
+
+.sort-panel button {
+  font-size: 24px;
+  border: none;
+  padding: 3px;
+}
+
+.sort-panel .input-container {
+  align-items: center;
+}
