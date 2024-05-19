@@ -130,7 +130,7 @@ class QueryBuilder {
   ): QueryElement {
     return {
       name: `filter`,
-      value: `${field}:${values.map((v) => `"${v}"`).join(',')}`,
+      value: `${field}:${values.map((v) => `${v}`).join(',')}`,
     };
   }
 
@@ -190,12 +190,12 @@ export class CatalogConnector {
   public async requestCategoryList() {
     await authConnector.runGeneralAuthWorkflow();
 
-    const result = await ServerConnector.post<PagedResponse<Category>>(
+    const result = await ServerConnector.get<PagedResponse<Category>>(
       ServerConnector.getAPIURL(
         'categories',
         QueryBuilder.buildQueryString({ name: 'limit', value: '100' })
       ),
-      { ...authConnector.getAuthBasicHeaders() }
+      { ...authConnector.getAuthBearerHeaders() }
     );
 
     if (result.ok) {

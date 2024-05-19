@@ -37,10 +37,10 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
     p(product.name).cls('name'),
 
     product.discount
-      ? div(product.discount, span(product.price).cls('discount')).cls(
-          'price',
-          'price-discount'
-        )
+      ? div(
+          product.discount,
+          span(product.price).cls('discount', 'strike-through')
+        ).cls('price', 'price-discount')
       : div(product.price).cls('price'),
     buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button')
   ).cls('product-card');

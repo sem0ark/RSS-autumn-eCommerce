@@ -9,6 +9,7 @@ import { inputComponents } from '../shared/inputComponents';
 import { sidebarLayout } from '../shared/layouts/sidebarLayout';
 import { spinnerComponents } from '../shared/spinnerComponents';
 import { productCard } from './productCard';
+import { categoryPanel } from './categoryPanel';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -16,16 +17,18 @@ const { containerFlexRow } = containerComponents;
 const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
-export const catalogPage = new Page(() => {
-  const loading = pboolean(false);
+export const catalogPage = new Page((categoryId?: string) => {
+  if (categoryId) catalogContext.filters.get().selectedCategoryId = categoryId;
 
-  loading.enable();
+  const loadingProducts = pboolean(false);
+
+  loadingProducts.enable();
   catalogContext.newRequest().then(() => {
-    loading.disable();
+    loadingProducts.disable();
   });
 
   return sidebarLayout('Catalog')(
-    aside().cls('catalog-page'),
+    aside(categoryPanel(categoryId)).cls('catalog-page'),
     main(
       containerFlexRow({
         gap: 10,
@@ -33,7 +36,7 @@ export const catalogPage = new Page(() => {
         wrap: true,
       })(
         functional(() =>
-          catalogContext.products.pLength.get() === 0 && !loading.get()
+          catalogContext.products.pLength.get() === 0 && !loadingProducts.get()
             ? p('No products found.')
             : hidden()
         )
@@ -41,17 +44,17 @@ export const catalogPage = new Page(() => {
         .cls('products-container')
         .list(catalogContext.products, productCard),
 
-      functional(() => (loading.get() ? spinner() : hidden())),
+      functional(() => (loadingProducts.get() ? spinner() : hidden())),
       functional(() =>
-        !loading.get() && catalogContext.canContinue.get()
+        !loadingProducts.get() && catalogContext.canContinue.get()
           ? buttonSecondary('Load More')
               .cls('load-more')
               .onClick(() => {
-                loading.enable();
+                loadingProducts.enable();
                 catalogContext
                   .nextPage()
-                  .then(() => loading.disable())
-                  .catch(() => loading.disable());
+                  .then(() => loadingProducts.disable())
+                  .catch(() => loadingProducts.disable());
               })
           : hidden()
       )

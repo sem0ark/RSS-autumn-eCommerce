@@ -20,6 +20,7 @@ export const loadApp = () => {
     new RegExpRoute('/login', loginPage),
     new RegExpRoute('/user', profilePage),
     new RegExpRoute('/catalog', catalogPage),
+    new RegExpRoute('/catalog/[string]', catalogPage),
     new DefaultRoute(notFoundPage)
   );
 

@@ -19,6 +19,7 @@ export type CategoryExternal = {
   id: string;
   name: string;
   subcategories: CategoryExternal[];
+  parent?: CategoryExternal;
 };
 
 export type ProductDataExternal = {
@@ -57,7 +58,9 @@ function currencyString(price: TypedMoney) {
   }
 }
 
-function constructCategoryTree(categories: Category[]): CategoryExternal[] {
+function constructCategoryTree(
+  categories: Category[]
+): [CategoryExternal[], Map<string, CategoryExternal>] {
   const map = new Map<string, CategoryExternal>();
   const result: CategoryExternal[] = [];
 
@@ -72,11 +75,15 @@ function constructCategoryTree(categories: Category[]): CategoryExternal[] {
     const cur = map.get(category.id);
     if (!cur) continue;
 
-    if (category.parent) map.get(category.parent.id)?.subcategories.push(cur);
-    else result.push(cur);
+    if (category.parent) {
+      map.get(category.parent.id)?.subcategories.push(cur);
+      cur.parent = map.get(category.parent.id);
+    } else {
+      result.push(cur);
+    }
   }
 
-  return result;
+  return [result, map];
 }
 
 function getProductData(initial: ProductProjection): ProductDataExternal {
@@ -95,6 +102,10 @@ function getProductData(initial: ProductProjection): ProductDataExternal {
 }
 
 class CatalogContext {
+  private categoriesMap?: Map<string, CategoryExternal>;
+
+  private rootCategories?: CategoryExternal[];
+
   constructor(
     public readonly canContinue = pboolean(false, 'CatalogContext_canContinue'),
 
@@ -114,20 +125,35 @@ class CatalogContext {
     storage.registerProperty(page);
   }
 
-  public async getListOfCategories(): Promise<CategoryExternal[]> {
+  private async fetchCategories(): Promise<void> {
+    if (this.rootCategories && this.categoriesMap) return;
+
     const result = await catalogConnector.requestCategoryList();
 
     if (result.ok) {
       debug('Received a new set of products');
-      return constructCategoryTree(result.body.results);
+      const [root, map] = constructCategoryTree(result.body.results);
+
+      this.rootCategories = root;
+      this.categoriesMap = map;
     } else {
       error('Failed to receive the next page.');
       notificationContext.addError(
         'Something went wrong: Failed to request the list of categories.'
       );
     }
+  }
 
-    return [];
+  public async getCategoryById(
+    categoryId: string
+  ): Promise<CategoryExternal | undefined> {
+    await this.fetchCategories();
+    return this.categoriesMap?.get(categoryId);
+  }
+
+  public async getListOfCategories(): Promise<CategoryExternal[]> {
+    await this.fetchCategories();
+    return this.rootCategories as CategoryExternal[];
   }
 
   private async getProducts(): Promise<void> {

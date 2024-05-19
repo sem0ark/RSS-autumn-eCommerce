@@ -1,0 +1,21 @@
+.category-panel {
+  width: 100%;
+}
+
+.category-panel ul {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-around;
+  padding: 5px 0;
+}
+
+.category-panel li {
+  display: block;
+  margin-left: 10px;
+}
+
+.category-panel li a:hover,
+.category-panel li a:active {
+  color: var(--primary-color);
+}
