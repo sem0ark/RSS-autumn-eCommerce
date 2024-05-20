@@ -24,8 +24,8 @@ class AuthContext {
 
   public readonly userName = pfunc(
     () => {
-      const userData = this.userData.get();
-      return userData ? this.formatName(userData) : 'Unauthorized';
+      const data = this.userData.get();
+      return this.formatName(data);
     },
     [],
     'userName'
@@ -36,20 +36,22 @@ class AuthContext {
     const storage = new Storage('AuthContext');
     storage.registerProperty(this.userData);
 
-    if (!authConnector.isLoggedIn()) {
-      debug('!authConnector.isLoggedIn()');
-      this.attemptLogout();
-    }
+    this.synchronizeLoginState();
+  }
 
-    if (this.userIsLoggedIn.get() || authConnector.isLoggedIn()) {
-      debug('this.userIsLoggedIn.get() || authConnector.isLoggedIn()');
+  private synchronizeLoginState() {
+    if (authConnector.isLoggedIn() && !this.userIsLoggedIn.get()) {
       authConnector.runReSignInWorkflow().catch(() => {
         notificationContext.addError('Session expired');
         this.attemptLogout();
         return Promise.resolve();
       });
-    } else {
+      return;
+    }
+
+    if (!authConnector.isLoggedIn()) {
       this.attemptLogout();
+      return;
     }
   }
 
@@ -69,7 +71,8 @@ class AuthContext {
   }
 
   public async attemptLogout() {
-    notificationContext.addInformation(`Goodbye!`);
+    if (this.userIsLoggedIn.get())
+      notificationContext.addInformation(`Goodbye!`);
     this.userData.set(null);
     await authConnector.requestLogout();
     return Promise.resolve(true);
@@ -90,7 +93,8 @@ class AuthContext {
     return Promise.resolve(false);
   }
 
-  private formatName(data: CustomerDataReceived) {
+  private formatName(data: CustomerDataReceived | null) {
+    if (data === null) return 'Unauthorized';
     if (data.firstName) return data.firstName;
     return data.email;
   }
