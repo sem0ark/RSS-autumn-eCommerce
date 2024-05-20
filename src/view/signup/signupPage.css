@@ -1,0 +1,112 @@
+.signup-page {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding: 30px 0;
+  align-items: center;
+}
+
+.signup-page .form-block {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.signup-page .form-block h2 {
+  display: flex;
+  width: 100%;
+  font-size: 28px;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.signup-page .form-block h3 {
+  display: block;
+  width: 100%;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.signup-page .form-block p {
+  display: block;
+  width: 100%;
+  color: var(--subtext);
+}
+
+.signup-page .form-block h2 span {
+  display: inline-block;
+  width: 6px;
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--primary-color);
+  margin-right: 10px;
+}
+
+.signup-page .form-block > div {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 25px;
+}
+
+.signup-page .form-block > div,
+.signup-page .form-block input[type='text'],
+.signup-page .form-block input[type='password'],
+.signup-page .form-block input[type='email'],
+.signup-page .form-block select {
+  display: block;
+  width: min(340px, 100%);
+}
+
+.signup-page .form-block input[type='text'],
+.signup-page .form-block input[type='password'],
+.signup-page .form-block input[type='email'],
+.signup-page .form-block select {
+  height: 50px;
+  background-color: var(--background-color-light);
+  font-size: 20px;
+}
+
+.signup-page .form-block .checkbox-container {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  height: 30px;
+  padding-top: 25px;
+}
+
+.signup-page .form-block input {
+  height: 50px;
+  line-height: 50px;
+  font-size: 20px;
+}
+
+.signup-page .form-block input::placeholder {
+  color: var(--subtext);
+  font-size: 14px;
+}
+
+.signup-page .form-block label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .signup-page .form-block h2 {
+    font-size: 24px;
+  }
+
+  .signup-page .form-block h3 {
+    font-size: 20px;
+  }
+
+  .signup-page .form-block input[type='text'],
+  .signup-page .form-block input[type='password'],
+  .signup-page .form-block input[type='email'],
+  .signup-page .form-block select {
+    height: 40px;
+    background-color: var(--background-color-light);
+    font-size: 18px;
+  }
+}
