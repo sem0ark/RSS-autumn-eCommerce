@@ -22,3 +22,10 @@
   justify-content: center;
   text-align: center;
 }
+
+@media screen and (max-width: 768px) {
+  .minimal-layout-header {
+    height: 130px;
+    font-size: 40px;
+  }
+}

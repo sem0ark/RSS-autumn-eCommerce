@@ -13,9 +13,10 @@ import {
 } from '../../utils/validation/addressValidation';
 import { getId } from '../../framework/utilities/id';
 
-const { pfunc } = factories;
+const { pfunc, pboolean } = factories;
 const { h2, span, div } = htmlComponents;
-const { inputText, selectInput, validated, labelled } = inputComponents;
+const { inputText, selectInput, validated, labelled, checkboxInput } =
+  inputComponents;
 
 const formBlock = div.cls('form-block');
 
@@ -31,9 +32,15 @@ export const addressForm = (
       city: string;
       postalCode: string;
       streetName: string;
+      saveDefault: boolean;
     }
   >,
 ] => {
+  const saveDefault = pboolean(true, 'save_default');
+  const checkboxSaveDefaultField = checkboxInput()
+    .attr('checked')
+    .onInput((e) => saveDefault.set((e.target as HTMLInputElement).checked));
+
   const [inputCityField, cityValid, cityValue] = validated(
     inputText(),
     cityValidators
@@ -74,6 +81,7 @@ export const addressForm = (
     country: countryValue.get(),
     postalCode: postalCodeValue.get(),
     streetName: streetValue.get(),
+    saveDefault: saveDefault.get(),
   }));
 
   return [
@@ -90,7 +98,17 @@ export const addressForm = (
       }),
       labelled('Street *', inputStreetField, getId('street'), {
         required: true,
-      })
+      }),
+
+      labelled(
+        `Save as default ${headingText}`,
+        checkboxSaveDefaultField,
+        getId('save-default'),
+        {
+          name: 'save as default address',
+          reverseOrder: true,
+        }
+      ).cls('checkbox-container')
     ),
     resultingDataCorrect,
     resultingData,
