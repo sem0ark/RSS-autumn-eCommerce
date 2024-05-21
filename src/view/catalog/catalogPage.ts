@@ -13,6 +13,7 @@ import { categoryPanel } from './categoryPanel';
 import { categoryBreadcrumps } from './categoryBreadcrumps';
 import { sortPanel } from './sortPanel';
 import { searchPanel } from './searchPanel';
+import { filterPanel } from './filterPanel';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -21,11 +22,9 @@ const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
-  if (categoryId) {
+  if (categoryId)
     catalogContext.filters.get().selectedCategoryIds = [categoryId];
-  } else {
-    catalogContext.filters.get().selectedCategoryIds = [];
-  }
+  else catalogContext.filters.get().selectedCategoryIds = [];
 
   catalogContext.filters.get().searchString = undefined;
   // clear search string on moving to the new category
@@ -38,9 +37,12 @@ export const catalogPage = new Page((categoryId?: string) => {
   });
 
   return sidebarLayout('Catalog')(
-    aside(searchPanel(), sortPanel(), categoryPanel(categoryId)).cls(
-      'catalog-page'
-    ),
+    aside(
+      searchPanel(),
+      sortPanel(),
+      filterPanel(),
+      categoryPanel(categoryId)
+    ).cls('catalog-page', 'hide-scrollbar'),
     main(
       categoryBreadcrumps(categoryId || ''),
 

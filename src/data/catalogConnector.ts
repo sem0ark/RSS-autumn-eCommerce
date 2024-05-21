@@ -11,6 +11,11 @@ export interface FilterSelection {
   selectedCategoryIds: string[];
   searchString: string;
 
+  filters: {
+    color: string[];
+    price: [number, number][];
+  };
+
   sort: {
     by: string;
     direction?: 'asc' | 'desc';
@@ -102,8 +107,8 @@ class QueryBuilder {
     return { name: `text.${locale}`, value: `"${text}"` };
   }
 
-  static priceFilterQuery(from: number = 0, to?: number): QueryElement {
-    return QueryBuilder.filterQueryRange('variants.price.centAmount', from, to);
+  static priceFilterQuery(ranges: [number, number][]): QueryElement {
+    return QueryBuilder.filterQueryRanges('variants.price.centAmount', ranges);
   }
 
   static categoryFilterQuery(categoryIds: string[]): QueryElement[] {
@@ -112,14 +117,15 @@ class QueryBuilder {
     );
   }
 
-  static filterQueryRange(
+  static filterQueryRanges(
     field: string,
-    from?: number,
-    to?: number
+    ranges: [number, number][]
   ): QueryElement {
     return {
       name: `filter`,
-      value: `${field}:range (${from || '*'} to ${to || '*'})`,
+      value: `${field}:range ${ranges
+        .map(([from, to]) => `(${from || '*'} to ${to || '*'})`)
+        .join(', ')}`,
     };
   }
 
@@ -130,6 +136,16 @@ class QueryBuilder {
     return {
       name: `filter`,
       value: `${field}:${values.map((v) => `${v}`).join(',')}`,
+    };
+  }
+
+  static filterQuerySelectQuoted(
+    field: string,
+    ...values: (string | number | boolean)[]
+  ): QueryElement {
+    return {
+      name: `filter`,
+      value: `${field}:${values.map((v) => `"${v}"`).join(',')}`,
     };
   }
 
@@ -162,7 +178,9 @@ class QueryBuilder {
         QueryBuilder.searchQuery(
           filters.searchString,
           options.locale || DEFAULT_LOCALE
-        )
+        ),
+        QueryBuilder.element('fuzzy', 'true'),
+        QueryBuilder.element('fuzzyLevel', '0')
       );
 
     if (filters.selectedCategoryIds?.length)
@@ -174,6 +192,19 @@ class QueryBuilder {
       elements.push(
         QueryBuilder.sortQuery(filters.sort.by, filters.sort.direction)
       );
+
+    if (filters.filters) {
+      if (filters.filters.price.length)
+        elements.push(QueryBuilder.priceFilterQuery(filters.filters.price));
+
+      if (filters.filters.color.length)
+        elements.push(
+          QueryBuilder.filterQuerySelectQuoted(
+            'variants.attributes.color',
+            ...filters.filters.color
+          )
+        );
+    }
 
     if (options.limit)
       elements.push(QueryBuilder.element('limit', options.limit));

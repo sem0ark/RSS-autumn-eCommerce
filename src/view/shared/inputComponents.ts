@@ -135,6 +135,25 @@ const selectInput = (entries: [string, string][], selected?: string) =>
     )
   );
 
+// const radioInput = (entries: [string, string][], selected?: string) => {
+//   const inputValue = factories.property<string>('', 'radioInputValue');
+//   const radioInputGroup = getId('input-components-input-radio');
+
+//   return div.cls('input-components-input-radio')(
+//     ...entries.map(([k, v]) => {
+//       const radio = input().attr('type', 'radio').attr('value', k);
+
+//       if (selected === k) radio.attr('checked');
+
+//       return labelled(v, radio, getId('input-radio'), {
+//         name: radioInputGroup,
+//       }).onClick(() => {
+//         inputValue
+//       });
+//     })
+//   );
+// };
+
 const submitButton = button
   .cls('block-selection', 'input-components-input-submit')
   .attr('type', 'submit');

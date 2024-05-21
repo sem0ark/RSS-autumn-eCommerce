@@ -18,6 +18,9 @@
 
 .sidebar-layout-aside {
   height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
   background-color: var(--background-light);
   transition: all ease-in-out 0.5s;
 
@@ -71,8 +74,9 @@
     padding: 0;
     margin: 0;
 
-    height: fit-content;
+    height: 100%;
     overflow: hidden;
+    overflow-y: scroll;
 
     border-top: 5px solid var(--primary-color);
     border-right: 5px solid var(--primary-color);
@@ -112,6 +116,10 @@
     border: none;
   }
 
+  .sidebar-layout-aside {
+    overflow-y: hidden;
+  }
+
   .sidebar-layout-aside > * {
     opacity: 0;
     pointer-events: none;
@@ -123,9 +131,16 @@
   }
 
   .sidebar-layout-aside > button.sidebar-layout-toggle {
+    position: sticky;
+    z-index: 2;
+    top: 10px;
     opacity: 1;
     pointer-events: all;
     width: 40px;
+  }
+
+  .sidebar-layout-aside.active {
+    overflow-y: scroll;
   }
 
   .sidebar-layout-aside.active > * {

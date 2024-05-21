@@ -5,8 +5,8 @@ import { inputComponents } from '../shared/inputComponents';
 import { textComponents } from '../shared/textComponents';
 import { catalogContext } from '../../contexts/catalogContext';
 
-const { form } = htmlComponents;
-const { validated, inputText, buttonSecondary } = inputComponents;
+const { div } = htmlComponents;
+const { validated, inputText } = inputComponents;
 const { header3Orange } = textComponents;
 
 export const searchPanel = () => {
@@ -23,19 +23,20 @@ export const searchPanel = () => {
     ]
   );
 
-  const searchButton = buttonSecondary('Search')
-    .propClass(searchValid, (v) => (v ? ['active'] : []))
-    .attr('type', 'submit');
-
-  return form(header3Orange('Search'), search, searchButton)
-    .cls('search-panel')
-    .onSubmit(() => {
-      if (!searchValid || searchValue.get()?.length === 0) {
-        catalogContext.filters.get().searchString = undefined;
-        return;
-      }
-
-      catalogContext.filters.get().searchString = searchValue.get();
+  search.onInput(() => {
+    if (searchValue.get()?.length === 0) {
+      catalogContext.filters.get().searchString = undefined;
       catalogContext.newRequest();
-    });
+    }
+
+    if (!searchValid || searchValue.get()?.length === 0) {
+      catalogContext.filters.get().searchString = undefined;
+      return;
+    }
+
+    catalogContext.filters.get().searchString = searchValue.get();
+    catalogContext.newRequest();
+  });
+
+  return div(header3Orange('Search'), search).cls('search-panel');
 };
