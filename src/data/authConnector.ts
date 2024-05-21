@@ -41,8 +41,8 @@ export interface CustomerData {
   shippingAddressIds?: string[];
   billingAddressIds?: string[];
 
-  defaultShippingAddress?: string;
-  defaultBillingAddress?: string;
+  defaultShippingAddress?: number;
+  defaultBillingAddress?: number;
 
   defaultShippingAddressId?: string;
   defaultBillingAddressId?: string;
@@ -59,11 +59,14 @@ export type FormData = {
     lastName: string;
     dateOfBirth: string;
   };
+
   billingAddress: Address;
+  billingAddressSaveDefault: boolean;
 } & (
   | {
       sameShippingAddress: false;
       shippingAddress: Address;
+      shippingAddressSaveDefault: boolean;
     }
   | {
       sameShippingAddress: true;
@@ -436,19 +439,27 @@ class AuthConnector {
       await this.requestTokenRefresh();
     }
 
-    formData.billingAddress.key ||= 'Billing';
-    const requestBody: CustomerData = {
-      ...formData.user,
-      addresses: [formData.billingAddress],
-      defaultBillingAddress: '0',
-      defaultShippingAddress: '0',
-    };
-
-    if (!formData.sameShippingAddress) {
-      formData.shippingAddress.key ||= 'Shipping';
-      requestBody.addresses.push(formData.shippingAddress);
-      requestBody.defaultShippingAddress = '1';
-    }
+    const requestBody: CustomerData = formData.sameShippingAddress
+      ? {
+          ...formData.user,
+          addresses: [formData.billingAddress],
+          defaultBillingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+          defaultShippingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+        }
+      : {
+          ...formData.user,
+          addresses: [formData.billingAddress, formData.shippingAddress],
+          defaultBillingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+          defaultShippingAddress: formData.shippingAddressSaveDefault
+            ? 0
+            : undefined,
+        };
 
     const result = await this.requestSignUp(requestBody);
 
