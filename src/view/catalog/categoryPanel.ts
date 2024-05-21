@@ -17,30 +17,27 @@ const { header3Orange } = textComponents;
 const { spinner } = spinnerComponents;
 const { checkboxInput } = inputComponents;
 
-const categoryEntry = (category: CategoryExternal, initial: boolean) => {
+const categoryEntry = (category: CategoryExternal) => {
   const result = div().cls('category-entry');
 
-  if (!initial) {
-    const checkboxSelectCategory = checkboxInput().onInput((e) => {
-      const checked = (e.target as HTMLInputElement).checked;
+  const checkboxSelectCategory = checkboxInput().onInput((e) => {
+    const checked = (e.target as HTMLInputElement).checked;
 
-      if (!checked) {
-        catalogContext.filters.get().selectedCategoryIds =
-          catalogContext.filters
-            .get()
-            ?.selectedCategoryIds?.filter((id) => id !== category.id);
-      } else {
-        catalogContext.filters.get().selectedCategoryIds = [
-          ...(catalogContext.filters.get().selectedCategoryIds || []),
-          category.id,
-        ];
-      }
+    if (!checked) {
+      catalogContext.filters.get().selectedCategoryIds = catalogContext.filters
+        .get()
+        ?.selectedCategoryIds?.filter((id) => id !== category.id);
+    } else {
+      catalogContext.filters.get().selectedCategoryIds = [
+        ...(catalogContext.filters.get().selectedCategoryIds || []),
+        category.id,
+      ];
+    }
 
-      catalogContext.newRequest();
-    });
+    catalogContext.newRequest();
+  });
 
-    result.add(checkboxSelectCategory.onClick(() => {}, false, true));
-  }
+  result.add(checkboxSelectCategory.onClick(() => {}, false, true));
 
   result.add(link(`/catalog/${category.id}`, category.name));
 
@@ -48,15 +45,12 @@ const categoryEntry = (category: CategoryExternal, initial: boolean) => {
 };
 
 export const categoryPanel = (rootCategoryId?: string) => {
-  function recursiveRender(
-    initial: boolean,
-    ...categories: CategoryExternal[]
-  ): HTMLComponent {
+  function recursiveRender(...categories: CategoryExternal[]): HTMLComponent {
     return ul(
       ...categories.map((c) =>
         li(
-          categoryEntry(c, initial),
-          c.subcategories ? recursiveRender(false, ...c.subcategories) : ''
+          categoryEntry(c),
+          c.subcategories ? recursiveRender(...c.subcategories) : ''
         )
       )
     );
@@ -69,11 +63,11 @@ export const categoryPanel = (rootCategoryId?: string) => {
         if (rootCategoryId) {
           const category = await catalogContext.getCategoryById(rootCategoryId);
           if (category)
-            return recursiveRender(true, category).cls('categories');
+            return recursiveRender(...category.subcategories).cls('categories');
         }
 
         const categories = await catalogContext.getListOfCategories();
-        return recursiveRender(true, ...categories).cls('categories');
+        return recursiveRender(...categories).cls('categories');
       },
       () => spinner().cls('categories')
     )

@@ -319,6 +319,16 @@ export class HTMLComponent extends Component {
   }
 
   /**
+   * Add sub-components to the start of the current HTML component
+   * @param children Children components to be added to the HTML Component
+   * @returns
+   */
+  public addBefore(...children: Component[]) {
+    this._children.unshift(...children);
+    return this;
+  }
+
+  /**
    * Sequentially (in the same order as the methods were called) add text entry inside the HTML component, will render it as an added TextNode.
    * @param txt Some text data
    * @returns

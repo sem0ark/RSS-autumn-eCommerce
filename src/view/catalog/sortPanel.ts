@@ -43,11 +43,14 @@ export const sortPanel = () => {
         true,
         true
       ),
-      selectInput([
-        ['', 'Sort by'],
-        ['name.en-gb', 'Name'],
-        ['price', 'Price'],
-      ]).onInputValue((value) => {
+      selectInput(
+        [
+          ['', 'Sort by'],
+          ['name.en-gb', 'Name'],
+          ['price', 'Price'],
+        ],
+        sortBy.get() || ''
+      ).onInputValue((value) => {
         sortBy.set(value);
         updateData();
       })

@@ -32,8 +32,9 @@
   padding: 3px 0;
 }
 
-.category-entry:hover input[type='checkbox'] {
-  margin-right: 5px;
+.category-entry input[type='checkbox'] {
+  position: relative;
+  margin-right: 10px;
   width: 20px;
   height: 20px;
 }

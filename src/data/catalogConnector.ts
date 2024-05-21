@@ -4,7 +4,7 @@ import { PagedResponse, ServerConnector } from './serverConnector';
 
 type LanguageLocale = 'en-GB' | 'en-US' | 'ru' | 'de' | 'rs';
 
-export const DEFAULT_LOCALE: LanguageLocale = 'en-US';
+export const DEFAULT_LOCALE: LanguageLocale = 'en-GB';
 export const CATALOG_LIMIT_PER_PAGE = 20;
 
 export interface FilterSelection {
