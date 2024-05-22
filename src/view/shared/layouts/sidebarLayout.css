@@ -8,6 +8,9 @@
   grid-template-columns: 3fr 9fr;
   min-height: 500px;
   gap: 50px;
+
+  height: 100%;
+  flex: 1;
 }
 
 .sidebar-layout > * {
@@ -53,7 +56,7 @@
   display: none;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1000px) {
   .sidebar-layout {
     position: relative;
     display: flex;

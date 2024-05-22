@@ -31,7 +31,7 @@ export const sidebarLayout =
               .propClass(active, (a) => (a ? ['active'] : []))
               .onClick(() => active.toggle())
           )
-          .cls('sidebar-layout-aside')
+          .cls('sidebar-layout-aside', 'hide-scrollbar')
           .propClass(active, (v) => (v ? ['active'] : [])),
         mainBlock.cls('sidebar-layout-main')
       ),

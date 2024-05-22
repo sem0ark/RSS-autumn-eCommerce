@@ -7,7 +7,7 @@ import { notificationModal } from '../notifications/notificationContainer';
 import { footerComponent } from '../footer/footer';
 import { navBar } from '../navBar/navBar';
 
-const { main, h1 } = htmlComponents;
+const { main, h1, div } = htmlComponents;
 const { containerMaxWidth, containerOuter } = containerComponents;
 
 export const minimalLayout =
@@ -17,6 +17,8 @@ export const minimalLayout =
       navBar(),
       h1(heading).cls('minimal-layout-header'),
       main(containerMaxWidth.cls('minimal-layout')(...children)),
+
+      div().cls('minimal-layout-push'),
       footerComponent(),
       notificationModal()
     );
