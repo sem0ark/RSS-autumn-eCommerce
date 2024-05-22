@@ -195,38 +195,27 @@ export type ProductFullDataExternal = {
 };
 
 export function getFullProductData(
-  initial: Product,
+  initial: ProductProjection,
   categories: Map<string, CategoryExternal>
 ): ProductFullDataExternal {
   return {
     id: initial.id,
-    name: localizedToString(initial.masterData.current.name),
-    description: localizedToString(
-      initial.masterData.current.description,
-      'No description'
-    ),
+    name: localizedToString(initial.name),
+    description: localizedToString(initial.description, 'No description'),
 
-    price: currencyString(
-      initial.masterData.current.masterVariant.prices[0].value
-    ),
-    discount: initial.masterData.current.masterVariant.prices[0].discounted
-      ? currencyString(
-          initial.masterData.current.masterVariant.prices[0].discounted.value
-        )
+    price: currencyString(initial.masterVariant.prices[0].value),
+    discount: initial.masterVariant.prices[0].discounted
+      ? currencyString(initial.masterVariant.prices[0].discounted.value)
       : undefined,
 
-    imageUrls:
-      initial.masterData.current.masterVariant.images?.map((v) => v.url) || [],
+    imageUrls: initial.masterVariant.images?.map((v) => v.url) || [],
 
-    categories: initial.masterData.current.categories
+    categories: initial.categories
       .map((v) => categories.get(v.id))
       .filter((v) => v !== undefined) as CategoryExternal[],
 
     attributes: Object.fromEntries(
-      initial.masterData.current.masterVariant.attributes.map((v) => [
-        v.name,
-        v.value,
-      ])
+      initial.masterVariant.attributes.map((v) => [v.name, v.value])
     ),
   };
 }

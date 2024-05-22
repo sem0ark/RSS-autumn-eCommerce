@@ -1,15 +1,13 @@
 import './categoryPanel.css';
 
-import {
-  CategoryExternal,
-  catalogContext,
-} from '../../contexts/catalogContext';
+import { catalogContext } from '../../contexts/catalogContext';
 import { factories } from '../../framework/factories';
 import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
 import { htmlComponents } from '../shared/htmlComponents';
 import { spinnerComponents } from '../shared/spinnerComponents';
 import { textComponents } from '../shared/textComponents';
 import { inputComponents } from '../shared/inputComponents';
+import { CategoryExternal } from '../../utils/dataAndTyping/catalogDTO';
 
 const { asynchronous } = factories;
 const { div, ul, li, link } = htmlComponents;

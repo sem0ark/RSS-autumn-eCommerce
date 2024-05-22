@@ -87,8 +87,7 @@ const colorSelection = () => {
   ).cls('filter-block');
 };
 
-export const filterPanel = () => {
-  return div(header3Orange('Filter'), priceSelection(), colorSelection()).cls(
+export const filterPanel = () =>
+  div(header3Orange('Filter'), priceSelection(), colorSelection()).cls(
     'filter-panel'
   );
-};
