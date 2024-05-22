@@ -26,8 +26,9 @@ export const catalogPage = new Page((categoryId?: string) => {
     catalogContext.filters.get().selectedCategoryIds = [categoryId];
   else catalogContext.filters.get().selectedCategoryIds = [];
 
+  // clear search string and other filters on moving to the new category
   catalogContext.filters.get().searchString = undefined;
-  // clear search string on moving to the new category
+  catalogContext.filters.get().filters = { color: [], price: [] };
 
   const loadingProducts = pboolean(false);
 

@@ -5,6 +5,7 @@
 
   justify-content: space-between;
   flex-direction: column;
+  align-items: center;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
@@ -38,6 +39,22 @@
   padding: 10px;
 
   font-size: 18px;
+  text-align: center;
+  font-weight: 400;
+}
+
+.product-card .description {
+  display: block;
+  width: 80%;
+  height: 30px;
+  line-height: 30px;
+
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  font-size: 14px;
   text-align: center;
   font-weight: 400;
 }
