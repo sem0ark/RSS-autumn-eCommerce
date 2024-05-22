@@ -1,99 +1,15 @@
 import { debug, error } from '../framework/utilities/logging';
+import {
+  CATALOG_LIMIT_PER_PAGE,
+  Category,
+  DEFAULT_LOCALE,
+  FilterSelection,
+  LanguageLocale,
+  Product,
+  ProductProjection,
+} from '../utils/dataAndTyping/catalogDTO';
 import { authConnector } from './authConnector';
 import { PagedResponse, ServerConnector } from './serverConnector';
-
-type LanguageLocale = 'en-GB' | 'en-US' | 'ru' | 'de' | 'rs';
-
-export const DEFAULT_LOCALE: LanguageLocale = 'en-GB';
-export const CATALOG_LIMIT_PER_PAGE = 20;
-
-export interface FilterSelection {
-  selectedCategoryIds: string[];
-  searchString: string;
-
-  filters: {
-    color: string[];
-    price: [number, number][];
-  };
-
-  sort: {
-    by: string;
-    direction?: 'asc' | 'desc';
-  };
-}
-
-interface CategoryReference {
-  id: string;
-  name: LocalizedString;
-}
-
-export interface Category {
-  id: string;
-  name: LocalizedString;
-  description: LocalizedString;
-  ancestors: CategoryReference[];
-  parent?: CategoryReference;
-}
-
-export interface Product {
-  id: string;
-  masterData: {
-    current: ProductData;
-  };
-}
-
-export interface ProductProjection {
-  id: string;
-  name: LocalizedString;
-  description?: LocalizedString;
-  categories: CategoryReference[];
-
-  masterVariant: ProductVariant;
-  variants: ProductVariant;
-}
-
-interface ProductData {
-  name: LocalizedString;
-  description: LocalizedString;
-
-  categories: CategoryReference[];
-
-  masterVariant: ProductVariant;
-  variants: ProductVariant;
-}
-
-interface ProductVariant {
-  id: string;
-  prices: Price[];
-  images: Image[];
-  attributes: Attribute<object>[];
-}
-
-interface Attribute<T> {
-  name: string;
-  value: T;
-}
-
-interface Price {
-  id: string;
-  value: TypedMoney;
-
-  discounted?: {
-    value: TypedMoney;
-  };
-}
-
-export interface TypedMoney {
-  centAmount: number;
-  currencyCode: 'USD' | 'EUR' | 'RUB' | 'RSD' | 'GBP';
-  fractionDigits: number;
-}
-
-interface Image {
-  url: string;
-}
-
-export type LocalizedString = Partial<Record<LanguageLocale, string>>;
 
 type QueryElement = { name: string; value: string };
 type QueryOptions = {
@@ -277,11 +193,8 @@ export class CatalogConnector {
       { ...authConnector.getAuthBearerHeaders() }
     );
 
-    if (result.ok) {
-      debug('Received product information', result.body);
-    } else {
-      error('Failed to load product information', result.errors);
-    }
+    if (result.ok) debug('Received product information', result.body);
+    else error('Failed to load product information', result.errors);
 
     return result;
   }
