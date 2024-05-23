@@ -196,7 +196,9 @@ function pobject<T extends RecObj>(initial: T, name?: string) {
 
 const defaultLoading = () => new HTMLComponent().tag('div');
 const defaultError = (err: Error) =>
-  new HTMLComponent().tag('div').text(`${err.name}: ${err.message}`);
+  new HTMLComponent()
+    .tag('div')
+    .text(`Something went wrong! ${err.name}: ${err.message}`);
 
 /**
  * `AsynchronousComponent` allows to place loadable data for the component. It is used to place `Promise`s into the component to be able to load some data, like images, etc.

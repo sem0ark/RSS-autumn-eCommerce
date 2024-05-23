@@ -65,9 +65,7 @@ class CartConnector {
     );
 
     if (result.ok) return result;
-    else {
-      error('Failed to update cart data', result.errors);
-    }
+    else error('Failed to update cart data', result.errors);
 
     return result;
   }
