@@ -23,11 +23,12 @@ const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
   if (categoryId)
-    catalogContext.filters.get().selectedCategoryIds = [categoryId];
-  else catalogContext.filters.get().selectedCategoryIds = [];
+    catalogContext.filters.get().selectedRootCategoryId = categoryId;
+  else catalogContext.filters.get().selectedRootCategoryId = undefined;
 
   // clear search string and other filters on moving to the new category
   catalogContext.filters.get().searchString = undefined;
+  catalogContext.filters.get().selectedCategoryIds = [];
   catalogContext.filters.get().filters = { color: [], price: [] };
 
   const loadingProducts = pboolean(false);

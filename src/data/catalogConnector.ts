@@ -26,9 +26,10 @@ class QueryBuilder {
     return QueryBuilder.filterQueryRanges('variants.price.centAmount', ranges);
   }
 
-  static categoryFilterQuery(categoryIds: string[]): QueryElement[] {
-    return categoryIds.map((v) =>
-      QueryBuilder.filterQuerySelect('categories.id', `subtree("${v}")`)
+  static categoryFilterQuery(categoryIds: string[]): QueryElement {
+    return QueryBuilder.filterQuerySelect(
+      'categories.id',
+      categoryIds.map((v) => `subtree("${v}")`).join(', ')
     );
   }
 
@@ -98,9 +99,14 @@ class QueryBuilder {
         QueryBuilder.element('fuzzyLevel', '0')
       );
 
+    if (filters.selectedRootCategoryId)
+      elements.push(
+        QueryBuilder.categoryFilterQuery([filters.selectedRootCategoryId])
+      );
+
     if (filters.selectedCategoryIds?.length)
       elements.push(
-        ...QueryBuilder.categoryFilterQuery(filters.selectedCategoryIds)
+        QueryBuilder.categoryFilterQuery(filters.selectedCategoryIds)
       );
 
     if (filters.sort)

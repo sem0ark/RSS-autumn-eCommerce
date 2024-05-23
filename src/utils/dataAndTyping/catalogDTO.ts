@@ -4,6 +4,7 @@ export const DEFAULT_LOCALE: LanguageLocale = 'en-GB';
 export const CATALOG_LIMIT_PER_PAGE = 20;
 
 export interface FilterSelection {
+  selectedRootCategoryId?: string;
   selectedCategoryIds: string[];
   searchString: string;
 

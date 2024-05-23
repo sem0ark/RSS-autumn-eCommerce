@@ -53,10 +53,17 @@ export const navBar = () => {
             .propClass(currentTab, (c) => (c === 3 ? ['active'] : []))
             .onClick(() => currentTab.set(3)),
 
-          buttonPrimary('Login')
-            .onClick(() => Router.navigateTo('/login'))
-            .propClass(currentTab, (c) => (c === 4 ? ['active'] : []))
-            .onClick(() => currentTab.set(4)),
+          functional(() =>
+            authContext.userIsLoggedIn.get()
+              ? buttonSecondary('Login')
+                  .onClick(() => Router.navigateTo('/login'))
+                  .propClass(currentTab, (c) => (c === 4 ? ['active'] : []))
+                  .onClick(() => currentTab.set(4))
+              : buttonPrimary('Login')
+                  .onClick(() => Router.navigateTo('/login'))
+                  .propClass(currentTab, (c) => (c === 4 ? ['active'] : []))
+                  .onClick(() => currentTab.set(4))
+          ),
 
           functional(() =>
             authContext.userIsLoggedIn.get()
