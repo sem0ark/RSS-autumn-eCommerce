@@ -56,6 +56,13 @@ export class ServerConnector {
     return `https://${config.VITE_CTP_API_HOST}/${config.VITE_CTP_PROJECT_KEY}/${postfix}${query}`;
   }
 
+  public static findErrorByCode(
+    errors: ErrorEntry[],
+    code: string
+  ): ErrorEntry | undefined {
+    return errors.filter((err) => err.code === code)[0];
+  }
+
   public static makeBearerAuthHeader(token: Token) {
     return {
       Authorization: `Bearer ${token}`,

@@ -3,8 +3,8 @@ import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
 import { ObservableList } from '../framework/reactive_properties/observable_list';
 import { debug, error } from '../framework/utilities/logging';
+import { CATALOG_LIMIT_PER_PAGE } from '../utils/dataAndTyping/DTO';
 import {
-  CATALOG_LIMIT_PER_PAGE,
   CategoryExternal,
   FilterSelection,
   ProductDataExternal,

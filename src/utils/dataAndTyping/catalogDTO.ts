@@ -1,7 +1,11 @@
-export type LanguageLocale = 'en-GB' | 'en-US' | 'ru' | 'de' | 'rs';
-
-export const DEFAULT_LOCALE: LanguageLocale = 'en-GB';
-export const CATALOG_LIMIT_PER_PAGE = 20;
+import {
+  Attribute,
+  Image,
+  LocalizedString,
+  Price,
+  TypedMoney,
+  localizedToString,
+} from './DTO';
 
 export interface FilterSelection {
   selectedRootCategoryId?: string;
@@ -49,7 +53,7 @@ export interface ProductProjection {
   variants: ProductVariant;
 }
 
-interface ProductData {
+export interface ProductData {
   name: LocalizedString;
   description: LocalizedString;
 
@@ -59,43 +63,11 @@ interface ProductData {
   variants: ProductVariant;
 }
 
-interface ProductVariant {
+export interface ProductVariant {
   id: string;
   prices: Price[];
   images: Image[];
   attributes: Attribute<object>[];
-}
-
-interface Attribute<T> {
-  name: string;
-  value: T;
-}
-
-interface Price {
-  id: string;
-  value: TypedMoney;
-
-  discounted?: {
-    value: TypedMoney;
-  };
-}
-
-export interface TypedMoney {
-  centAmount: number;
-  currencyCode: 'USD' | 'EUR' | 'RUB' | 'RSD' | 'GBP';
-  fractionDigits: number;
-}
-
-interface Image {
-  url: string;
-}
-
-export type LocalizedString = Partial<Record<LanguageLocale, string>>;
-export function localizedToString(
-  name: LocalizedString = {},
-  otherwise: string = 'No name'
-) {
-  return name['en-GB'] || name['en-US'] || Object.values(name)[0] || otherwise;
 }
 
 export type CategoryExternal = {
