@@ -18,8 +18,9 @@ const { submitButton, checkboxInput, labelled } = inputComponents;
 const formBlock = div.cls('form-block');
 
 export const signupPage = new Page(() => {
-  const sameShippingAddress = pboolean(false, 'same_shipping_address');
+  const sameShippingAddress = pboolean(true, 'same_shipping_address');
   const checkboxSameShippingAddress = checkboxInput()
+    .attr('checked')
     .cls('checkbox-password')
     .onInput((e) =>
       sameShippingAddress.set((e.target as HTMLInputElement).checked)
@@ -66,9 +67,15 @@ export const signupPage = new Page(() => {
           authContext
             .attemptSignUp({
               user: userFormValue.get(),
-              sameShippingAddress: sameShippingAddress.get(),
+
               billingAddress: billingAddressValue.get(),
+
+              sameShippingAddress: sameShippingAddress.get(),
               shippingAddress: shippingAddressValue.get(),
+
+              billingAddressSaveDefault: billingAddressValue.get().saveDefault,
+              shippingAddressSaveDefault:
+                shippingAddressValue.get().saveDefault,
             })
             .then((success) => {
               if (success) Router.navigateTo('/');

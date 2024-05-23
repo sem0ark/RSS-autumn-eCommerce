@@ -8,7 +8,7 @@ import {
 } from './serverConnector';
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
-import { ProfileUpdateAction } from './fieldEditBuilder';
+import { ProfileUpdateAction } from '../contexts/fieldEditBuilder';
 
 /**
  * Address object interface based on the commerce tools documentation and RSS requirements.
@@ -41,8 +41,8 @@ export interface CustomerData {
   shippingAddressIds?: string[];
   billingAddressIds?: string[];
 
-  defaultShippingAddress?: string;
-  defaultBillingAddress?: string;
+  defaultShippingAddress?: number;
+  defaultBillingAddress?: number;
 
   defaultShippingAddressId?: string;
   defaultBillingAddressId?: string;
@@ -59,11 +59,14 @@ export type FormData = {
     lastName: string;
     dateOfBirth: string;
   };
+
   billingAddress: Address;
+  billingAddressSaveDefault: boolean;
 } & (
   | {
       sameShippingAddress: false;
       shippingAddress: Address;
+      shippingAddressSaveDefault: boolean;
     }
   | {
       sameShippingAddress: true;
@@ -391,9 +394,34 @@ class AuthConnector {
   }
 
   /**
-   * Authorize the user.
-   * @param username - entered username from the form
-   * @param password - entered password from the form
+   * Authorize the user for the standard catalog functionality.
+   * Will automatically update the session information before making request.
+   * @returns
+   */
+  public async runGeneralAuthWorkflow(): Promise<void> {
+    debug('Trying to run general authentication workflow.');
+    const token = this._tokenData.get();
+
+    if (!token) {
+      debug('User is not logged in, trying to get an anonymous token.');
+
+      const tokenResult = await this.requestAnonymousToken();
+      if (!tokenResult.ok) {
+        error('Failed to request the anonymous token');
+        return;
+      }
+
+      this.configureTokenData(tokenResult.body, true);
+    } else if (token.expirationDateMS < Date.now()) {
+      debug('Token already exists, but it is outdated.');
+      await this.requestTokenRefresh();
+    } else {
+      debug('User is already logged in, doing nothing.');
+    }
+  }
+
+  /**
+   * Sign up the user based on the form data.
    * @returns Login information about the user
    */
   public async runSignUpWorkflow(
@@ -411,19 +439,27 @@ class AuthConnector {
       await this.requestTokenRefresh();
     }
 
-    formData.billingAddress.key ||= 'Billing';
-    const requestBody: CustomerData = {
-      ...formData.user,
-      addresses: [formData.billingAddress],
-      defaultBillingAddress: '0',
-      defaultShippingAddress: '0',
-    };
-
-    if (!formData.sameShippingAddress) {
-      formData.shippingAddress.key ||= 'Shipping';
-      requestBody.addresses.push(formData.shippingAddress);
-      requestBody.defaultShippingAddress = '1';
-    }
+    const requestBody: CustomerData = formData.sameShippingAddress
+      ? {
+          ...formData.user,
+          addresses: [formData.billingAddress],
+          defaultBillingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+          defaultShippingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+        }
+      : {
+          ...formData.user,
+          addresses: [formData.billingAddress, formData.shippingAddress],
+          defaultBillingAddress: formData.billingAddressSaveDefault
+            ? 0
+            : undefined,
+          defaultShippingAddress: formData.shippingAddressSaveDefault
+            ? 0
+            : undefined,
+        };
 
     const result = await this.requestSignUp(requestBody);
 

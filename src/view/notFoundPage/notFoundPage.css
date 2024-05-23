@@ -24,3 +24,9 @@
   font-size: 18px;
   height: auto;
 }
+
+@media screen and (max-width: 768px) {
+  .not-found-page h1 {
+    font-size: 60px;
+  }
+}

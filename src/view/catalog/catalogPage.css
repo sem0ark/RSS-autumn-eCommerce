@@ -1,0 +1,24 @@
+main.catalog-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-bottom: 30px;
+}
+
+.catalog-page .products-container {
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 30px;
+}
+
+.catalog-page .load-more {
+  width: 300px;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.catalog-page .category-breadcrumps a:hover,
+.catalog-page .category-breadcrumps a:active {
+  color: var(--primary-color);
+}

@@ -22,3 +22,15 @@
   justify-content: center;
   text-align: center;
 }
+
+.minimal-layout-push {
+  height: 100%;
+  flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .minimal-layout-header {
+    height: 130px;
+    font-size: 40px;
+  }
+}

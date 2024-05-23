@@ -1,4 +1,4 @@
-import { Address } from './authConnector';
+import { Address } from '../data/authConnector';
 
 export type ActionCode =
   | 'setFirstName'

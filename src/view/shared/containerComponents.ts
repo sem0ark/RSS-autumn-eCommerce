@@ -32,14 +32,13 @@ const containerOuter = container.cls('container-components-outer');
 const containerMaxWidth = container.cls('container-components-max-width');
 
 const containerFlexRow =
-  (options?: { gap?: number; padding?: number }) =>
+  (options?: { gap?: number; padding?: number; wrap?: boolean }) =>
   (...children: CC) =>
     container
       .cls('container-components-flex-row')(...children)
-      .if(!!(options && options.gap), (c) =>
-        c.style('gap', `${options?.gap}px`)
-      )
-      .if(!!(options && options.padding), (c) =>
+      .if(!!options?.gap, (c) => c.style('gap', `${options?.gap}px`))
+      .if(!!options?.wrap, (c) => c.style('flex-wrap', `wrap`))
+      .if(!!options?.padding, (c) =>
         c.style('padding', `${options?.padding}px`)
       );
 
