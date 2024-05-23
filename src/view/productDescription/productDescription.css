@@ -1,0 +1,85 @@
+.product-description-page main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 60px;
+  gap: 30px;
+
+  justify-items: center;
+}
+
+.product-description-page .slider {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.product-description-page .information {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-description-page .information h2 {
+  font-size: 36px;
+  font-weight: light;
+}
+
+.product-description-page .information .price {
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--fail-red);
+  color: var(--border-dark);
+}
+
+.product-description-page .information .price-discount {
+  color: var(--fail-red);
+}
+
+.product-description-page .information .discount {
+  margin-left: 10px;
+  font-size: 24px;
+  color: var(--border-dark);
+}
+
+.product-description-page .information button {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 500;
+  width: 190px;
+}
+
+.product-description-page .information .description {
+  border-top: 1px solid grey;
+  margin-bottom: 20px;
+}
+
+.product-description-page .information .description h3 {
+  font-size: 24px;
+  font-weight: lighter;
+  margin: 20px 0;
+}
+
+.product-description-page .information .description p {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 30px;
+}
+
+@media screen and (max-width: 900px) {
+  .product-description-page main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .product-description-page .slider {
+    width: 100%;
+    height: 400px;
+    max-height: 400px;
+  }
+
+  .product-description-page .description {
+    margin-bottom: 30px;
+  }
+}

@@ -1,0 +1,137 @@
+.slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.slider-container .slider-component {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.slider-container .image {
+  object-fit: contain;
+  width: 100%;
+}
+
+.slider-container .slider-component.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slider-container .slider-modal {
+  z-index: 10;
+  padding-top: 40px;
+  display: none;
+}
+
+.slider-container .slider-modal .cancel {
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  background-color: var(--background-light);
+}
+
+.slider-container .slider-modal.active {
+  display: block;
+  backdrop-filter: brightness(0.6);
+}
+
+.slider-container .slider-modal.active button {
+  height: 50px;
+  width: 50px;
+}
+
+.slider-container .slider-modal.active > div {
+  height: 90vh;
+}
+
+.slider-container .slider-modal.active .image {
+  object-fit: contain;
+  max-height: min(90vh, 90vw);
+  max-width: 100%;
+}
+
+.slider-container .slider-component .image {
+  display: none;
+}
+
+.slider-container .slider-component .image.active {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  object-fit: contain;
+}
+
+.slider-container .slider-component button {
+  opacity: 0;
+  position: absolute;
+  z-index: 10;
+
+  font-size: 20px;
+  line-height: 40px;
+  background-color: var(--background-light);
+  color: black;
+}
+
+.slider-container .slider-component:hover button {
+  opacity: 1;
+}
+
+.slider-container .slider-component button:first-child {
+  top: 50%;
+  left: 10px;
+  transform: translate(0, -50%);
+}
+
+.slider-container .slider-component button:last-child {
+  top: 50%;
+  right: 10px;
+  transform: translate(0, -50%);
+}
+
+.slider-container .slider-component .dot-container {
+  position: absolute;
+  bottom: 10px;
+
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.slider-container .slider-component .dot-container .dot {
+  padding: 10px;
+  border-radius: 20px;
+  transition: background-color 0.2s ease-in-out;
+  background-color: var(--background-primary);
+}
+
+.slider-container .slider-component .dot-container .dot.active {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+@media screen and (max-width: 900px) {
+  .slider-container {
+    width: 100%;
+    height: 400px;
+  }
+
+  .slider-container .slider-component {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    object-fit: contain;
+  }
+}

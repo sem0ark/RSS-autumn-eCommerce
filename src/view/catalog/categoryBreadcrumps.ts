@@ -1,8 +1,6 @@
-import {
-  CategoryExternal,
-  catalogContext,
-} from '../../contexts/catalogContext';
+import { catalogContext } from '../../contexts/catalogContext';
 import { factories } from '../../framework/factories';
+import { CategoryExternal } from '../../utils/dataAndTyping/catalogDTO';
 import { htmlComponents } from '../shared/htmlComponents';
 
 const { link, div } = htmlComponents;

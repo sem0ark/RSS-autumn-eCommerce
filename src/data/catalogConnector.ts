@@ -5,7 +5,6 @@ import {
   DEFAULT_LOCALE,
   FilterSelection,
   LanguageLocale,
-  Product,
   ProductProjection,
 } from '../utils/dataAndTyping/catalogDTO';
 import { authConnector } from './authConnector';
@@ -194,8 +193,8 @@ export class CatalogConnector {
   public async requestProductInfo(productId: string) {
     await authConnector.runGeneralAuthWorkflow();
 
-    const result = await ServerConnector.get<Product>(
-      ServerConnector.getAPIURL(`products/${productId}`),
+    const result = await ServerConnector.get<ProductProjection>(
+      ServerConnector.getAPIURL(`product-projections/${productId}`),
       { ...authConnector.getAuthBearerHeaders() }
     );
 
