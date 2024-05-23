@@ -82,7 +82,7 @@ export class CartEditBuilder {
     };
   }
 
-  public static recalculate(updateProductData = true): CartUpdateAction {
+  public static recalculate(updateProductData = false): CartUpdateAction {
     return {
       action: 'recalculate',
       updateProductData,

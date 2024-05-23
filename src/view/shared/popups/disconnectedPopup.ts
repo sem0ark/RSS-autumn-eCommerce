@@ -14,7 +14,6 @@ export const disconnectedPopup = () => {
     window.navigator.onLine || window.navigator?.onLine === undefined,
     'currentlyOnline'
   );
-
   window.addEventListener('online', () => active.set(window.navigator.onLine));
   window.addEventListener('offline', () => active.set(window.navigator.onLine));
 

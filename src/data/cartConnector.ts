@@ -26,7 +26,7 @@ class CartConnector {
     return result;
   }
 
-  private async requestActiveCart() {
+  public async requestActiveCart() {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.get<Cart>(
@@ -49,17 +49,20 @@ class CartConnector {
     return result;
   }
 
-  private async requestUpdateCart(cart: Cart, actions: CartUpdateAction) {
+  public async requestUpdateCart(
+    cartData: { id: string; version: number },
+    ...actions: CartUpdateAction[]
+  ) {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.post<Cart>(
-      ServerConnector.getAPIURL(`me/carts/${cart.id}`),
+      ServerConnector.getAPIURL(`me/carts/${cartData.id}`),
       {
         ...authConnector.getAuthBearerHeaders(),
         ...ServerConnector.formJSONHeaders,
       },
       {
-        version: cart.version,
+        version: cartData.version,
         actions,
       }
     );
@@ -70,11 +73,11 @@ class CartConnector {
     return result;
   }
 
-  private async requestDeleteCart(cart: Cart) {
+  public async requestDeleteCart(cartData: { id: string; version: number }) {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.delete<Cart>(
-      ServerConnector.getAPIURL(`me/carts/${cart.id}`),
+      ServerConnector.getAPIURL(`me/carts/${cartData.id}`),
       { ...authConnector.getAuthBearerHeaders() }
     );
 
