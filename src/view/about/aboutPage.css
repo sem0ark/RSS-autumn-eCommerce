@@ -98,3 +98,10 @@
   filter: brightness(1.3);
   transform: scale(1.05);
 }
+
+@media screen and (max-width: 400px) {
+  .about-page .member-description {
+    max-width: unset;
+    width: 100%;
+  }
+}
