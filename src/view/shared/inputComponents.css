@@ -111,11 +111,50 @@ a {
   border-radius: 8px;
 }
 
+.input-components-button-icon .icon {
+  height: 24px;
+  width: 24px;
+}
+
 .input-components-button-icon.active,
 .input-components-button-icon:hover,
 .input-components-button-icon:active:hover {
   background-color: var(--color-text-light);
   transform: scale(1.2);
+}
+
+.input-components-button-icon-text {
+  display: inline-block;
+  text-align: center;
+  height: 30px;
+  width: 30px;
+  overflow: hidden;
+
+  border-radius: 8px;
+}
+
+.input-components-button-icon-text span {
+  height: 30px;
+  position: relative;
+  display: block;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 30px;
+  top: -2px;
+}
+
+.input-components-button-icon-text.active,
+.input-components-button-icon-text:hover,
+.input-components-button-icon-text:active:hover {
+  background-color: var(--color-text-light);
+  transform: scale(1.2);
+}
+
+.input-components-button-icon:disabled,
+.input-components-button-icon-text:disabled,
+.input-components-button:disabled {
+  cursor: not-allowed;
+  filter: contrast(0.3);
 }
 
 @media only screen and (max-width: 768px) {

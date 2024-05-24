@@ -13,7 +13,7 @@ import { Router } from '../../../framework/routing/router';
 import { Storage } from '../../../framework/persistence/storage';
 import { cartContext } from '../../../contexts/cartContext';
 
-const { functional, text } = factories;
+const { functional } = factories;
 const { div, nav, ul, li, link, iconSvg, hidden } = htmlComponents;
 const { buttonSecondary, buttonPrimary, buttonIcon } = inputComponents;
 const { containerMaxWidth, containerFlexRow } = containerComponents;
@@ -92,9 +92,11 @@ export const navBar = () => {
           .propClass(currentTab, (c) => (c === 6 ? ['active'] : []))
           .onClick(() => currentTab.set(6))
           .add(
-            div(
-              functional(() => text(cartContext.cartEntriesCounter.get()))
-            ).cls('quantity')
+            functional(() =>
+              cartContext.cartEntriesCounter.get() > 0
+                ? div(cartContext.cartEntriesCounter.get()).cls('quantity')
+                : hidden()
+            )
           )
       ).cls('navbar-buttons')
     )

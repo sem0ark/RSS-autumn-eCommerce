@@ -1,7 +1,11 @@
 import { cartConnector } from '../data/cartConnector';
 import { factories } from '../framework/factories';
 import { error, warn } from '../framework/utilities/logging';
-import { CartDataExternal, getCartData } from '../utils/dataAndTyping/cartDTO';
+import {
+  Cart,
+  CartDataExternal,
+  getCartData,
+} from '../utils/dataAndTyping/cartDTO';
 import { authContext } from './authContext';
 import { CartEditBuilder } from './cartUpdateBuilder';
 import { notificationContext } from './notificationContext';
@@ -10,6 +14,8 @@ const cartFindItem = (cart: CartDataExternal, productId: string) =>
   cart.products.filter((p) => p.product.id === productId)[0];
 
 class CartContext {
+  public cartData?: Cart;
+
   public readonly cart = factories.property<CartDataExternal | null>(
     null,
     'cart-data'
@@ -18,7 +24,7 @@ class CartContext {
   public readonly cartEntriesCounter = factories.pfunc(
     () => {
       const cart = this.cart.get();
-      if (!cart) return 0;
+      if (!cart || cart === null) return 0;
       return Math.min(
         cart.products.reduce((acc, p) => acc + p.quantity, 0),
         9
@@ -29,21 +35,42 @@ class CartContext {
   );
 
   constructor() {
-    authContext.userData.onChange(() => {
-      this.clearData();
+    authContext.userData.onChange((data) => {
+      const userIsLoggingOut = data === null;
+      if (userIsLoggingOut) this.clearData();
+
       // wait a bit to allow clear the authentication data beforehand
-      setTimeout(() => this.fetchCartData(), 500);
+      setTimeout(() => this.initCartData(!userIsLoggingOut), 500);
     });
   }
 
   public async clearData() {
+    delete this.cartData;
     this.cart.set(null);
+  }
+
+  private async initCartData(synchronizeCarts = false) {
+    const result = await cartConnector.requestCreateNewCart(
+      synchronizeCarts ? this.cartData : undefined
+    );
+
+    if (result.ok) {
+      this.cartData = result.body;
+      this.cart.set(getCartData(result.body));
+      return Promise.resolve(true);
+    }
+
+    result.errors.forEach(({ message }) =>
+      notificationContext.addError(message)
+    );
+    return Promise.resolve(false);
   }
 
   public async fetchCartData() {
     const result = await cartConnector.requestActiveCart();
 
     if (result.ok) {
+      this.cartData = result.body;
       this.cart.set(getCartData(result.body));
       return Promise.resolve(true);
     }

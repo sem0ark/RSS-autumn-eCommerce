@@ -6,7 +6,12 @@ import { authConnector } from './authConnector';
 import { ServerConnector } from './serverConnector';
 
 class CartConnector {
-  private async requestCreateNewCart() {
+  /**
+   * Call API to create a new cart.
+   * @param initialCartData some cart data in case cart was already existing during anonymous session
+   * @returns
+   */
+  public async requestCreateNewCart(initialCartData?: Cart) {
     await authConnector.runGeneralAuthWorkflow();
 
     const result = await ServerConnector.post<Cart>(
@@ -17,6 +22,7 @@ class CartConnector {
       },
       {
         currency: 'EUR',
+        ...initialCartData,
       }
     );
 

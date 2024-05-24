@@ -485,6 +485,62 @@ export class HTMLComponent extends Component {
   }
 
   /**
+   * Update Component's `classList` in runtime based on promise's state.
+   * Note: to avoid undefined behavior, set some class for a specific component in only one call to this method.
+   *
+   * @param promise some promise to listen to for updating a list of classes
+   * @param classes classes to set and then remove, after the promise completes
+   * @returns The same instance to allow chaining operations.
+   */
+  public asyncApplyClass(promise: Promise<unknown>, classes: string[]) {
+    const node = this._node;
+
+    if (node) {
+      node.classList.add(...classes);
+      promise
+        .then(() => node.classList.remove(...classes))
+        .catch(() => node.classList.remove(...classes));
+    }
+
+    return this;
+  }
+
+  /**
+   * Update Component's attributes in runtime based on promise's state.
+   *
+   * @param promise some promise to listen to for updating a list of classes
+   * @param attribute
+   * @param value
+   * @returns
+   */
+  public asyncApplyAttr(
+    promise: Promise<unknown>,
+    attribute: string,
+    value: string = ''
+  ) {
+    const node = this._node;
+
+    if (node) {
+      const previousValue = node.getAttribute(attribute);
+
+      node.setAttribute(attribute, value);
+      promise
+        .then(() =>
+          previousValue !== null
+            ? node.setAttribute(attribute, previousValue)
+            : node.removeAttribute(attribute)
+        )
+        .catch(() =>
+          previousValue !== null
+            ? node.setAttribute(attribute, previousValue)
+            : node.removeAttribute(attribute)
+        );
+    }
+
+    return this;
+  }
+
+  /**
    * Set attribute value to the already rendered HTML Element
    * @param name
    * @param value
@@ -492,6 +548,16 @@ export class HTMLComponent extends Component {
    */
   public applyAttr(name: string, value: string = '') {
     if (this._node) this._node.setAttribute(name, value);
+    return this;
+  }
+
+  /**
+   * Remove attribute value from the already rendered HTML Element
+   * @param name
+   * @returns
+   */
+  public removeAttr(name: string) {
+    if (this._node) this._node.removeAttribute(name);
     return this;
   }
 

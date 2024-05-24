@@ -9,6 +9,7 @@ import { signupPage } from '../view/signup/signupPage';
 import { profilePage } from '../view/profile/profilePage';
 import { catalogPage } from '../view/catalog/catalogPage';
 import { productDescriptionPage } from '../view/productDescription/productDescriptionPage';
+import { cartPage } from '../view/cart/cartPage';
 
 export const loadApp = () => {
   log('Loading the application');
@@ -23,6 +24,7 @@ export const loadApp = () => {
     new RegExpRoute('/catalog', catalogPage),
     new RegExpRoute('/catalog/[string]', catalogPage),
     new RegExpRoute('/products/[string]', productDescriptionPage),
+    new RegExpRoute('/cart', cartPage),
     new DefaultRoute(notFoundPage)
   );
 

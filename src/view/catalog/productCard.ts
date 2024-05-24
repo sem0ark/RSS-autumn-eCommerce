@@ -34,6 +34,21 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
     () => spinner().cls('image')
   );
 
+  const buyButton = buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button');
+  buyButton.onClick(
+    () => {
+      const prom = cartContext.addProduct(product.id, 1);
+      buyButton.asyncApplyAttr(
+        prom.then((success) => {
+          if (success) notificationContext.addSuccess('Added to the cart');
+        }),
+        'disabled'
+      );
+    },
+    true,
+    true
+  );
+
   return div(
     cardImage,
 
@@ -46,19 +61,7 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
         ).cls('price', 'price-discount')
       : div(product.price).cls('price'),
 
-    buttonPrimary(iconSvg(cartSVG), 'Buy')
-      .cls('buy-button')
-      .onClick(
-        () => {
-          cartContext.addProduct(product.id, 1).then((success) => {
-            if (success) {
-              notificationContext.addSuccess('Successfully added to the cart');
-            }
-          });
-        },
-        true,
-        true
-      )
+    buyButton
   )
     .cls('product-card')
     .onClick(
