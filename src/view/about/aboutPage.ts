@@ -10,7 +10,7 @@ import { Page } from '../../framework/ui_components/page';
 import { htmlComponents } from '../shared/htmlComponents';
 import { blankLayout } from '../shared/layouts/blankLayout';
 
-const { p, h1, h2, h3, div, img, ul, li, iconSvg, a } = htmlComponents;
+const { p, h1, h2, h3, div, img, ul, li, iconSvg, a, span } = htmlComponents;
 
 const memberDescription = (
   imageUrl: string | undefined,
@@ -21,12 +21,14 @@ const memberDescription = (
   github: string
 ) =>
   div(
-    imageUrl ? img(imageUrl).cls('image') : div(description).cls('image'),
-    h2(name),
-    h3(role),
+    div(
+      imageUrl ? img(imageUrl).cls('image') : div().cls('image'),
+      h2(name),
+      h3(role)
+    ).cls('head'),
     div(description).cls('description'),
     ul(...actions.map((v) => li(v))),
-    div(iconSvg(githubSVG), a(github, 'GitHub'))
+    div(a(github, iconSvg(githubSVG).cls('icon'), span('GitHub'))).cls('github')
   ).cls('member-description');
 
 export const aboutPage = new Page(() => {
