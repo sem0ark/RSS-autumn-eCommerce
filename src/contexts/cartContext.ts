@@ -171,6 +171,29 @@ class CartContext {
     );
     return Promise.resolve(false);
   }
+
+  public async applyPromoCode(code: string) {
+    if (!this.cart.get()) {
+      const success = await this.fetchCartData();
+      if (!success) error("Failed to receive a cart, can't remove a product.");
+    }
+
+    const cart = this.cart.get() as CartDataExternal;
+
+    // we are updating quantity to the existing product
+
+    const result = await cartConnector.requestUpdateCart(
+      cart,
+      CartEditBuilder.addDiscountCode(code)
+    );
+
+    if (result.ok) {
+      this.cart.set(getCartData(result.body));
+      return Promise.resolve(true);
+    }
+
+    return Promise.resolve(false);
+  }
 }
 
 export const cartContext = new CartContext();

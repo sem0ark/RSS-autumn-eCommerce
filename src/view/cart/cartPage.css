@@ -34,7 +34,13 @@
 
 .cart-page:not(.cart-empty) > p > .price {
   font-weight: 800;
-  text-decoration: underline;
+}
+
+.cart-page:not(.cart-empty) > p > .price .price-discount {
+  margin-right: 20px;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--fail-red);
 }
 
 .cart-page:not(.cart-empty) .control-buttons {
@@ -55,4 +61,17 @@
 .cart-page:not(.cart-empty) .control-buttons .clear-cart-button:hover {
   background-color: var(--fail-red);
   color: #fff;
+}
+
+.cart-page .promo-form {
+  margin-top: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.cart-page .promo-form > * {
+  height: 40px;
+  font-size: 16px;
 }
