@@ -4,7 +4,7 @@ import rssSVG from '../../../assets/rs_school.svg';
 import githubSVG from '../../../assets/github.svg';
 import arkadiiImage from '../../../assets/arkadii.png';
 import larisaImage from '../../../assets/larisa.png';
-// import ekaterinaImage from '../../../assets/larisa.png';
+import ekaterinaImage from '../../../assets/ekaterina.jpg';
 
 import { Page } from '../../framework/ui_components/page';
 import { htmlComponents } from '../shared/htmlComponents';
@@ -76,7 +76,7 @@ export const aboutPage = new Page(() => {
           'https://github.com/laranu'
         ),
         memberDescription(
-          undefined,
+          ekaterinaImage,
           'Ekaterina Grigoreva',
           'Frontend Developer',
           'NA',
