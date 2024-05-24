@@ -25,7 +25,7 @@ export interface TypedMoney {
 export type LanguageLocale = 'en-GB' | 'en-US' | 'ru' | 'de' | 'rs';
 
 export const DEFAULT_LOCALE: LanguageLocale = 'en-GB';
-export const CATALOG_LIMIT_PER_PAGE = 20;
+export const CATALOG_LIMIT_PER_PAGE = 10;
 
 export type LocalizedString = Partial<Record<LanguageLocale, string>>;
 export function localizedToString(

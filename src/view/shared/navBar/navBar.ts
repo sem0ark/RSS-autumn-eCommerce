@@ -11,8 +11,9 @@ import { factories } from '../../../framework/factories';
 import { authContext } from '../../../contexts/authContext';
 import { Router } from '../../../framework/routing/router';
 import { Storage } from '../../../framework/persistence/storage';
+import { cartContext } from '../../../contexts/cartContext';
 
-const { functional } = factories;
+const { functional, text } = factories;
 const { div, nav, ul, li, link, iconSvg, hidden } = htmlComponents;
 const { buttonSecondary, buttonPrimary, buttonIcon } = inputComponents;
 const { containerMaxWidth, containerFlexRow } = containerComponents;
@@ -59,14 +60,12 @@ export const navBar = () => {
 
           functional(() =>
             authContext.userIsLoggedIn.get()
-              ? buttonSecondary('Login')
-                  .onClick(() => Router.navigateTo('/login'))
-                  .propClass(currentTab, (c) => (c === 4 ? ['active'] : []))
-                  .onClick(() => currentTab.set(4))
-              : buttonPrimary('Login')
-                  .onClick(() => Router.navigateTo('/login'))
-                  .propClass(currentTab, (c) => (c === 4 ? ['active'] : []))
-                  .onClick(() => currentTab.set(4))
+              ? buttonSecondary('Login').onClick(() =>
+                  Router.navigateTo('/login')
+                )
+              : buttonPrimary('Login').onClick(() =>
+                  Router.navigateTo('/login')
+                )
           ),
 
           functional(() =>
@@ -92,7 +91,11 @@ export const navBar = () => {
           .onClick(() => Router.navigateTo('/cart'))
           .propClass(currentTab, (c) => (c === 6 ? ['active'] : []))
           .onClick(() => currentTab.set(6))
-          .add(div(1).cls('quantity'))
+          .add(
+            div(
+              functional(() => text(cartContext.cartEntriesCounter.get()))
+            ).cls('quantity')
+          )
       ).cls('navbar-buttons')
     )
     .propClass(menuOpen, (o) => (o ? ['navbar-menu-open'] : []))

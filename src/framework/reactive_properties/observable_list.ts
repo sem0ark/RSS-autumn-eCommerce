@@ -85,8 +85,8 @@ export class ObservableList<T extends PropertyValueType> {
 
   public remove(index: number) {
     this.removeHandlers.forEach((h) => h(index));
-    this.pLength.set(this._properties.length);
     this._properties.splice(index, 1);
+    this.pLength.set(this._properties.length);
   }
 
   public removeByProperty(property: Property<T>) {

@@ -9,6 +9,8 @@ import { factories } from '../../framework/factories';
 import { spinnerComponents } from '../shared/spinnerComponents';
 import { Router } from '../../framework/routing/router';
 import { ProductDataExternal } from '../../utils/dataAndTyping/catalogDTO';
+import { cartContext } from '../../contexts/cartContext';
+import { notificationContext } from '../../contexts/notificationContext';
 
 const { asynchronous } = factories;
 const { p, div, span, img, iconSvg } = htmlComponents;
@@ -46,7 +48,17 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
 
     buttonPrimary(iconSvg(cartSVG), 'Buy')
       .cls('buy-button')
-      .onClick(() => {}, true, true)
+      .onClick(
+        () => {
+          cartContext.addProduct(product.id, 1).then((success) => {
+            if (success) {
+              notificationContext.addSuccess('Successfully added to the cart');
+            }
+          });
+        },
+        true,
+        true
+      )
   )
     .cls('product-card')
     .onClick(
