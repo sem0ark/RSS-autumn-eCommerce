@@ -50,21 +50,25 @@ export const cartPage = new Page(() => {
           const codeSubmitButton = buttonSecondary('Apply Code');
 
           return div(
-            form(promoCodeInput, codeSubmitButton)
-              .cls('promo-form')
-              .onSubmit(() => {
-                if (!promoCodeInputValue.get()) return;
+            cart.discount
+              ? hidden()
+              : form(promoCodeInput, codeSubmitButton)
+                  .cls('promo-form')
+                  .onSubmit(() => {
+                    if (!promoCodeInputValue.get()) return;
 
-                const promise = cartContext
-                  .applyPromoCode(promoCodeInputValue.get())
-                  .then((s) => {
-                    if (s)
-                      notificationContext.addSuccess("You've got a discount!");
-                    else notificationContext.addError('Incorrect code...');
-                  });
+                    const promise = cartContext
+                      .applyPromoCode(promoCodeInputValue.get())
+                      .then((s) => {
+                        if (s)
+                          notificationContext.addSuccess(
+                            "You've got a discount!"
+                          );
+                        else notificationContext.addError('Incorrect code...');
+                      });
 
-                codeSubmitButton.asyncApplyAttr(promise, 'disabled');
-              }),
+                    codeSubmitButton.asyncApplyAttr(promise, 'disabled');
+                  }),
 
             ...cart.products.map((product) => cartEntry(product)),
             p(
