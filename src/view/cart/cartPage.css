@@ -36,3 +36,23 @@
   font-weight: 800;
   text-decoration: underline;
 }
+
+.cart-page:not(.cart-empty) .control-buttons {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-page:not(.cart-empty) .control-buttons > button {
+  font-size: 18px;
+}
+
+.cart-page:not(.cart-empty) .control-buttons .clear-cart-button {
+  color: grey;
+}
+
+.cart-page:not(.cart-empty) .control-buttons .clear-cart-button:hover {
+  background-color: var(--fail-red);
+  color: #fff;
+}

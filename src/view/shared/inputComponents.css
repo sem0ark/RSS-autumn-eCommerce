@@ -152,7 +152,10 @@ a {
 
 .input-components-button-icon:disabled,
 .input-components-button-icon-text:disabled,
-.input-components-button:disabled {
+.input-components-button:disabled,
+.input-components-button-icon.inactive,
+.input-components-button-icon-text.inactive,
+.input-components-button.inactive {
   cursor: not-allowed;
   filter: contrast(0.3);
 }

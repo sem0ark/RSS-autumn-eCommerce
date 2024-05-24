@@ -11,19 +11,37 @@ import { sliderComponent } from './imageSlider';
 import { cartContext } from '../../contexts/cartContext';
 import { notificationContext } from '../../contexts/notificationContext';
 
-const { asynchronous } = factories;
+const { asynchronous, pfunc } = factories;
 const { main, div, span, h2, h3, p } = htmlComponents;
 const { spinner } = spinnerComponents;
 const { buttonPrimary } = inputComponents;
 
 export const productDescriptionPage = new Page((productId: string) => {
+  // update the cart data in case it was not loaded
+  cartContext.fetchCartData();
+
   const renderSlider = async () => {
     const product = await productInfoContext.getProductData(productId);
     return sliderComponent(product.imageUrls || []).cls('slider');
   };
 
-  const buyButton = buttonPrimary('Add To Cart');
+  const alreadyInCart = pfunc(
+    () =>
+      !!cartContext.cart
+        .get()
+        ?.products.find((item) => item.product.id === productId)
+  );
+
+  const buyButton = buttonPrimary('Add To Cart').propClass(
+    alreadyInCart,
+    (v) => (v ? ['inactive'] : [])
+  );
   buyButton.onClick(() => {
+    if (alreadyInCart.get()) {
+      notificationContext.addInformation('Product is already in the cart');
+      return;
+    }
+
     const prom = cartContext.addProduct(productId, 1);
     buyButton.asyncApplyAttr(
       prom.then((success) => {

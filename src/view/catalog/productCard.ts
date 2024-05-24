@@ -12,7 +12,7 @@ import { ProductDataExternal } from '../../utils/dataAndTyping/catalogDTO';
 import { cartContext } from '../../contexts/cartContext';
 import { notificationContext } from '../../contexts/notificationContext';
 
-const { asynchronous } = factories;
+const { asynchronous, pfunc } = factories;
 const { p, div, span, img, iconSvg } = htmlComponents;
 const { buttonPrimary } = inputComponents;
 const { spinner } = spinnerComponents;
@@ -34,9 +34,23 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
     () => spinner().cls('image')
   );
 
-  const buyButton = buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button');
+  const alreadyInCart = pfunc(
+    () =>
+      !!cartContext.cart
+        .get()
+        ?.products.find((item) => item.product.id === product.id)
+  );
+
+  const buyButton = buttonPrimary(iconSvg(cartSVG), 'Buy')
+    .cls('buy-button')
+    .propClass(alreadyInCart, (v) => (v ? ['inactive'] : []));
   buyButton.onClick(
     () => {
+      if (alreadyInCart.get()) {
+        notificationContext.addInformation('Product is already in the cart');
+        return;
+      }
+
       const prom = cartContext.addProduct(product.id, 1);
       buyButton.asyncApplyAttr(
         prom.then((success) => {

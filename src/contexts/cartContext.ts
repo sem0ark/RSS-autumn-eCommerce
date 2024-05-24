@@ -14,7 +14,7 @@ const cartFindItem = (cart: CartDataExternal, productId: string) =>
   cart.products.filter((p) => p.product.id === productId)[0];
 
 class CartContext {
-  public cartData?: Cart;
+  private cartData?: Cart;
 
   public readonly cart = factories.property<CartDataExternal | null>(
     null,
@@ -37,14 +37,21 @@ class CartContext {
   constructor() {
     authContext.userData.onChange((data) => {
       const userIsLoggingOut = data === null;
-      if (userIsLoggingOut) this.clearData();
+      if (userIsLoggingOut) {
+        this.clearData();
+        // wait a bit to allow clear the authentication data beforehand
+        setTimeout(() => this.initCartData(), 500);
+        return;
+      }
 
-      // wait a bit to allow clear the authentication data beforehand
-      setTimeout(() => this.initCartData(!userIsLoggingOut), 500);
+      // overwrite the cart only if it already has something
+      if (this.cartData?.lineItems.length)
+        setTimeout(() => this.initCartData(!userIsLoggingOut), 500);
+      else setTimeout(() => this.fetchCartData(), 500);
     });
   }
 
-  public async clearData() {
+  private async clearData() {
     delete this.cartData;
     this.cart.set(null);
   }
@@ -79,6 +86,11 @@ class CartContext {
       notificationContext.addError(message)
     );
     return Promise.resolve(false);
+  }
+
+  public async clearCartData() {
+    this.clearData();
+    await this.initCartData();
   }
 
   public async addProduct(productId: string, quantity: number = 1) {

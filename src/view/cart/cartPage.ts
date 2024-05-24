@@ -12,7 +12,7 @@ import { spinnerComponents } from '../shared/spinnerComponents';
 
 const { asynchronous, functional } = factories;
 const { div, p, span } = htmlComponents;
-const { buttonPrimary } = inputComponents;
+const { buttonPrimary, buttonSecondary } = inputComponents;
 const { spinner } = spinnerComponents;
 
 export const cartPage = new Page(() => {
@@ -34,9 +34,16 @@ export const cartPage = new Page(() => {
             ).cls('cart-page', 'cart-empty');
           }
 
+          const clearCart =
+            buttonSecondary('Clear Cart').cls('clear-cart-button');
+          clearCart.onClick(() =>
+            clearCart.asyncApplyAttr(cartContext.clearCartData(), 'disable')
+          );
+
           return div(
             ...cart.products.map((product) => cartEntry(product)),
-            p('Total price is ', span(cart.price).cls('price'))
+            p('Total price is ', span(cart.price).cls('price')),
+            div(clearCart, buttonPrimary('Order')).cls('control-buttons')
           ).cls('cart-page');
         });
       },
