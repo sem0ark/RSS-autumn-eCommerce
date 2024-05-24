@@ -25,6 +25,38 @@
   height: auto;
 }
 
+.main-page .promo-codes {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 240px;
+  font-size: 18px;
+  height: auto;
+  color: var(--border-dark);
+  background-color: var(--background-light);
+  padding: 20px;
+  border-radius: 0 0 0 10px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  border-left: var(--primary-color) 2px solid;
+  border-bottom: var(--primary-color) 2px solid;
+}
+
+.main-page .promo-codes h2 {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.main-page .promo-codes .promo {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.main-page .promo-codes .time {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fail-red);
+}
+
 @media screen and (max-width: 768px) {
   .main-page h1 {
     font-size: 50px;

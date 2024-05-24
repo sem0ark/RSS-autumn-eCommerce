@@ -7,16 +7,31 @@ import { htmlComponents } from '../shared/htmlComponents';
 import { backgroundImageLayout } from '../shared/layouts/backgroundImageLayout';
 import { inputComponents } from '../shared/inputComponents';
 import { Router } from '../../framework/routing/router';
+import { showTime } from '../../framework/utilities/format';
+import { factories } from '../../framework/factories';
 
-const { h1, h2, p } = htmlComponents;
+const { pinteger, functional, text } = factories;
+const { div, h1, h2, p } = htmlComponents;
 const { containerFlexColumn } = containerComponents;
 const { buttonPrimary } = inputComponents;
+
+const counter = pinteger(6000, 'promo-time-counter');
+setInterval(() => counter.set(Math.max(counter.get() - 1, 0)), 1000);
 
 export const mainPage = new Page(() => {
   return backgroundImageLayout(background)(
     containerFlexColumn({
       gap: 90,
     })(
+      div(
+        h2('Use promo code!'),
+        p('FLOWER').cls('promo'),
+        p(
+          'Time left: ',
+          functional(() => text(showTime(counter.get())))
+        ).cls('time')
+      ).cls('promo-codes'),
+
       containerFlexColumn({
         gap: 10,
       })(
