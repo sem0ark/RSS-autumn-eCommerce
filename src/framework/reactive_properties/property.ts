@@ -49,7 +49,7 @@ export class Property<T extends PropertyValueType> {
    * @param newValue new value of the property to set.
    */
   public set(newValue: T): void {
-    if (newValue !== this.value) {
+    if (newValue !== this.value || !Object.is(newValue, this.value)) {
       this.value = newValue;
       this.update();
     }
