@@ -14,7 +14,6 @@ import { categoryBreadcrumps } from './categoryBreadcrumps';
 import { sortPanel } from './sortPanel';
 import { searchPanel } from './searchPanel';
 import { filterPanel } from './filterPanel';
-import { cartContext } from '../../contexts/cartContext';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -23,9 +22,6 @@ const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
-  // update the cart data in case it was not loaded
-  cartContext.fetchCartData();
-
   if (categoryId)
     catalogContext.filters.get().selectedRootCategoryId = categoryId;
   else catalogContext.filters.get().selectedRootCategoryId = undefined;

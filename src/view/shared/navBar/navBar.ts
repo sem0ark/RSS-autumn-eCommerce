@@ -25,6 +25,8 @@ const currentTab = storage.registerProperty(
 
 export const navBar = () => {
   const menuOpen = factories.pboolean(false, 'menuOpen');
+  // update the cart data in case it was not loaded
+  cartContext.fetchCartData();
 
   return containerMaxWidth
     .cls('navbar')(

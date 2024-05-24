@@ -17,9 +17,6 @@ const { spinner } = spinnerComponents;
 const { buttonPrimary } = inputComponents;
 
 export const productDescriptionPage = new Page((productId: string) => {
-  // update the cart data in case it was not loaded
-  cartContext.fetchCartData();
-
   const renderSlider = async () => {
     const product = await productInfoContext.getProductData(productId);
     return sliderComponent(product.imageUrls || []).cls('slider');
