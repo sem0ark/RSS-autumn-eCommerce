@@ -69,13 +69,15 @@ export const addressForm = (
     streetValidators
   );
 
-  const resultingDataCorrect = pfunc(
-    () =>
-      cityValid.get() &&
-      countryValid.get() &&
-      postalCodeValid.get() &&
-      streetValid.get()
-  );
+  const resultingDataCorrect = pfunc(() => {
+    const city = cityValid.get();
+    const country = countryValid.get();
+    const postal = postalCodeValid.get();
+    const street = streetValid.get();
+
+    return city && country && postal && street;
+  });
+
   const resultingData = pfunc(() => ({
     city: cityValue.get(),
     country: countryValue.get(),

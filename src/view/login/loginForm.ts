@@ -35,9 +35,11 @@ export const loginForm = () => {
     passwordValidators
   );
 
-  const formValid = factories.pfunc(
-    () => emailValid.get() && passwordValid.get()
-  );
+  const formValid = factories.pfunc(() => {
+    const email = emailValid.get();
+    const password = passwordValid.get();
+    return email && password;
+  });
 
   return form
     .cls('login-form')(
