@@ -7,7 +7,10 @@ const { footer, iconSvg, a } = htmlComponents;
 
 const footerContainer = () =>
   footer(
-    a('https://rollingscopes.com/', iconSvg(rssSVG).cls('rss')),
+    a(
+      'https://rollingscopes.com/',
+      iconSvg(rssSVG).cls('rss', 'block-selection')
+    ),
     'JavaScript/Front-end 2023Q4 ©'
   );
 

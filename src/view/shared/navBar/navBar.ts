@@ -31,7 +31,7 @@ export const navBar = () => {
   return containerMaxWidth
     .cls('navbar')(
       div(iconSvg(logoSVG))
-        .cls('logo-site')
+        .cls('logo-site', 'block-selection')
         .onClick(() => menuOpen.toggle()),
       div(
         nav(
