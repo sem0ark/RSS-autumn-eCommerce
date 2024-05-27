@@ -53,11 +53,13 @@ export const catalogPage = new Page((categoryId?: string) => {
         padding: 10,
         wrap: true,
       })(
-        functional(() =>
-          catalogContext.products.pLength.get() === 0 && !loadingProducts.get()
-            ? p('No products found.')
-            : hidden()
-        )
+        functional(() => {
+          const loading = loadingProducts.get();
+          const noProducts = catalogContext.products.pLength.get() === 0;
+
+          if (!loading && noProducts) return p('No products found.');
+          return hidden();
+        })
       )
         .cls('products-container')
         .list(catalogContext.products, productCard),
