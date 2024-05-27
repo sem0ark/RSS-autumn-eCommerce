@@ -54,9 +54,11 @@ export const catalogPage = new Page((categoryId?: string) => {
         wrap: true,
       })(
         functional(() => {
-          if (loadingProducts.get()) return hidden();
-          if (catalogContext.products.pLength.get() === 0)
-            return p('No products found.');
+          const noProducts = catalogContext.products.pLength.get() === 0;
+          const loading = loadingProducts.get();
+
+          if (loading) return hidden();
+          if (noProducts) return p('No products found.');
           return hidden();
         })
       )

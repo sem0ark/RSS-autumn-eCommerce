@@ -1,6 +1,6 @@
 import { cartConnector } from '../data/cartConnector';
 import { factories } from '../framework/factories';
-import { error, warn } from '../framework/utilities/logging';
+import { error, info, warn } from '../framework/utilities/logging';
 import {
   Cart,
   CartDataExternal,
@@ -37,17 +37,24 @@ class CartContext {
   constructor() {
     authContext.userData.onChange((data) => {
       const userIsLoggingOut = data === null;
+
       if (userIsLoggingOut) {
         this.clearData();
         // wait a bit to allow clear the authentication data beforehand
-        setTimeout(() => this.initCartData(), 500);
+        info('User is logging out, no cart data synchronization...');
+        setTimeout(() => this.initCartData(), 0);
         return;
       }
 
       // overwrite the cart only if it already has something
-      if (this.cartData?.lineItems.length)
-        setTimeout(() => this.initCartData(!userIsLoggingOut), 500);
-      else setTimeout(() => this.fetchCartData(), 500);
+      if (this.cartData?.lineItems.length) {
+        info('User is logging in and already has some cart data...');
+        notificationContext.addSuccess('We synchronized your cart!');
+        setTimeout(() => this.initCartData(!userIsLoggingOut), 0);
+      } else {
+        info('User is logging in without any cart data...');
+        setTimeout(() => this.fetchCartData(), 0);
+      }
     });
   }
 
