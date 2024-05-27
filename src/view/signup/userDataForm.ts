@@ -74,14 +74,15 @@ export const userDataForm = (
     .cls('checkbox-password')
     .onInput((e) => showPassword.set((e.target as HTMLInputElement).checked));
 
-  const resultingDataCorrect = pfunc(
-    () =>
-      firstNameValid.get() &&
-      lastNameValid.get() &&
-      emailValid.get() &&
-      passwordValid.get() &&
-      dateOfBirthValid.get()
-  );
+  const resultingDataCorrect = pfunc(() => {
+    const first = firstNameValid.get();
+    const last = lastNameValid.get();
+    const email = emailValid.get();
+    const password = passwordValid.get();
+    const date = dateOfBirthValid.get();
+
+    return first && last && email && password && date;
+  });
 
   const resultingData = pfunc(() => ({
     firstName: firstNameValue.get(),
