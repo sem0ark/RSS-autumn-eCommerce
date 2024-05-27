@@ -79,7 +79,7 @@ export const aboutPage = new Page(() => {
           ekaterinaImage,
           'Ekaterina Grigoreva',
           'Frontend Developer',
-          'NA',
+          'Passionate about web development with a focus on creating intuitive and user-friendly interfaces. I am currently enhancing my skills through various projects and courses.',
           [
             'Was in charge of information collection regarding the requirements and API functionality.',
             'Actively participated in project discussions.',
