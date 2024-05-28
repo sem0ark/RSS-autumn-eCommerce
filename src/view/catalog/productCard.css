@@ -29,6 +29,8 @@
 
 .product-card img.icon {
   filter: brightness(10);
+  height: 140%;
+  margin-right: 5px;
 }
 
 .product-card .name {
@@ -93,4 +95,13 @@
   gap: 3px;
   width: 100%;
   border-radius: 0 0 10px 10px;
+}
+
+.product-card .buy-button.removing {
+  background-color: var(--fail-red);
+  border-color: var(--fail-red);
+}
+
+.product-card .buy-button.removing img {
+  filter: invert(1);
 }

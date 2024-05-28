@@ -23,6 +23,7 @@ class CartConnector {
       {
         currency: 'EUR',
         ...initialCartData,
+        discountCodes: undefined,
       }
     );
 
