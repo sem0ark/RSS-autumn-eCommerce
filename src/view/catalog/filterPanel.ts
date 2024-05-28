@@ -83,6 +83,12 @@ const colorSelection = () => {
     }),
     labelled('White', checkboxColor('white'), getId('checkbox-color'), {
       reverseOrder: true,
+    }),
+    labelled('Pink', checkboxColor('pink'), getId('checkbox-color'), {
+      reverseOrder: true,
+    }),
+    labelled('Orange', checkboxColor('orange'), getId('checkbox-color'), {
+      reverseOrder: true,
     })
   ).cls('filter-block');
 };
