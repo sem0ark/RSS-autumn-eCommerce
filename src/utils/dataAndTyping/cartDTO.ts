@@ -15,6 +15,9 @@ export interface Cart {
   lineItems: LineItem[];
 
   totalPrice: TypedMoney;
+  discountOnTotalPrice?: {
+    discountedAmount: TypedMoney;
+  };
 }
 
 export interface LineItem {
@@ -75,5 +78,8 @@ export function getCartData(cart: Cart): CartDataExternal {
 
     products: cart.lineItems.map(getCartEntryData),
     price: currencyString(cart.totalPrice),
+    discount: cart.discountOnTotalPrice
+      ? currencyString(cart.discountOnTotalPrice.discountedAmount)
+      : undefined,
   };
 }

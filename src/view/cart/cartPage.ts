@@ -9,10 +9,12 @@ import { inputComponents } from '../shared/inputComponents';
 import { minimalLayout } from '../shared/layouts/minimalLayout';
 import { cartEntry } from './cartEntry';
 import { spinnerComponents } from '../shared/spinnerComponents';
+import { notificationContext } from '../../contexts/notificationContext';
 
 const { asynchronous, functional } = factories;
-const { div, p, span } = htmlComponents;
-const { buttonPrimary, buttonSecondary } = inputComponents;
+const { div, p, span, form, hidden } = htmlComponents;
+const { buttonPrimary, buttonSecondary, inputText, validated } =
+  inputComponents;
 const { spinner } = spinnerComponents;
 
 export const cartPage = new Page(() => {
@@ -40,9 +42,45 @@ export const cartPage = new Page(() => {
             clearCart.asyncApplyAttr(cartContext.clearCartData(), 'disable')
           );
 
+          const [promoCodeInput, , promoCodeInputValue] = validated(
+            inputText().attr('placeholder', 'FLOWER'),
+            []
+          );
+
+          const codeSubmitButton = buttonSecondary('Apply Code');
+
           return div(
+            cart.discount
+              ? hidden()
+              : form(promoCodeInput, codeSubmitButton)
+                  .cls('promo-form')
+                  .onSubmit(() => {
+                    if (!promoCodeInputValue.get()) return;
+
+                    const promise = cartContext
+                      .applyPromoCode(promoCodeInputValue.get())
+                      .then((s) => {
+                        if (s)
+                          notificationContext.addSuccess(
+                            "You've got a discount!"
+                          );
+                        else notificationContext.addError('Incorrect code...');
+                      });
+
+                    codeSubmitButton.asyncApplyAttr(promise, 'disabled');
+                  }),
+
             ...cart.products.map((product) => cartEntry(product)),
-            p('Total price is ', span(cart.price).cls('price')),
+            p(
+              'Total price is ',
+              span(
+                cart.discount
+                  ? span('(Saved ', cart.discount, ')').cls('price-discount')
+                  : hidden(),
+                cart.price
+              ).cls('price')
+            ),
+
             div(clearCart, buttonPrimary('Order')).cls('control-buttons')
           ).cls('cart-page');
         });
