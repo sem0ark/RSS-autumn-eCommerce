@@ -49,6 +49,11 @@
   width: 190px;
 }
 
+.product-description-page .information button.removing {
+  background-color: var(--fail-red);
+  border-color: var(--fail-red);
+}
+
 .product-description-page .information .description {
   border-top: 1px solid grey;
   margin-bottom: 20px;

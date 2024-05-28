@@ -1,6 +1,7 @@
 import './productCard.css';
 
 import cartSVG from '../../../assets/shopping-cart.svg';
+import trashcanSVG from '../../../assets/trash-can-regular.svg';
 import { Property } from '../../framework/reactive_properties/property';
 
 import { htmlComponents } from '../shared/htmlComponents';
@@ -11,8 +12,9 @@ import { Router } from '../../framework/routing/router';
 import { ProductDataExternal } from '../../utils/dataAndTyping/catalogDTO';
 import { cartContext } from '../../contexts/cartContext';
 import { notificationContext } from '../../contexts/notificationContext';
+import { HTMLComponent } from '../../framework/ui_components/htmlComponent';
 
-const { asynchronous, pfunc } = factories;
+const { asynchronous, pfunc, functional } = factories;
 const { p, div, span, img, iconSvg } = htmlComponents;
 const { buttonPrimary } = inputComponents;
 const { spinner } = spinnerComponents;
@@ -41,27 +43,52 @@ export const productCard = (productProp: Property<ProductDataExternal>) => {
         ?.products.find((item) => item.product.id === product.id)
   );
 
-  const buyButton = buttonPrimary(iconSvg(cartSVG), 'Buy')
-    .cls('buy-button')
-    .propClass(alreadyInCart, (v) => (v ? ['inactive'] : []));
-  buyButton.onClick(
-    () => {
-      if (alreadyInCart.get()) {
-        notificationContext.addInformation('Product is already in the cart');
-        return;
-      }
+  const attemptAddToCart = (c: HTMLComponent) => () => {
+    if (alreadyInCart.get()) {
+      notificationContext.addInformation('Product is already in the cart');
+      return;
+    }
 
-      const prom = cartContext.addProduct(product.id, 1);
-      buyButton.asyncApplyAttr(
-        prom.then((success) => {
-          if (success) notificationContext.addSuccess('Added to the cart');
-        }),
-        'disabled'
+    const prom = cartContext.addProduct(product.id, 1);
+    c.asyncApplyAttr(
+      prom.then((success) => {
+        if (success) notificationContext.addSuccess('Added to the cart');
+      }),
+      'disabled'
+    );
+  };
+
+  const attemptRemoveFromCart = (c: HTMLComponent) => () => {
+    if (!alreadyInCart.get()) {
+      notificationContext.addInformation('Product is not in the cart');
+      return;
+    }
+
+    const prom = cartContext.removeProduct(product.id);
+    c.asyncApplyAttr(
+      prom.then((success) => {
+        if (success) notificationContext.addSuccess('Removed from the cart');
+      }),
+      'disabled'
+    );
+  };
+
+  const buyButton = functional(() => {
+    let b: HTMLComponent;
+
+    if (!alreadyInCart.get()) {
+      b = buttonPrimary(iconSvg(cartSVG), 'Buy').cls('buy-button');
+      b.onClick(attemptAddToCart(b), true, true);
+    } else {
+      b = buttonPrimary(iconSvg(trashcanSVG), 'Remove').cls(
+        'buy-button',
+        'removing'
       );
-    },
-    true,
-    true
-  );
+      b.onClick(attemptRemoveFromCart(b), true, true);
+    }
+
+    return b;
+  });
 
   return div(
     cardImage,
