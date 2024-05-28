@@ -43,6 +43,7 @@ class CartContext {
         // wait a bit to allow clear the authentication data beforehand
         info('User is logging out, no cart data synchronization...');
         setTimeout(() => this.initCartData(), 0);
+
         return;
       }
 
