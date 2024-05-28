@@ -123,7 +123,7 @@ class QueryBuilder {
       if (filters.filters.color.length)
         elements.push(
           QueryBuilder.filterQuerySelectQuoted(
-            'variants.attributes.color',
+            'variants.attributes.color.key',
             ...filters.filters.color
           )
         );
