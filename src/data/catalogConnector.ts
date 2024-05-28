@@ -1,10 +1,12 @@
 import { debug, error } from '../framework/utilities/logging';
 import {
   CATALOG_LIMIT_PER_PAGE,
-  Category,
   DEFAULT_LOCALE,
-  FilterSelection,
   LanguageLocale,
+} from '../utils/dataAndTyping/DTO';
+import {
+  Category,
+  FilterSelection,
   ProductProjection,
 } from '../utils/dataAndTyping/catalogDTO';
 import { authConnector } from './authConnector';

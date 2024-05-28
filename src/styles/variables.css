@@ -26,6 +26,8 @@
   --success-green: #63db63;
   --fail-red: #d65a5a;
 
+  --fail-red-light: #d65a5a33;
+
   --font-family-heading: 'Alegreya Sans SC', 'Inter', sans-serif;
   --font-family-default: 'Inter', sans-serif;
 }

@@ -1,6 +1,6 @@
-import { Address } from '../data/authConnector';
+import { Address } from '../utils/dataAndTyping/authDTO';
 
-export type ActionCode =
+type ActionCode =
   | 'setFirstName'
   | 'setLastName'
   | 'changeEmail'

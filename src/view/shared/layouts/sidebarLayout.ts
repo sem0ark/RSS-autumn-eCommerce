@@ -8,6 +8,7 @@ import { navBar } from '../navBar/navBar';
 import { HTMLComponent } from '../../../framework/ui_components/htmlComponent';
 import { factories } from '../../../framework/factories';
 import { inputComponents } from '../inputComponents';
+import { disconnectedPopup } from '../popups/disconnectedPopup';
 
 const { h1 } = htmlComponents;
 const { pboolean, functional, text } = factories;
@@ -36,6 +37,7 @@ export const sidebarLayout =
         mainBlock.cls('sidebar-layout-main')
       ),
       footerComponent(),
-      notificationModal()
+      notificationModal(),
+      disconnectedPopup()
     );
   };

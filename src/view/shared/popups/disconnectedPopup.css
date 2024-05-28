@@ -1,0 +1,38 @@
+.disconnected-popup {
+  display: none;
+}
+
+.disconnected-popup.active {
+  z-index: 10;
+
+  display: flex;
+  backdrop-filter: brightness(0.6);
+
+  animation: fade-in 500ms;
+}
+
+.disconnected-popup.active .disconnected-popup-modal {
+  width: min(400px, 100%);
+
+  padding: 40px;
+  background-color: var(--background-light);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.disconnected-popup.active .disconnected-popup-modal button {
+  width: 100%;
+  font-size: 16px;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

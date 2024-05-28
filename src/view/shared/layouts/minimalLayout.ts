@@ -6,6 +6,7 @@ import { htmlComponents } from '../htmlComponents';
 import { notificationModal } from '../notifications/notificationContainer';
 import { footerComponent } from '../footer/footer';
 import { navBar } from '../navBar/navBar';
+import { disconnectedPopup } from '../popups/disconnectedPopup';
 
 const { main, h1, div } = htmlComponents;
 const { containerMaxWidth, containerOuter } = containerComponents;
@@ -20,5 +21,6 @@ export const minimalLayout =
 
       div().cls('minimal-layout-push'),
       footerComponent(),
-      notificationModal()
+      notificationModal(),
+      disconnectedPopup()
     );

@@ -14,6 +14,7 @@ import { categoryBreadcrumps } from './categoryBreadcrumps';
 import { sortPanel } from './sortPanel';
 import { searchPanel } from './searchPanel';
 import { filterPanel } from './filterPanel';
+import { cartContext } from '../../contexts/cartContext';
 
 const { functional, pboolean } = factories;
 const { main, aside, p, hidden } = htmlComponents;
@@ -22,6 +23,9 @@ const { spinner } = spinnerComponents;
 const { buttonSecondary } = inputComponents;
 
 export const catalogPage = new Page((categoryId?: string) => {
+  // update the cart data in case it was not loaded
+  cartContext.fetchCartData();
+
   if (categoryId)
     catalogContext.filters.get().selectedRootCategoryId = categoryId;
   else catalogContext.filters.get().selectedRootCategoryId = undefined;
@@ -53,11 +57,12 @@ export const catalogPage = new Page((categoryId?: string) => {
         padding: 10,
         wrap: true,
       })(
-        functional(() =>
-          catalogContext.products.pLength.get() === 0 && !loadingProducts.get()
-            ? p('No products found.')
-            : hidden()
-        )
+        functional(() => {
+          if (loadingProducts.get()) return hidden();
+          if (catalogContext.products.pLength.get() === 0)
+            return p('No products found.');
+          return hidden();
+        })
       )
         .cls('products-container')
         .list(catalogContext.products, productCard),
@@ -66,11 +71,13 @@ export const catalogPage = new Page((categoryId?: string) => {
       functional(() => {
         const canContinue = catalogContext.canContinue.get();
         const loading = loadingProducts.get();
+
         return !loading && canContinue
           ? buttonSecondary('Load More')
               .cls('load-more')
               .onClick(() => {
                 loadingProducts.enable();
+
                 catalogContext
                   .nextPage()
                   .then(() => loadingProducts.disable())

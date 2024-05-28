@@ -9,27 +9,7 @@ import {
 import { factories } from '../framework/factories';
 import { Storage } from '../framework/persistence/storage';
 import { ProfileUpdateAction } from '../contexts/fieldEditBuilder';
-
-/**
- * Address object interface based on the commerce tools documentation and RSS requirements.
- */
-export interface Address {
-  id?: string;
-  key?: string;
-  // title: string;
-  // firstName: string;
-  // lastName: string;
-
-  country: string;
-  city: string;
-  postalCode: string;
-  streetName: string;
-  // streetNumber: string;
-
-  // phone: string;
-  // mobile: string;
-  // email: string;
-}
+import { Address } from '../utils/dataAndTyping/authDTO';
 
 export interface CustomerData {
   email: string;
@@ -122,7 +102,7 @@ class AuthConnector {
        */
       expirationDateMS: number;
       isAnonymous: boolean;
-    } | null>(null)
+    } | null>(null, 'Token_Data')
   ) {
     const storage = new Storage('AuthConnector');
     storage.registerProperty(_tokenData);
@@ -253,7 +233,7 @@ class AuthConnector {
   /**
    * Unauthorize the user.
    */
-  public async requestLogout() {
+  public requestLogout() {
     this._tokenData.set(null);
   }
 
@@ -402,7 +382,7 @@ class AuthConnector {
     debug('Trying to run general authentication workflow.');
     const token = this._tokenData.get();
 
-    if (!token) {
+    if (!token || token === null) {
       debug('User is not logged in, trying to get an anonymous token.');
 
       const tokenResult = await this.requestAnonymousToken();
@@ -416,7 +396,7 @@ class AuthConnector {
       debug('Token already exists, but it is outdated.');
       await this.requestTokenRefresh();
     } else {
-      debug('User is already logged in, doing nothing.');
+      debug('User is already logged in, doing nothing.', token);
     }
   }
 

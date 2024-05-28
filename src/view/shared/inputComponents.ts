@@ -9,7 +9,7 @@ import {
   Property,
 } from '../../framework/reactive_properties/property';
 
-const { input, div, p, label, button, iconSvg, link, select, option } =
+const { input, div, p, label, button, iconSvg, link, select, option, span } =
   htmlComponents;
 
 const inputClue = p.cls('input-components-clue');
@@ -198,6 +198,19 @@ const buttonIcon = (svgPath: string) =>
     'button-icon'
   );
 
+/**
+ * Useful for defining icon-like buttons with UTF symbols
+ * @param textIcon some UTF symbol to be used as an icon
+ * @returns html component
+ */
+const buttonIconText = (textIcon: string) =>
+  button(span(textIcon)).cls(
+    'block-selection',
+    'input-components-button-icon-text',
+    'button',
+    'button-icon-text'
+  );
+
 export const inputComponents = {
   labelled,
   validated,
@@ -218,4 +231,5 @@ export const inputComponents = {
   buttonIcon,
   buttonPrimaryLink,
   buttonSecondaryLink,
+  buttonIconText,
 };
