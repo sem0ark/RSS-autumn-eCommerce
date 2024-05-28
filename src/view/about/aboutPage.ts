@@ -85,7 +85,7 @@ export const aboutPage = new Page(() => {
             'Actively participated in project discussions.',
             'Was in charge of final testing of the application.',
           ],
-          'https://github.com/laranu'
+          'https://github.com/katiegrigoreva'
         )
       ).cls('members')
     ).cls('about-page')
