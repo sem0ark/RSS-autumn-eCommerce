@@ -50,6 +50,7 @@ export class Property<T extends PropertyValueType> {
    */
   public set(newValue: T): void {
     if (newValue !== this.value || !Object.is(newValue, this.value)) {
+      // debug(`Updating property ${this.toString()} to`, newValue as object);
       this.value = newValue;
       this.update();
     }
@@ -252,10 +253,6 @@ export class DependentProperty<
    */
   public set() {
     const newValue = this.updater(...((this.args || []) as T));
-    debug(
-      `Updating dependent property ${this.toString()} to`,
-      newValue as object
-    );
     super.set(newValue);
   }
 

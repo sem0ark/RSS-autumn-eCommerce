@@ -25,11 +25,13 @@ const currentTab = storage.registerProperty(
 
 export const navBar = () => {
   const menuOpen = factories.pboolean(false, 'menuOpen');
+  // update the cart data in case it was not loaded
+  cartContext.fetchCartData();
 
   return containerMaxWidth
     .cls('navbar')(
       div(iconSvg(logoSVG))
-        .cls('logo-site')
+        .cls('logo-site', 'block-selection')
         .onClick(() => menuOpen.toggle()),
       div(
         nav(

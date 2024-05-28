@@ -255,7 +255,7 @@ export const addressDataForm = () => {
       ...addresses.map((address) => addressDataFormEntry(address, data)),
 
       functional(() =>
-        addresses.length === 0 && !addingNewAddress.get()
+        !addingNewAddress.get() && addresses.length === 0
           ? p('No address entries found, please add a new one')
           : hidden()
       ),

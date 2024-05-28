@@ -34,7 +34,8 @@ const span = html('span');
 const a = (url: string, ...children: CC) =>
   html('a')(...children)
     .cls('link', 'link-external')
-    .attr('href', url);
+    .attr('href', url)
+    .attr('target', '_blank');
 
 const link = (url: string, ...children: CC) =>
   html('a')(...children)
