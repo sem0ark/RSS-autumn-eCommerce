@@ -39,6 +39,10 @@
   height: 20px;
 }
 
+li[data-checked='true'] ul input[type='checkbox'] {
+  display: none;
+}
+
 .category-panel > ul > * li {
   display: block;
   margin-left: 15px;
