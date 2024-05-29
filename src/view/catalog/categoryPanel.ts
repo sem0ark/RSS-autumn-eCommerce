@@ -8,6 +8,7 @@ import { spinnerComponents } from '../shared/spinnerComponents';
 import { textComponents } from '../shared/textComponents';
 import { inputComponents } from '../shared/inputComponents';
 import { CategoryExternal } from '../../utils/dataAndTyping/catalogDTO';
+import { Router } from '../../framework/routing/router';
 
 const { asynchronous } = factories;
 const { div, ul, li, link } = htmlComponents;
@@ -35,7 +36,7 @@ const categoryEntry = (category: CategoryExternal) => {
     catalogContext.newRequest();
   });
 
-  result.add(checkboxSelectCategory.onClick(() => {}, false, true));
+  result.add(checkboxSelectCategory.onClick(() => {Router.navigateTo(`/catalog/${category.id}`)}, false, true));
 
   result.add(link(`/catalog/${category.id}`, category.name));
 

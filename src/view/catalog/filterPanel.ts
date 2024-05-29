@@ -7,18 +7,22 @@ import { catalogContext } from '../../contexts/catalogContext';
 import { getId } from '../../framework/utilities/id';
 
 const { div, p } = htmlComponents;
-const { checkboxInput, labelled } = inputComponents;
+const { checkboxInput, labelled, buttonSecondary } = inputComponents;
 const { header3Orange } = textComponents;
 
 const initFilters = () => {
   catalogContext.filters.get().filters ||= { color: [], price: [] };
 };
 
+const checkedBoxes: HTMLInputElement[] = [];
+
 const priceSelection = () => {
   const checkboxPrice = (interval: [number, number]) =>
     checkboxInput().onInput((e) => {
-      const checked = (e.target as HTMLInputElement).checked;
+      const checkbox = e.target as HTMLInputElement;
+      const checked = checkbox.checked;
       initFilters();
+      checkedBoxes.push(checkbox);
 
       const filters = catalogContext.filters.get().filters;
       if (!filters) return;
@@ -58,8 +62,10 @@ const priceSelection = () => {
 const colorSelection = () => {
   const checkboxColor = (color: string) =>
     checkboxInput().onInput((e) => {
-      const checked = (e.target as HTMLInputElement).checked;
+      const checkbox = e.target as HTMLInputElement;
+      const checked = checkbox.checked;
       initFilters();
+      checkedBoxes.push(checkbox);
 
       const filters = catalogContext.filters.get().filters;
       if (!filters) return;
@@ -93,7 +99,26 @@ const colorSelection = () => {
   ).cls('filter-block');
 };
 
+
+const resetAllBtn = () => {
+  return buttonSecondary('Reset all').
+    onClick(() => {
+      checkedBoxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      })
+      checkedBoxes.length = 0;
+
+      const filters = catalogContext.filters.get().filters;
+      if (!filters) return;
+
+      filters.color.length = 0; 
+      filters.price.length = 0; 
+
+      catalogContext.newRequest();
+    })
+}
+
 export const filterPanel = () =>
-  div(header3Orange('Filter'), priceSelection(), colorSelection()).cls(
+  div(header3Orange('Filter'), resetAllBtn(), priceSelection(), colorSelection()).cls(
     'filter-panel'
   );
