@@ -9,13 +9,16 @@ import { textComponents } from '../shared/textComponents';
 import { inputComponents } from '../shared/inputComponents';
 import { CategoryExternal } from '../../utils/dataAndTyping/catalogDTO';
 
-const { asynchronous } = factories;
+const { asynchronous, text } = factories;
 const { div, ul, li, link } = htmlComponents;
 const { header3Orange } = textComponents;
 const { spinner } = spinnerComponents;
 const { checkboxInput } = inputComponents;
 
-const categoryEntry = (category: CategoryExternal) => {
+const categoryEntry = (
+  category: CategoryExternal,
+  outerContainer: HTMLComponent
+) => {
   const result = div().cls('category-entry');
 
   const checkboxSelectCategory = checkboxInput().onInput((e) => {
@@ -35,8 +38,12 @@ const categoryEntry = (category: CategoryExternal) => {
     catalogContext.newRequest();
   });
 
-  result.add(checkboxSelectCategory.onClick(() => {}, false, true));
-
+  result.add(
+    checkboxSelectCategory.onClick((e) => {
+      const checked = (e.target as HTMLInputElement).checked;
+      outerContainer.applyAttr('data-checked', `${checked}`);
+    }, false)
+  );
   result.add(link(`/catalog/${category.id}`, category.name));
 
   return result;
@@ -45,12 +52,14 @@ const categoryEntry = (category: CategoryExternal) => {
 export const categoryPanel = (rootCategoryId?: string) => {
   function recursiveRender(...categories: CategoryExternal[]): HTMLComponent {
     return ul(
-      ...categories.map((c) =>
-        li(
-          categoryEntry(c),
-          c.subcategories ? recursiveRender(...c.subcategories) : ''
-        )
-      )
+      ...categories.map((c) => {
+        const result = li();
+        result.add(
+          categoryEntry(c, result),
+          c.subcategories ? recursiveRender(...c.subcategories) : text('')
+        );
+        return result;
+      })
     );
   }
 
