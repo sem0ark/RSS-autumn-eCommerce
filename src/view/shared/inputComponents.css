@@ -1,0 +1,129 @@
+a {
+  color: var(--link);
+}
+
+.input-components-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 24px;
+  width: 100%;
+}
+
+.input-components-input-text {
+  background-color: var(--background-light);
+  display: block;
+  border: 1px solid;
+  border-radius: 7px;
+  height: 60px;
+  font-size: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.input-components-input-select {
+  background-color: var(--background-light);
+  display: block;
+  border: 1px solid;
+  border-radius: 7px;
+  height: 60px;
+  font-size: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.input-components-input-date {
+  background-color: var(--background-light);
+  width: 100%;
+}
+
+.input-components-clue {
+  font-size: 14px;
+  color: var(--subtext);
+}
+
+.input-components-input-submit {
+  font-size: 24px;
+  padding: 15px 30px;
+  border-radius: 30px;
+  color: var(--color-text-light);
+  background-color: var(--primary-color);
+  width: 170px;
+}
+
+.input-components-input-checkbox {
+  accent-color: black;
+  height: 18px;
+  width: 18px;
+  border-radius: 3px;
+}
+
+.input-components-validated.success {
+  border-color: var(--color-success);
+  box-shadow: var(--color-success) 0 2px 0;
+  outline-color: var(--color-success);
+}
+
+.input-components-validated.error {
+  border-color: var(--color-fail);
+  box-shadow: var(--color-fail) 0 2px 0;
+  outline-color: var(--color-fail);
+}
+
+.input-components-button {
+  background-color: transparent;
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 10px 15px;
+
+  height: 35px;
+  width: fit-content;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.input-components-button-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--color-text-light);
+}
+
+.input-components-button-primary.active,
+.input-components-button-primary:hover,
+.input-components-button-primary:active:hover {
+  filter: brightness(0.9);
+}
+
+.input-components-button-secondary.active,
+.input-components-button-secondary:hover,
+.input-components-button-secondary:active:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--color-text-light);
+}
+
+.input-components-button-icon {
+  height: 37px;
+  width: 37px;
+  border-radius: 8px;
+}
+
+.input-components-button-icon.active,
+.input-components-button-icon:hover,
+.input-components-button-icon:active:hover {
+  background-color: var(--color-text-light);
+  transform: scale(1.2);
+}
+
+@media only screen and (max-width: 768px) {
+  .input-components-input-container label {
+    font-size: 15px;
+  }
+
+  .input-components-clue {
+    font-size: 12px;
+  }
+}

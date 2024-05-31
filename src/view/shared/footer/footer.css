@@ -1,0 +1,6 @@
+footer {
+  width: 100%;
+  height: 70px;
+  background-color: var(--border-dark);
+  color: var(--color-text-light);
+}
