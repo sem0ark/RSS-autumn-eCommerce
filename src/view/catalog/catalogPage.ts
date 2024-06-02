@@ -14,6 +14,7 @@ import { categoryBreadcrumps } from './categoryBreadcrumps';
 import { sortPanel } from './sortPanel';
 import { searchPanel } from './searchPanel';
 import { filterPanel } from './filterPanel';
+import { Router } from '../../framework/routing/router';
 import { cartContext } from '../../contexts/cartContext';
 
 const { functional, pboolean } = factories;
@@ -47,6 +48,14 @@ export const catalogPage = new Page((categoryId?: string) => {
       searchPanel(),
       sortPanel(),
       filterPanel(),
+      buttonSecondary('Clear Filters')
+        .onClick(() =>
+          Router.navigateTo(
+            categoryId ? `/catalog/${categoryId}` : `/catalog`,
+            true
+          )
+        )
+        .cls('clear-filters-button'),
       categoryPanel(categoryId)
     ).cls('catalog-page', 'hide-scrollbar'),
     main(
