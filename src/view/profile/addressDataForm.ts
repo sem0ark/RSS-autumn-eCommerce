@@ -1,7 +1,8 @@
 import './addressDataForm.css';
 
 import { authContext } from '../../contexts/authContext';
-import { Address, CustomerDataReceived } from '../../data/authConnector';
+import { Address } from '../../utils/dataAndTyping/authDTO';
+import { CustomerDataReceived } from '../../data/authConnector';
 import { factories } from '../../framework/factories';
 import { htmlComponents } from '../shared/htmlComponents';
 import { inputComponents } from '../shared/inputComponents';
