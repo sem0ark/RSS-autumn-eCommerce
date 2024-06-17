@@ -51,6 +51,10 @@ export interface CartDataExternal {
 }
 
 export function getCartEntryData(item: LineItem): CartEntryExternal {
+  const discount = item.price.discounted
+    ? currencyString({...item.price.discounted.value, centAmount: item.price.value.centAmount - item.price.discounted.value.centAmount})
+    : undefined;
+  
   return {
     product: {
       id: item.productId,
@@ -58,9 +62,7 @@ export function getCartEntryData(item: LineItem): CartEntryExternal {
       shortDescription: '',
 
       price: currencyString(item.price.value),
-      discount: item.price.discounted
-        ? currencyString(item.price.discounted.value)
-        : undefined,
+      discount,
 
       imageUrl: item.variant.images[0].url,
     },

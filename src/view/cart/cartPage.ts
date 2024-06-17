@@ -75,7 +75,7 @@ export const cartPage = new Page(() => {
               'Total price is ',
               span(
                 cart.discount
-                  ? span('(Saved ', cart.discount, ')').cls('price-discount')
+                  ? span(`${cart.discount}`).cls('price-discount', 'strike-through')
                   : hidden(),
                 cart.price
               ).cls('price')
