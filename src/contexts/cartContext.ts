@@ -48,14 +48,11 @@ class CartContext {
       }
 
       // overwrite the cart only if it already has something
-      if (this.cartData?.lineItems.length) {
-        info('User is logging in and already has some cart data...');
-        notificationContext.addSuccess('We synchronized your cart!');
-        setTimeout(() => this.initCartData(!userIsLoggingOut), 0);
-      } else {
-        info('User is logging in without any cart data...');
-        setTimeout(() => this.fetchCartData(), 0);
-      }
+      info('User is logging in, trying to synchronize carts...');
+      setTimeout(() => {
+        this.initCartData(true);
+        notificationContext.addSuccess("We've synchronized your cart!");
+      }, 0);
     });
   }
 
@@ -65,9 +62,9 @@ class CartContext {
   }
 
   private async initCartData(synchronizeCarts = false) {
-    const result = await cartConnector.requestCreateNewCart(
-      synchronizeCarts ? this.cartData : undefined
-    );
+    const result = await (synchronizeCarts
+      ? cartConnector.requestCreateSynchronizedCart(this.cartData)
+      : cartConnector.requestCreateEmptyCart());
 
     if (result.ok) {
       this.cartData = result.body;
