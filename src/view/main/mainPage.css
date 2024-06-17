@@ -1,0 +1,70 @@
+.main-page.container {
+  align-items: center;
+  text-align: center;
+
+  color: var(--color-text-light);
+}
+
+.main-page p {
+  font-size: 22px;
+}
+
+.main-page h1 {
+  font-size: 72px;
+  font-weight: bold;
+}
+
+.main-page h2 {
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.main-page button {
+  width: 200px;
+  font-size: 18px;
+  height: auto;
+}
+
+.main-page .promo-codes {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 240px;
+  font-size: 18px;
+  height: auto;
+  color: var(--border-dark);
+  background-color: var(--background-light);
+  padding: 20px;
+  border-radius: 0 0 0 10px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  border-left: var(--primary-color) 2px solid;
+  border-bottom: var(--primary-color) 2px solid;
+}
+
+.main-page .promo-codes h2 {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.main-page .promo-codes .promo {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.main-page .promo-codes .time {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fail-red);
+}
+
+@media screen and (max-width: 768px) {
+  .main-page h1 {
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  .main-page h2 {
+    font-size: 30px;
+    font-weight: bold;
+  }
+}

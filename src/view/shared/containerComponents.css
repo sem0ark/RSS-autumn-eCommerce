@@ -1,0 +1,81 @@
+#app-root {
+  position: relative;
+}
+
+.container-components-outer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.container-components-max-width {
+  width: calc(100% - 20px);
+  max-width: 1200px;
+
+  margin: 0 auto;
+  box-sizing: content-box;
+  padding: 0 10px;
+}
+
+/* prefix like .container-components will allow to encapsulate all styles into a single space at least partially */
+.container-components-modal {
+  display: flex;
+  flex-direction: column;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  gap: 10px;
+
+  pointer-events: none;
+}
+
+.container-components-modal > * {
+  pointer-events: all;
+}
+
+.container-components-modal-center {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container-components-modal-column {
+  flex-direction: column;
+  align-items: left;
+  justify-content: flex-end;
+}
+
+.container-components-modal-row {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.container-components-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.container-components-round-edges {
+  background-color: var(--background-body);
+  border-radius: 30px;
+  padding: 30px;
+}
+
+.container-components-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.container-components-flex-column {
+  display: flex;
+  flex-direction: column;
+}

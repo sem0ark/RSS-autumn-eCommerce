@@ -1,0 +1,101 @@
+.address-data-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-data-form .address-entry {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  background-color: var(--background-grey);
+
+  padding: 30px;
+  border-radius: 20px;
+}
+
+.address-data-form .address-description {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.address-data-form .tags {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.address-data-form .tags > * {
+  border: 1px solid var(--border-dark);
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: var(--subtext);
+}
+
+.address-data-form .button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.address-data-form .button-container > * {
+  font-size: 15px;
+  border: none;
+}
+
+.address-data-form .address-entry p {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.address-data-form .address-entry p {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--subtext);
+}
+
+.address-data-form .address-entry p {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--subtext);
+}
+
+.address-data-form .address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-data-form .address-form input,
+.address-data-form .address-form select {
+  height: 40px;
+  background-color: var(--background-light);
+
+  font-size: 18px;
+}
+
+.address-data-form button {
+  font-size: 16px;
+}
+
+.address-data-form > p {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.address-data-form label {
+  font-size: 16px;
+}
+
+.address-data-form .button-container {
+  flex-wrap: wrap;
+  row-gap: 5px;
+}
